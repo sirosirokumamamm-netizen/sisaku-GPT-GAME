@@ -11,7 +11,7 @@ const runs=await page.evaluate(({rounds,naive})=>{
    }
    if(game.mode==='camp'){const learned=SKILLS.filter(s=>p.learned[s.id]&&isManualSkill(s)).sort((a,b)=>((b.category===style?4:0)+(p.learned[b.id]||0))-((a.category===style?4:0)+(p.learned[a.id]||0)));const loadout=['crescent',...learned.filter(s=>s.id!=='crescent').slice(0,2).map(s=>s.id)];for(let slot=0;slot<loadout.length;slot++)equipSkill(loadout[slot],slot);while(p.hp<p.maxHp-20&&p.potions)usePotion();if(p.hp<p.maxHp-25&&game.gold>=POTION.price){openShop();buyPotion(true);closeShop()}continueJourney();if(game.mode==='end')break}let target={x:380,y:p.y-180};
    if(game.phase==='combat'||game.phase==='waveBreak'){
-    const closest=nearest(2000);if(closest)target=closest;
+    if(p.ultimate>=100)activateUltimate();const closest=nearest(2000);if(closest)target=closest;
     const danger=naive?null:warnings.find(w=>warningContains(w));
     if(danger&&danger.life<=p.justWindow&&p.cd.roll===0){joystick=escape(danger,target);action('roll')}
     const mine=naive?null:hazards.find(z=>distance(z,p)<z.r+25),shot=naive?null:hostileShots.find(b=>distance(b,p)<95&&(p.x-b.x)*b.dir.x+(p.y-b.y)*b.dir.y>0);

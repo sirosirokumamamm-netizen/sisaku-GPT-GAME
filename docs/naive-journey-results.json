@@ -2,118 +2,113 @@
   {
     "style": "sword",
     "seed": 20261017,
-    "resonances": 110,
-    "goals": 7,
-    "score": 86419,
-    "rank": "A",
-    "level": 10,
-    "goldEarned": 5367,
-    "goldSpent": 320,
-    "cleared": 10,
-    "kills": 282,
-    "hp": 144,
-    "seconds": 158,
+    "resonances": 143,
+    "goals": 6,
+    "score": 69172,
+    "rank": "B",
+    "level": 9,
+    "goldEarned": 5007,
+    "goldSpent": 240,
+    "cleared": 9,
+    "kills": 281,
+    "hp": 0,
+    "seconds": 190,
     "perfects": 0,
-    "drafts": 9,
+    "drafts": 8,
     "loadout": [
       "crescent",
-      "dash",
-      "pierce"
+      "flurry",
+      "wave"
     ],
-    "remaining": [],
+    "remaining": [
+      {
+        "kind": "boss",
+        "hp": 787,
+        "x": 416,
+        "y": 310
+      }
+    ],
     "player": {
-      "x": 387,
-      "y": 380
+      "x": 515,
+      "y": 320
     },
-    "phase": "travel",
-    "damageTaken": 396,
-    "combatSeconds": 119,
-    "skillUses": 108,
-    "barrels": 20,
-    "win": true
+    "phase": "combat",
+    "damageTaken": 509,
+    "combatSeconds": 152,
+    "skillUses": 153,
+    "barrels": 19,
+    "win": false
   },
   {
     "style": "element",
     "seed": 20261018,
-    "resonances": 67,
-    "goals": 4,
-    "score": 36235,
-    "rank": "C",
-    "level": 8,
-    "goldEarned": 2487,
-    "goldSpent": 80,
-    "cleared": 5,
-    "kills": 147,
+    "resonances": 177,
+    "goals": 7,
+    "score": 69372,
+    "rank": "B",
+    "level": 9,
+    "goldEarned": 5047,
+    "goldSpent": 320,
+    "cleared": 9,
+    "kills": 281,
     "hp": 0,
-    "seconds": 86,
+    "seconds": 181,
     "perfects": 0,
-    "drafts": 7,
+    "drafts": 8,
     "loadout": [
       "crescent",
       "meteor",
-      "frost"
+      "pierce"
     ],
     "remaining": [
       {
-        "kind": "totem",
-        "hp": 47,
-        "x": 232,
-        "y": 2834
-      },
-      {
-        "kind": "totem",
-        "hp": 25,
-        "x": 226,
-        "y": 3037
-      },
-      {
-        "kind": "archer",
-        "hp": 14,
-        "x": 285,
-        "y": 2781
+        "kind": "boss",
+        "hp": 164,
+        "x": 602,
+        "y": 415
       }
     ],
     "player": {
-      "x": 395,
-      "y": 2850
+      "x": 616,
+      "y": 514
     },
     "phase": "combat",
-    "damageTaken": 295,
-    "combatSeconds": 64,
-    "skillUses": 55,
-    "barrels": 11,
+    "damageTaken": 521,
+    "combatSeconds": 141,
+    "skillUses": 135,
+    "barrels": 19,
     "win": false
   },
   {
     "style": "support",
     "seed": 20261019,
-    "resonances": 121,
-    "goals": 9,
-    "score": 86462,
+    "resonances": 169,
+    "goals": 7,
+    "score": 84941,
     "rank": "A",
     "level": 10,
-    "goldEarned": 5447,
+    "goldEarned": 5361,
     "goldSpent": 400,
     "cleared": 10,
     "kills": 282,
-    "hp": 133,
-    "seconds": 176,
+    "hp": 120,
+    "seconds": 229,
     "perfects": 0,
     "drafts": 9,
     "loadout": [
       "crescent",
-      "blink",
+      "parry",
       null
     ],
     "remaining": [],
     "player": {
       "x": 374,
-      "y": 266
+      "y": 350
     },
     "phase": "travel",
-    "damageTaken": 575,
-    "combatSeconds": 135,
-    "skillUses": 98,
+    "damageTaken": 543,
+    "combatSeconds": 189,
+    "skillUses": 105,
     "barrels": 19,
     "win": true
   }

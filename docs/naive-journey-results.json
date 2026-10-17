@@ -1,0 +1,212 @@
+[
+  {
+    "style": "sword",
+    "seed": 20261017,
+    "resonances": 94,
+    "goals": 6,
+    "score": 65793,
+    "rank": "B",
+    "level": 9,
+    "goldEarned": 4685,
+    "goldSpent": 320,
+    "cleared": 8,
+    "kills": 275,
+    "hp": 0,
+    "seconds": 143,
+    "perfects": 0,
+    "drafts": 8,
+    "loadout": [
+      "crescent",
+      "dash",
+      "orbit"
+    ],
+    "remaining": [
+      {
+        "kind": "archer",
+        "hp": 38,
+        "x": 365,
+        "y": 987
+      },
+      {
+        "kind": "archer",
+        "hp": 38,
+        "x": 247,
+        "y": 1220
+      },
+      {
+        "kind": "shield",
+        "hp": 84,
+        "x": 397,
+        "y": 1056
+      },
+      {
+        "kind": "archer",
+        "hp": 54,
+        "x": 252,
+        "y": 1257
+      },
+      {
+        "kind": "shield",
+        "hp": 36,
+        "x": 443,
+        "y": 1221
+      },
+      {
+        "kind": "archer",
+        "hp": 54,
+        "x": 252,
+        "y": 1113
+      }
+    ],
+    "player": {
+      "x": 521,
+      "y": 1079
+    },
+    "phase": "combat",
+    "damageTaken": 503,
+    "combatSeconds": 96,
+    "skillUses": 86,
+    "barrels": 19,
+    "win": false
+  },
+  {
+    "style": "element",
+    "seed": 20261018,
+    "resonances": 61,
+    "goals": 6,
+    "score": 46124,
+    "rank": "C",
+    "level": 9,
+    "goldEarned": 3237,
+    "goldSpent": 240,
+    "cleared": 6,
+    "kills": 189,
+    "hp": 0,
+    "seconds": 118,
+    "perfects": 0,
+    "drafts": 8,
+    "loadout": [
+      "crescent",
+      "rain",
+      "flame"
+    ],
+    "remaining": [
+      {
+        "kind": "bomber",
+        "hp": 27,
+        "x": 556,
+        "y": 2269
+      },
+      {
+        "kind": "bomber",
+        "hp": 46,
+        "x": 558,
+        "y": 2458
+      },
+      {
+        "kind": "bomber",
+        "hp": 3,
+        "x": 198,
+        "y": 2532
+      }
+    ],
+    "player": {
+      "x": 197,
+      "y": 2376
+    },
+    "phase": "combat",
+    "damageTaken": 382,
+    "combatSeconds": 83,
+    "skillUses": 77,
+    "barrels": 14,
+    "win": false
+  },
+  {
+    "style": "support",
+    "seed": 20261019,
+    "resonances": 72,
+    "goals": 5,
+    "score": 44847,
+    "rank": "C",
+    "level": 8,
+    "goldEarned": 3128,
+    "goldSpent": 240,
+    "cleared": 6,
+    "kills": 183,
+    "hp": 0,
+    "seconds": 127,
+    "perfects": 0,
+    "drafts": 7,
+    "loadout": [
+      "crescent",
+      "focus",
+      "frost"
+    ],
+    "remaining": [
+      {
+        "kind": "bomber",
+        "hp": 46,
+        "x": 452,
+        "y": 2227
+      },
+      {
+        "kind": "bomber",
+        "hp": 2,
+        "x": 458,
+        "y": 2322
+      },
+      {
+        "kind": "bomber",
+        "hp": 46,
+        "x": 468,
+        "y": 2387
+      },
+      {
+        "kind": "shield",
+        "hp": 49,
+        "x": 307,
+        "y": 2408
+      },
+      {
+        "kind": "shield",
+        "hp": 23,
+        "x": 158,
+        "y": 2367
+      },
+      {
+        "kind": "slime",
+        "hp": 31,
+        "x": 150,
+        "y": 2292
+      },
+      {
+        "kind": "shield",
+        "hp": 39,
+        "x": 242,
+        "y": 2307
+      },
+      {
+        "kind": "bomber",
+        "hp": 46,
+        "x": 401,
+        "y": 2244
+      },
+      {
+        "kind": "bat",
+        "hp": 7,
+        "x": 230,
+        "y": 2436
+      }
+    ],
+    "player": {
+      "x": 199,
+      "y": 2276
+    },
+    "phase": "combat",
+    "damageTaken": 479,
+    "combatSeconds": 92,
+    "skillUses": 73,
+    "barrels": 15,
+    "win": false
+  }
+]

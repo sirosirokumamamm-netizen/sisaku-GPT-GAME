@@ -2,42 +2,42 @@
   {
     "style": "sword",
     "seed": 20261017,
-    "resonances": 61,
-    "goals": 10,
-    "score": 90965,
+    "resonances": 165,
+    "goals": 9,
+    "score": 91936,
     "rank": "A",
     "level": 10,
-    "goldEarned": 5487,
+    "goldEarned": 5435,
     "goldSpent": 0,
     "cleared": 10,
     "kills": 282,
     "hp": 144,
-    "seconds": 130,
-    "perfects": 34,
+    "seconds": 188,
+    "perfects": 58,
     "drafts": 9,
     "loadout": [
       "crescent",
-      "orbit",
-      "flurry"
+      "flurry",
+      "blood"
     ],
     "remaining": [],
     "player": {
-      "x": 386,
-      "y": 344
+      "x": 373,
+      "y": 283
     },
     "phase": "travel",
-    "damageTaken": 11,
-    "combatSeconds": 79,
-    "skillUses": 95,
+    "damageTaken": 125,
+    "combatSeconds": 149,
+    "skillUses": 206,
     "barrels": 20,
     "win": true
   },
   {
     "style": "element",
     "seed": 20261018,
-    "resonances": 115,
+    "resonances": 161,
     "goals": 10,
-    "score": 90735,
+    "score": 91391,
     "rank": "A",
     "level": 10,
     "goldEarned": 5487,
@@ -45,32 +45,32 @@
     "cleared": 10,
     "kills": 282,
     "hp": 134,
-    "seconds": 162,
-    "perfects": 38,
+    "seconds": 164,
+    "perfects": 45,
     "drafts": 9,
     "loadout": [
       "crescent",
-      "quake",
-      "nova"
+      "meteor",
+      "dash"
     ],
     "remaining": [],
     "player": {
-      "x": 373,
-      "y": 395
+      "x": 385,
+      "y": 402
     },
     "phase": "travel",
-    "damageTaken": 36,
-    "combatSeconds": 110,
-    "skillUses": 121,
-    "barrels": 20,
+    "damageTaken": 60,
+    "combatSeconds": 123,
+    "skillUses": 165,
+    "barrels": 18,
     "win": true
   },
   {
     "style": "support",
     "seed": 20261019,
-    "resonances": 118,
+    "resonances": 132,
     "goals": 10,
-    "score": 91111,
+    "score": 91571,
     "rank": "A",
     "level": 10,
     "goldEarned": 5487,
@@ -78,23 +78,23 @@
     "cleared": 10,
     "kills": 282,
     "hp": 162,
-    "seconds": 193,
-    "perfects": 48,
+    "seconds": 160,
+    "perfects": 46,
     "drafts": 9,
     "loadout": [
       "crescent",
-      "parry",
-      "quake"
+      "blink",
+      "tornado"
     ],
     "remaining": [],
     "player": {
-      "x": 373,
-      "y": 336
+      "x": 386,
+      "y": 472
     },
     "phase": "travel",
-    "damageTaken": 35,
-    "combatSeconds": 139,
-    "skillUses": 141,
+    "damageTaken": 6,
+    "combatSeconds": 118,
+    "skillUses": 154,
     "barrels": 20,
     "win": true
   }

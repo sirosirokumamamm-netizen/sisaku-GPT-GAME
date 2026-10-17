@@ -4,11 +4,12 @@ const runs=await page.evaluate(({rounds,naive})=>{
  const results=[];for(let round=0;round<rounds;round++)for(const style of ['sword','element','support']){selectedStyle=({sword:'azure',element:'storm',support:'ward'})[style];reset(20261017+round*10+['sword','element','support'].indexOf(style));begin();sounds=false;let frames=0;
   function escape(source,target){let best=null,score=-Infinity;for(let k=0;k<8;k++){const a=k*Math.PI/4,n={x:Math.cos(a),y:Math.sin(a)},point={x:clamp(p.x+n.x*100,105,655),y:clampPlayerY(p.y+n.y*100)},safe=canStand(point.x,point.y,p.r)&&(source.kind? !warningContains(source,point,20):distance(source,point)>source.r+20),value=(safe?300:0)+Math.min(distance(source,point),150)-distance(point,target)*.35+distance(point,p)*.2;if(value>score){score=value;best=n}}return best}
   for(;frames<60*480&&game.mode!=='end';frames++){
+   if(game.mode==='replace')replaceAcquiredSkill(1+(frames%2));
    if(game.mode==='draft'){
     const score=id=>{const s=getSkill(id);return (s.category===style?5:0)+(p.learned[id]?2:0)+(SKILLS.filter(a=>p.learned[a.id]&&a.category!=='passive').length<3&&s.category!=='passive'?3:0)+(['power','haste','vital','leech'].includes(id)?3:0)};
     const ranked=game.offers.map((id,i)=>({i,score:score(id)})).sort((a,b)=>b.score-a.score);chooseOffer(ranked[0].i);
    }
-   if(game.mode==='camp'){const learned=SKILLS.filter(s=>p.learned[s.id]&&s.category!=='passive'&&s.kind!=='heal').sort((a,b)=>((b.category===style?4:0)+(p.learned[b.id]||0))-((a.category===style?4:0)+(p.learned[a.id]||0)));const loadout=['crescent',...learned.filter(s=>s.id!=='crescent').slice(0,2).map(s=>s.id)];for(let slot=0;slot<loadout.length;slot++)equipSkill(loadout[slot],slot);while(p.hp<p.maxHp-20&&p.potions)usePotion();if(p.hp<p.maxHp-25&&game.gold>=POTION.price){openShop();buyPotion(true);closeShop()}continueJourney();if(game.mode==='end')break}let target={x:380,y:p.y-180};
+   if(game.mode==='camp'){const learned=SKILLS.filter(s=>p.learned[s.id]&&isManualSkill(s)).sort((a,b)=>((b.category===style?4:0)+(p.learned[b.id]||0))-((a.category===style?4:0)+(p.learned[a.id]||0)));const loadout=['crescent',...learned.filter(s=>s.id!=='crescent').slice(0,2).map(s=>s.id)];for(let slot=0;slot<loadout.length;slot++)equipSkill(loadout[slot],slot);while(p.hp<p.maxHp-20&&p.potions)usePotion();if(p.hp<p.maxHp-25&&game.gold>=POTION.price){openShop();buyPotion(true);closeShop()}continueJourney();if(game.mode==='end')break}let target={x:380,y:p.y-180};
    if(game.phase==='combat'||game.phase==='waveBreak'){
     const closest=nearest(2000);if(closest)target=closest;
     const danger=naive?null:warnings.find(w=>warningContains(w));

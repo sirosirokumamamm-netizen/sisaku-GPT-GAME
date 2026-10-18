@@ -1,115 +1,28 @@
-[
-  {
-    "style": "sword",
-    "seed": 20261017,
-    "resonances": 143,
-    "goals": 6,
-    "score": 69172,
-    "rank": "B",
-    "level": 9,
-    "goldEarned": 5007,
-    "goldSpent": 240,
-    "cleared": 9,
-    "kills": 281,
-    "hp": 0,
-    "seconds": 190,
-    "perfects": 0,
-    "drafts": 8,
-    "loadout": [
-      "crescent",
-      "flurry",
-      "wave"
-    ],
-    "remaining": [
-      {
-        "kind": "boss",
-        "hp": 787,
-        "x": 416,
-        "y": 310
+{
+  "date": "2026-10-18",
+  "mode": "four-regions-five-rooms",
+  "note": "Automated simulation; timings exclude human choice/reading. Bot uses internal positions and, except novice, warning data. Not a human fun or first-play assessment.",
+  "runs": [
+    {
+      "style": "azure",
+      "stage": 1,
+      "win": true,
+      "time": 55,
+      "kills": 129,
+      "level": 9,
+      "firstLevel": 4,
+      "damage": 51,
+      "hp": 83,
+      "ultimates": 3,
+      "perfects": 0,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 335,
+        "y": 5865
       }
-    ],
-    "player": {
-      "x": 515,
-      "y": 320
-    },
-    "phase": "combat",
-    "damageTaken": 509,
-    "combatSeconds": 152,
-    "skillUses": 153,
-    "barrels": 19,
-    "win": false
-  },
-  {
-    "style": "element",
-    "seed": 20261018,
-    "resonances": 177,
-    "goals": 7,
-    "score": 69372,
-    "rank": "B",
-    "level": 9,
-    "goldEarned": 5047,
-    "goldSpent": 320,
-    "cleared": 9,
-    "kills": 281,
-    "hp": 0,
-    "seconds": 181,
-    "perfects": 0,
-    "drafts": 8,
-    "loadout": [
-      "crescent",
-      "meteor",
-      "pierce"
-    ],
-    "remaining": [
-      {
-        "kind": "boss",
-        "hp": 164,
-        "x": 602,
-        "y": 415
-      }
-    ],
-    "player": {
-      "x": 616,
-      "y": 514
-    },
-    "phase": "combat",
-    "damageTaken": 521,
-    "combatSeconds": 141,
-    "skillUses": 135,
-    "barrels": 19,
-    "win": false
-  },
-  {
-    "style": "support",
-    "seed": 20261019,
-    "resonances": 169,
-    "goals": 7,
-    "score": 84941,
-    "rank": "A",
-    "level": 10,
-    "goldEarned": 5361,
-    "goldSpent": 400,
-    "cleared": 10,
-    "kills": 282,
-    "hp": 120,
-    "seconds": 229,
-    "perfects": 0,
-    "drafts": 9,
-    "loadout": [
-      "crescent",
-      "parry",
-      null
-    ],
-    "remaining": [],
-    "player": {
-      "x": 374,
-      "y": 350
-    },
-    "phase": "travel",
-    "damageTaken": 543,
-    "combatSeconds": 189,
-    "skillUses": 105,
-    "barrels": 19,
-    "win": true
-  }
-]
+    }
+  ]
+}

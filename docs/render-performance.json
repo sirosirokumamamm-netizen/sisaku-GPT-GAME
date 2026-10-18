@@ -1,24 +1,22 @@
 {
-  "viewport": {
-    "width": 1280,
-    "height": 900
-  },
-  "samples": 300,
-  "warmup_frames": 30,
-  "same_scene_enemies": 42,
-  "before": {
-    "median": 5.800000004470348,
-    "p95": 9.799999997019768,
-    "max": 35.29999999701977,
+  "date": "2026-10-18",
+  "runtime": "Chromium 154, headless cloud host",
+  "scope": "legacy combat/render fixtures, not physical mobile or average gameplay FPS",
+  "terrain": {
+    "medianMs": 3.6000000000931323,
+    "p95Ms": 5.900000000023283,
+    "maxMs": 15.099999999976717,
     "enemies": 42,
-    "effects": 6
+    "effects": 1,
+    "errors": false
   },
-  "after": {
-    "median": 2.6000000089406967,
-    "p95": 4.5999999940395355,
-    "max": 16.700000002980232,
-    "enemies": 42,
-    "effects": 0
-  },
-  "note": "Host headless Chromium measurements, not a real-device FPS guarantee."
+  "automaticSkills": {
+    "median": 3.5,
+    "p95": 5.599999999976717,
+    "max": 14.400000000023283,
+    "autoCasts": 4,
+    "effects": 175,
+    "fields": 1,
+    "finite": true
+  }
 }

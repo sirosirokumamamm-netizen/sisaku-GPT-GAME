@@ -1,101 +1,259 @@
-[
-  {
-    "style": "sword",
-    "seed": 20261017,
-    "resonances": 216,
-    "goals": 9,
-    "score": 92394,
-    "rank": "A",
-    "level": 10,
-    "goldEarned": 5435,
-    "goldSpent": 0,
-    "cleared": 10,
-    "kills": 282,
-    "hp": 144,
-    "seconds": 236,
-    "perfects": 72,
-    "drafts": 9,
-    "loadout": [
-      "crescent",
-      "pierce",
-      "blood"
-    ],
-    "remaining": [],
-    "player": {
-      "x": 373,
-      "y": 453
+{
+  "date": "2026-10-18",
+  "mode": "four-regions-five-rooms",
+  "note": "Automated simulation; timings exclude human choice/reading. Bot uses internal positions and, except novice, warning data. Not a human fun or first-play assessment.",
+  "runs": [
+    {
+      "style": "azure",
+      "stage": 1,
+      "win": true,
+      "time": 72,
+      "kills": 129,
+      "level": 9,
+      "firstLevel": 5,
+      "damage": 0,
+      "hp": 126,
+      "ultimates": 3,
+      "perfects": 20,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 409,
+        "y": 5884
+      }
     },
-    "phase": "travel",
-    "damageTaken": 158,
-    "combatSeconds": 196,
-    "skillUses": 269,
-    "barrels": 19,
-    "win": true
-  },
-  {
-    "style": "element",
-    "seed": 20261018,
-    "resonances": 61,
-    "goals": 10,
-    "score": 90909,
-    "rank": "A",
-    "level": 10,
-    "goldEarned": 5487,
-    "goldSpent": 0,
-    "cleared": 10,
-    "kills": 282,
-    "hp": 134,
-    "seconds": 163,
-    "perfects": 40,
-    "drafts": 9,
-    "loadout": [
-      "crescent",
-      "flame",
-      "meteor"
-    ],
-    "remaining": [],
-    "player": {
-      "x": 374,
-      "y": 469
+    {
+      "style": "azure",
+      "stage": 2,
+      "win": true,
+      "time": 163,
+      "kills": 145,
+      "level": 10,
+      "firstLevel": 2,
+      "damage": 13,
+      "hp": 129,
+      "ultimates": 8,
+      "perfects": 50,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 397,
+        "y": 5188
+      }
     },
-    "phase": "travel",
-    "damageTaken": 35,
-    "combatSeconds": 125,
-    "skillUses": 147,
-    "barrels": 19,
-    "win": true
-  },
-  {
-    "style": "support",
-    "seed": 20261019,
-    "resonances": 181,
-    "goals": 10,
-    "score": 92428,
-    "rank": "A",
-    "level": 10,
-    "goldEarned": 5484,
-    "goldSpent": 0,
-    "cleared": 10,
-    "kills": 282,
-    "hp": 162,
-    "seconds": 231,
-    "perfects": 69,
-    "drafts": 9,
-    "loadout": [
-      "crescent",
-      null,
-      null
-    ],
-    "remaining": [],
-    "player": {
-      "x": 385,
-      "y": 369
+    {
+      "style": "azure",
+      "stage": 3,
+      "win": true,
+      "time": 163,
+      "kills": 161,
+      "level": 10,
+      "firstLevel": 3,
+      "damage": 5,
+      "hp": 139,
+      "ultimates": 6,
+      "perfects": 57,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 338,
+        "y": 2275
+      }
     },
-    "phase": "travel",
-    "damageTaken": 3,
-    "combatSeconds": 191,
-    "skillUses": 127,
-    "barrels": 20,
-    "win": true
-  }
-]
+    {
+      "style": "azure",
+      "stage": 4,
+      "win": true,
+      "time": 143,
+      "kills": 173,
+      "level": 10,
+      "firstLevel": 2,
+      "damage": 23,
+      "hp": 150,
+      "ultimates": 7,
+      "perfects": 51,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 340,
+        "y": 476
+      }
+    },
+    {
+      "style": "storm",
+      "stage": 1,
+      "win": true,
+      "time": 89,
+      "kills": 129,
+      "level": 9,
+      "firstLevel": 2,
+      "damage": 2,
+      "hp": 116,
+      "ultimates": 4,
+      "perfects": 24,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 418,
+        "y": 5876
+      }
+    },
+    {
+      "style": "storm",
+      "stage": 2,
+      "win": true,
+      "time": 181,
+      "kills": 145,
+      "level": 10,
+      "firstLevel": 2,
+      "damage": 0,
+      "hp": 128,
+      "ultimates": 6,
+      "perfects": 65,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 392,
+        "y": 5187
+      }
+    },
+    {
+      "style": "storm",
+      "stage": 3,
+      "win": true,
+      "time": 143,
+      "kills": 161,
+      "level": 10,
+      "firstLevel": 2,
+      "damage": 0,
+      "hp": 134,
+      "ultimates": 7,
+      "perfects": 49,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 398,
+        "y": 2188
+      }
+    },
+    {
+      "style": "storm",
+      "stage": 4,
+      "win": true,
+      "time": 215,
+      "kills": 173,
+      "level": 10,
+      "firstLevel": 4,
+      "damage": 0,
+      "hp": 140,
+      "ultimates": 9,
+      "perfects": 76,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 329,
+        "y": 458
+      }
+    },
+    {
+      "style": "ward",
+      "stage": 1,
+      "win": true,
+      "time": 79,
+      "kills": 129,
+      "level": 9,
+      "firstLevel": 2,
+      "damage": 1,
+      "hp": 144,
+      "ultimates": 5,
+      "perfects": 23,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 432,
+        "y": 5846
+      }
+    },
+    {
+      "style": "ward",
+      "stage": 2,
+      "win": true,
+      "time": 141,
+      "kills": 145,
+      "level": 10,
+      "firstLevel": 2,
+      "damage": 3,
+      "hp": 156,
+      "ultimates": 5,
+      "perfects": 45,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 341,
+        "y": 5206
+      }
+    },
+    {
+      "style": "ward",
+      "stage": 3,
+      "win": true,
+      "time": 150,
+      "kills": 161,
+      "level": 10,
+      "firstLevel": 3,
+      "damage": 0,
+      "hp": 162,
+      "ultimates": 6,
+      "perfects": 55,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 331,
+        "y": 2225
+      }
+    },
+    {
+      "style": "ward",
+      "stage": 4,
+      "win": true,
+      "time": 149,
+      "kills": 173,
+      "level": 10,
+      "firstLevel": 3,
+      "damage": 90,
+      "hp": 154,
+      "ultimates": 7,
+      "perfects": 54,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 326,
+        "y": 439
+      }
+    }
+  ]
+}

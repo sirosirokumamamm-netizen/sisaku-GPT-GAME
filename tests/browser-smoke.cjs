@@ -2,7 +2,7 @@ const{chromium}=require('playwright');const assert=require('node:assert/strict')
 (async()=>{
  const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
  const page=await browser.newPage({viewport:{width:1440,height:1040}}),errors=[];page.on('pageerror',e=>{errors.push(e.message);console.error('Browser error:',e.message)});
- const url=process.env.BASE_URL||'http://127.0.0.1:8000';await page.goto(url);await page.getByRole('button',{name:'剣士の冒険へ'}).click();
+ const url=process.env.BASE_URL||'http://127.0.0.1:8000';await page.goto(url);await page.evaluate(()=>{reset();begin()});
  await page.keyboard.down('w');await page.waitForTimeout(2100);await page.keyboard.up('w');assert(await page.evaluate(()=>game.active&&game.wave===1));await page.screenshot({path:'/tmp/swordsman-desktop.png',fullPage:true});
  const checks=await page.evaluate(()=>{
  const tests=[],ok=(condition,name)=>{if(!condition)throw Error(name);tests.push(name)};
@@ -83,6 +83,6 @@ const{chromium}=require('playwright');const assert=require('node:assert/strict')
  const pad=await page.locator('#movePad').boundingBox(),skill=await page.locator('#slash').boundingBox();assert(pad.x+pad.width<skill.x);const y1=await page.evaluate(()=>p.y);await page.mouse.move(pad.x+pad.width/2,pad.y+pad.height/2);await page.mouse.down();await page.mouse.move(pad.x+pad.width/2,pad.y+3);await page.waitForTimeout(400);await page.mouse.up();assert(await page.evaluate(y=>p.y<y,y1));assert.deepEqual(await page.evaluate(()=>joystick),{x:0,y:0});
  await page.evaluate(()=>{game.cleared=2;openDraft()});await page.screenshot({path:'/tmp/tempo-draft-mobile.png',fullPage:true});assert.equal(await page.locator('.draft-card').count(),4);await page.locator('.draft-card').first().click();assert.equal(await page.evaluate(()=>game.mode),'play');
  await page.setViewportSize({width:320,height:740});await page.evaluate(()=>openDraft());await page.waitForTimeout(100);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.equal(await page.locator('.draft-card').count(),4);await page.locator('.draft-card').nth(2).click();
- const quiet=await browser.newPage({reducedMotion:'reduce'});await quiet.goto(url);await quiet.getByRole('button',{name:'剣士の冒険へ'}).click();assert(await quiet.evaluate(()=>{p.crit=0;const e=spawnEnemy('slime',p.x,p.y-50);e.hp=500;enemies=[e];action('slash');return reduced&&shake===0&&hitstop===0}));await quiet.close();assert.deepEqual(errors,[]);
+ const quiet=await browser.newPage({reducedMotion:'reduce'});await quiet.goto(url);await quiet.evaluate(()=>{reset();begin()});assert(await quiet.evaluate(()=>{p.crit=0;const e=spawnEnemy('slime',p.x,p.y-50);e.hp=500;enemies=[e];action('slash');return reduced&&shake===0&&hitstop===0}));await quiet.close();assert.deepEqual(errors,[]);
  console.log('PASS desktop/mobile random four-choice UI, immediate resume, equipment, joystick, reduced motion, zero JS errors');await browser.close();
 })().catch(e=>{console.error(e);process.exit(1)});

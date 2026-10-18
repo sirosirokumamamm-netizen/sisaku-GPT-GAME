@@ -1,0 +1,3 @@
+const fs=require('node:fs'),path=require('node:path');const root=path.join(__dirname,'..');const read=f=>fs.readFileSync(path.join(root,'src',f),'utf8');
+const js=['core.js','render.js','campaign.js','input.js'].map(read).join('\n');new Function(js);
+const html=read('template.html').replace('{{STYLE}}',()=>read('style.css')).replace('{{GAME}}',()=>js);if(process.argv.includes('--check')){if(html!==fs.readFileSync(path.join(root,'index.html'),'utf8'))throw Error('index.html is stale; run node scripts/build.cjs');console.log('PASS standalone HTML matches sources')}else{fs.writeFileSync(path.join(root,'index.html'),html);console.log('Built standalone index.html')}

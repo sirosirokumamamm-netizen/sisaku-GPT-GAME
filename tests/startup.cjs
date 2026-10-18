@@ -12,7 +12,7 @@ const assert=require('node:assert/strict');
    if(mode==='no-script'){assert(await page.locator('noscript').isVisible());assert(await page.locator('#bootStatus').isVisible())}
    else if(mode==='no-canvas'){assert.match(await page.locator('#bootStatus').innerText(),/起動できませんでした/)}
    else{
-    await page.getByRole('button',{name:'剣士の冒険へ'}).click();
+    await page.locator('#startButton').click();await page.locator('[data-stage="0"]').click();await page.locator('#startStageButton').click();
     await page.keyboard.down('w');await page.waitForTimeout(250);await page.keyboard.up('w');
     assert(await page.evaluate(()=>p.y<WORLD.start));
     await page.setViewportSize({width:390,height:844});await page.waitForTimeout(150);

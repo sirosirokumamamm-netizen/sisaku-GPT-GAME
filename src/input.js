@@ -34,7 +34,7 @@ window.addEventListener('keydown',e=>{
  if(!e.repeat){if(k==='j')action('slash');if(k==='k')action('magic');if(k==='l')action('thunder');if(k==='Shift')action('roll');if(k==='q')action('ultimate');if(k==='e')action('heal')}
 });
 window.addEventListener('keyup',e=>keys.delete(boundKey(normalizeKey(e.key))));window.addEventListener('blur',()=>{resetInput();if(game.mode==='play')pause()});document.addEventListener('visibilitychange',()=>{if(document.hidden){resetInput();if(game.mode==='play')pause()}});
-$('roomExit').onclick=()=>{if(game.phase==='roomRest')roomEquipment()};
+$('roomExit').onclick=()=>{if(game.phase==='exitWalk')game.phase='roomRest';if(game.phase==='roomRest')roomEquipment()};
 $('growthButton').onclick=()=>{if(game.mode==='play'&&game.pendingChoices>0){game.draftDeferred=0;openDraft()}};
 $('ultimate').onclick=()=>action('ultimate');
 $('roll').addEventListener('pointerdown',e=>{if(game.mode!=='play')return;p.rollHeld=true;$('roll').setPointerCapture(e.pointerId);action('roll')});for(const event of ['pointerup','pointercancel','lostpointercapture'])$('roll').addEventListener(event,()=>p.rollHeld=false);

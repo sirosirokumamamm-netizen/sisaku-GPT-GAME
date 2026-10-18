@@ -17,7 +17,7 @@ const assert=require('node:assert/strict');
    beginRest('crown');p.ultimate=0;chargeUltimate(20);ok(p.ultimate===25,'charge relic uses same ultimate cap');chargeUltimate(200);ok(p.ultimate===100,'charge remains capped');
    beginRest('edge');const target={hp:100,maxHp:100};ok(relicDamage(target,true,false)===1.18&&relicDamage(target,true,true)===1,'manual relic excludes automatic damage');
    beginRest('fang');ok(relicDamage({hp:34,maxHp:100},false,false)===1.25&&relicDamage(target,true,false)===1,'finisher has a health threshold');
-   beginRest('ward');$('roomEquipmentDone').click();ok(p.shield===20&&p.shieldTime===12&&game.room===3,'defensive relic grants a bounded opening shield');
+   beginRest('ward');$('roomEquipmentDone').click();if(game.phase==='exitWalk'){p.x=380;p.y=STAGES[game.stage].y-240;update(.016)}ok(p.shield===20&&p.shieldTime===12&&game.room===3,'defensive relic grants a bounded opening shield');
    beginRest('vow');game.mode='play';game.active=true;game.phase='combat';p.hp=90;p.invuln=0;p.armor=0;takeHit(25,p.x,p.y);ok(p.hp===62&&relicDamage(target,true,false)===1.22,'risk relic increases outgoing and incoming damage');
    // Equal enemy kinds differ by role; no hidden third wave or boss adds.
    game.roomRoute=['approach','horde','elite','treasure','boss'];game.room=2;const swarm=spawnEnemy('slime',200,p.y);decorateCampaignEnemy(swarm,0);ok(swarm.hp<18&&stageWaveSize(0,1)===22,'horde is plentiful and fragile');game.room=3;game.wave=1;const elite=spawnEnemy('slime',200,p.y);decorateCampaignEnemy(elite,0);ok(elite.elite&&elite.trait==='breaker'&&elite.hp>30&&stageWaveSize(0,1)===8,'elite room is smaller and marked');const plain=spawnEnemy('slime',240,p.y);decorateCampaignEnemy(plain,1);ok(!plain.elite,'one elite per wave');game.wave=2;const swift=spawnEnemy('bat',200,p.y);decorateCampaignEnemy(swift,0);ok(swift.trait==='swift'&&swift.speed>plain.speed,'second elite has a distinct movement trait');
@@ -32,7 +32,7 @@ const assert=require('node:assert/strict');
   await page.reload();await page.locator('#startButton').click();assert(await page.locator('#resumeExpedition').isVisible());await page.locator('#resumeExpedition').click();
   assert.deepEqual(await page.evaluate(()=>({room:game.room,relic:game.relic,mp:p.maxMp,regen:p.manaRegen,lv:p.lv,skill:p.learned.whirl,slot:p.loadout[1],power:p.power,gold:game.gold,spent:game.goldSpent,time:game.time,potion:game.restPotionUsed,saved:campaign.suspended})),{room:2,relic:'glass',mp:30,regen:.8,lv:4,skill:2,slot:'whirl',power:1.15,gold:110,spent:70,time:65,potion:true,saved:null});
   assert(await page.locator('#restPotion').isDisabled(),'rest bottle cannot be repurchased after resume');
-  await page.locator('#roomEquipmentDone').click();assert.equal(await page.evaluate(()=>game.room),3);
+  await page.locator('#roomEquipmentDone').click();await page.evaluate(()=>{if(game.phase==='exitWalk'){p.x=380;p.y=STAGES[game.stage].y-240;update(.016)}});assert.equal(await page.evaluate(()=>game.room),3);
   // Settlement credits only the unspent gold and is still exactly-once.
   await page.evaluate(()=>{finishStageLoss()});assert.equal(await page.evaluate(()=>campaign.wallet),110);await page.evaluate(()=>finishStageLoss());assert.equal(await page.evaluate(()=>campaign.wallet),110);
   for(const width of [320,390,1280]){
@@ -41,7 +41,7 @@ const assert=require('node:assert/strict');
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'collection fits viewport');await page.locator('#collectionBack').click();
    await page.evaluate(()=>{openPreparation(0);startStageAttempt(0,19);game.roomRoute=['approach','treasure','horde','elite','boss'];game.room=2;enemies=[];game.pendingChoices=0;game.phase='stageClear';grantStageReward()});
    assert.equal(await page.locator('[data-relic]').count(),4);await page.screenshot({path:'/tmp/expanded-treasure-'+width+'.png'});
-   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&[...document.querySelectorAll('[data-relic]')].every(e=>e.scrollWidth<=e.clientWidth+1)),'relic choices fit narrow screen');await page.locator('[data-relic="1"]').click();await page.locator('#roomEquipmentDone').click();assert.equal(await page.evaluate(()=>game.room),3);
+   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&[...document.querySelectorAll('[data-relic]')].every(e=>e.scrollWidth<=e.clientWidth+1)),'relic choices fit narrow screen');await page.locator('[data-relic="1"]').click();await page.locator('#roomEquipmentDone').click();await page.evaluate(()=>{if(game.phase==='exitWalk'){p.x=380;p.y=STAGES[game.stage].y-240;update(.016)}});assert.equal(await page.evaluate(()=>game.room),3);
   }
   const regional=await page.evaluate(()=>{let n=0;for(let region=0;region<4;region++){game.region=region;campaign.rares=[];const offers=chestOffers(true);if(offers.length!==4||offers.filter(o=>REGION_SIGNATURES[region].includes(o.id)).length<2)throw Error('regional signatures');n++}return n});
   assert.deepEqual(errors,[]);console.log('PASS '+(checks+regional)+' expansion checks; reload/resume, one-time net settlement, collection and treasure at 320/390/1280px');

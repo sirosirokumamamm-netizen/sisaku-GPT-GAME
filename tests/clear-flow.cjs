@@ -26,7 +26,7 @@ const assert=require('node:assert/strict');
   if(await page.evaluate(()=>game.mode==='replace'))await page.locator('#skipReplacement').click();
   assert(await page.locator('#roomEquipmentDone').isVisible(),'choosing growth automatically reaches the next-room confirmation');
   await page.screenshot({path:'/tmp/clear-flow-room-confirm.png'});
-  await page.locator('#roomEquipmentDone').click();
+  await page.locator('#roomEquipmentDone').click();await page.evaluate(()=>{if(game.phase==='exitWalk'){p.x=380;p.y=STAGES[game.stage].y-240;update(.016)}});
   assert.equal(await page.evaluate(()=>game.room),2);
   // Finish all three stages via real wave/clear/reward hooks, including multiple growth selections.
   for(let region=0;region<3;region++){
@@ -36,7 +36,7 @@ const assert=require('node:assert/strict');
     while(!['chest','stageResult'].includes(game.mode)&&guard++<600){
      if(game.mode==='draft'){chooseOffer(0);continue}
      if(game.mode==='replace'){replaceAcquiredSkill(-1);continue}
-     if(game.mode==='roomEquipment'){if(game.relicOffers?.length){chooseRelic(0);continue}confirmations++;$('roomEquipmentDone').click();continue}
+     if(game.mode==='roomEquipment'){if(game.relicOffers?.length){chooseRelic(0);continue}confirmations++;$('roomEquipmentDone').click();if(game.phase==='exitWalk'){p.x=380;p.y=STAGES[game.stage].y-240;update(.016)}continue}
      if(game.mode!=='play')throw Error('unexpected stopped mode '+game.mode);
      if(game.phase==='combat')for(const e of [...enemies])if(e.hp>0){e.spawnTime=0;e.hp=1;hurtEnemy(e,1000)}
      update(.1);updateVisuals(.1);

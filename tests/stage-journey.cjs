@@ -6,6 +6,7 @@ const results=[];for(const style of novice?['azure']:['azure','storm','ward']){c
   const escape=(w,target)=>{let best={x:1,y:0},score=-Infinity;for(let i=0;i<16;i++){const a=i*Math.PI/8,n={x:Math.cos(a),y:Math.sin(a)},q={x:p.x+n.x*95,y:p.y+n.y*95};if(!canStand(q.x,q.y,p.r)||q.y!==clampPlayerY(q.y))continue;const safe=w.kind?!warningContains(w,q,20):distance(q,w)>w.r+25,value=(safe?500:0)-hazards.filter(z=>distance(q,z)<z.r+25).length*700-warnings.filter(z=>warningContains(z,q,18)).length*250+distance(q,w)-distance(q,target)*.25;if(value>score){score=value;best=n}}return best};
   for(;frames<60*420&&game.mode!=='stageResult'&&game.mode!=='chest';frames++){
    if(game.mode==='roomEquipment'){if(game.relicOffers?.length){chooseRelic(0);continue}$('roomEquipmentDone').click();continue}
+   if(game.phase==='exitWalk'&&game.mode==='play'){joystick=norm(380-p.x,STAGES[game.stage].y-240-p.y);update(1/60);updateVisuals(1/60);continue}
    if(game.phase==='roomRest'&&game.mode==='play'){advanceRoom();continue}
    if(game.mode==='draft'){const ranked=game.offers.map((id,i)=>({i,score:(['whirl','orbit','wave','frost','power','haste','guard','focus','ultimatePower','charge'].includes(id)?5:0)+(p.learned[id]?1:0)+(style==='storm'&&getSkill(id).category==='element'?4:0)})).sort((a,b)=>b.score-a.score);chooseOffer(ranked[0].i)}
    if(game.mode==='replace')replaceAcquiredSkill(1+(frames%2));if(game.mode!=='play')continue;
@@ -23,4 +24,4 @@ const results=[];for(const style of novice?['azure']:['azure','storm','ward']){c
   if(win){const q=campaign.pending;let pick=q.offers.findIndex(o=>o.kind==='rare'&&['whirl','orbit','wave','guard'].includes(o.id));claimChest(q.id,pick>=0?pick:0)}else break;
  }
 }return results;
-},{novice:process.env.NOVICE==='1'});console.log(JSON.stringify(results,null,2));if(process.env.NOVICE==='1')assert(results.length===1&&results.every(r=>r.win&&r.perfects===0),'first full stage approachable without timed dodge');else assert(results.length===12&&results.every(r=>r.win),'all four stages and their five rooms complete with three styles');assert(results.every(r=>r.time<420),'no stuck progression');}finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});
+},{novice:process.env.NOVICE==='1'});console.log(JSON.stringify(results,null,2));if(process.env.NOVICE==='1')assert(results.length===1&&results.every(r=>r.win&&r.perfects===0),'first full stage approachable without timed dodge');else assert(results.length===15&&results.every(r=>r.win),'all five stages and their five rooms complete with three styles');assert(results.every(r=>r.time<420),'no stuck progression');}finally{await browser.close()}})().catch(e=>{console.error(e);process.exitCode=1});

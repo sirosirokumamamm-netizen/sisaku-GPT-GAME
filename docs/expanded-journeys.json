@@ -1,248 +1,164 @@
 {
-  "date": "2026-10-18",
-  "method": "Internal-state automated play. Three styles, four five-room stages, level-up/relic choices and real combat update. Not human first-play difficulty evidence.",
-  "journeys": [
+  "date": "2026-10-19",
+  "method": "Headless Chromium, seeded automated routes, three styles x five stages; no human playtime claim",
+  "runs": [
     {
       "style": "azure",
       "stage": 1,
       "win": true,
-      "time": 93,
+      "time": 82,
       "kills": 105,
       "level": 9,
-      "firstLevel": 3,
+      "firstLevel": 2,
       "damage": 0,
       "hp": 126,
-      "ultimates": 4,
-      "perfects": 21,
+      "ultimates": 3,
+      "perfects": 22,
       "phase": "stageClear",
       "room": 5,
       "wave": 2,
       "remaining": [],
       "p": {
-        "x": 328,
-        "y": 5826
+        "x": 429,
+        "y": 5860
       }
     },
     {
       "style": "azure",
       "stage": 2,
       "win": true,
-      "time": 128,
+      "time": 122,
       "kills": 121,
       "level": 9,
       "firstLevel": 2,
-      "damage": 27,
-      "hp": 115,
+      "damage": 0,
+      "hp": 132,
       "ultimates": 5,
-      "perfects": 40,
+      "perfects": 38,
       "phase": "stageClear",
       "room": 5,
       "wave": 2,
       "remaining": [],
       "p": {
-        "x": 370,
-        "y": 5186
+        "x": 431,
+        "y": 5231
       }
     },
     {
       "style": "azure",
       "stage": 3,
       "win": true,
-      "time": 132,
+      "time": 112,
       "kills": 137,
       "level": 9,
-      "firstLevel": 2,
-      "damage": 36,
+      "firstLevel": 1,
+      "damage": 4,
       "hp": 138,
-      "ultimates": 7,
-      "perfects": 45,
+      "ultimates": 5,
+      "perfects": 37,
       "phase": "stageClear",
       "room": 5,
       "wave": 2,
       "remaining": [],
       "p": {
-        "x": 327,
-        "y": 2232
+        "x": 399,
+        "y": 2188
       }
     },
     {
       "style": "azure",
       "stage": 4,
       "win": true,
-      "time": 144,
-      "kills": 151,
-      "level": 10,
-      "firstLevel": 2,
-      "damage": 29,
+      "time": 160,
+      "kills": 152,
+      "level": 12,
+      "firstLevel": 4,
+      "damage": 64,
       "hp": 150,
-      "ultimates": 8,
-      "perfects": 48,
+      "ultimates": 9,
+      "perfects": 65,
       "phase": "stageClear",
       "room": 5,
       "wave": 2,
       "remaining": [],
       "p": {
-        "x": 329,
-        "y": 427
+        "x": 330,
+        "y": 455
+      }
+    },
+    {
+      "style": "azure",
+      "stage": 5,
+      "win": true,
+      "time": 200,
+      "kills": 163,
+      "level": 12,
+      "firstLevel": 3,
+      "damage": 70,
+      "hp": 134,
+      "ultimates": 7,
+      "perfects": 67,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 400,
+        "y": 3491
       }
     },
     {
       "style": "storm",
       "stage": 1,
       "win": true,
-      "time": 80,
+      "time": 105,
       "kills": 105,
       "level": 9,
       "firstLevel": 2,
       "damage": 0,
       "hp": 116,
-      "ultimates": 3,
-      "perfects": 24,
-      "phase": "stageClear",
-      "room": 5,
-      "wave": 2,
-      "remaining": [],
-      "p": {
-        "x": 397,
-        "y": 5879
-      }
-    },
-    {
-      "style": "storm",
-      "stage": 2,
-      "win": true,
-      "time": 141,
-      "kills": 121,
-      "level": 9,
-      "firstLevel": 2,
-      "damage": 27,
-      "hp": 108,
-      "ultimates": 6,
-      "perfects": 45,
-      "phase": "stageClear",
-      "room": 5,
-      "wave": 2,
-      "remaining": [],
-      "p": {
-        "x": 361,
-        "y": 5190
-      }
-    },
-    {
-      "style": "storm",
-      "stage": 3,
-      "win": true,
-      "time": 113,
-      "kills": 137,
-      "level": 9,
-      "firstLevel": 3,
-      "damage": 13,
-      "hp": 128,
-      "ultimates": 5,
-      "perfects": 41,
-      "phase": "stageClear",
-      "room": 5,
-      "wave": 2,
-      "remaining": [],
-      "p": {
-        "x": 328,
-        "y": 2244
-      }
-    },
-    {
-      "style": "storm",
-      "stage": 4,
-      "win": true,
-      "time": 165,
-      "kills": 151,
-      "level": 10,
-      "firstLevel": 2,
-      "damage": 10,
-      "hp": 140,
-      "ultimates": 6,
-      "perfects": 62,
-      "phase": "stageClear",
-      "room": 5,
-      "wave": 2,
-      "remaining": [],
-      "p": {
-        "x": 332,
-        "y": 416
-      }
-    },
-    {
-      "style": "ward",
-      "stage": 1,
-      "win": true,
-      "time": 86,
-      "kills": 105,
-      "level": 9,
-      "firstLevel": 3,
-      "damage": 0,
-      "hp": 144,
       "ultimates": 4,
-      "perfects": 23,
+      "perfects": 32,
       "phase": "stageClear",
       "room": 5,
       "wave": 2,
       "remaining": [],
       "p": {
-        "x": 327,
-        "y": 5836
+        "x": 380,
+        "y": 5893
       }
     },
     {
-      "style": "ward",
+      "style": "storm",
       "stage": 2,
       "win": true,
-      "time": 125,
+      "time": 121,
       "kills": 121,
       "level": 9,
       "firstLevel": 2,
-      "damage": 3,
-      "hp": 150,
-      "ultimates": 5,
+      "damage": 16,
+      "hp": 122,
+      "ultimates": 4,
       "perfects": 36,
       "phase": "stageClear",
       "room": 5,
       "wave": 2,
       "remaining": [],
       "p": {
-        "x": 356,
-        "y": 5194
+        "x": 369,
+        "y": 5293
       }
     },
     {
-      "style": "ward",
+      "style": "storm",
       "stage": 3,
       "win": true,
-      "time": 100,
+      "time": 134,
       "kills": 137,
       "level": 9,
-      "firstLevel": 4,
-      "damage": 4,
-      "hp": 156,
-      "ultimates": 4,
-      "perfects": 31,
-      "phase": "stageClear",
-      "room": 5,
-      "wave": 2,
-      "remaining": [],
-      "p": {
-        "x": 327,
-        "y": 2243
-      }
-    },
-    {
-      "style": "ward",
-      "stage": 4,
-      "win": true,
-      "time": 121,
-      "kills": 151,
-      "level": 10,
-      "firstLevel": 5,
-      "damage": 32,
-      "hp": 168,
+      "firstLevel": 2,
+      "damage": 10,
+      "hp": 128,
       "ultimates": 5,
       "perfects": 42,
       "phase": "stageClear",
@@ -250,31 +166,178 @@
       "wave": 2,
       "remaining": [],
       "p": {
-        "x": 424,
-        "y": 470
+        "x": 409,
+        "y": 2285
+      }
+    },
+    {
+      "style": "storm",
+      "stage": 4,
+      "win": true,
+      "time": 174,
+      "kills": 152,
+      "level": 12,
+      "firstLevel": 3,
+      "damage": 12,
+      "hp": 140,
+      "ultimates": 6,
+      "perfects": 65,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 330,
+        "y": 425
+      }
+    },
+    {
+      "style": "storm",
+      "stage": 5,
+      "win": true,
+      "time": 261,
+      "kills": 163,
+      "level": 12,
+      "firstLevel": 2,
+      "damage": 71,
+      "hp": 106,
+      "ultimates": 8,
+      "perfects": 89,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 336,
+        "y": 3467
+      }
+    },
+    {
+      "style": "ward",
+      "stage": 1,
+      "win": true,
+      "time": 70,
+      "kills": 105,
+      "level": 9,
+      "firstLevel": 2,
+      "damage": 3,
+      "hp": 144,
+      "ultimates": 3,
+      "perfects": 17,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 394,
+        "y": 5891
+      }
+    },
+    {
+      "style": "ward",
+      "stage": 2,
+      "win": true,
+      "time": 106,
+      "kills": 121,
+      "level": 9,
+      "firstLevel": 3,
+      "damage": 0,
+      "hp": 150,
+      "ultimates": 4,
+      "perfects": 32,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 371,
+        "y": 5294
+      }
+    },
+    {
+      "style": "ward",
+      "stage": 3,
+      "win": true,
+      "time": 98,
+      "kills": 137,
+      "level": 9,
+      "firstLevel": 2,
+      "damage": 8,
+      "hp": 156,
+      "ultimates": 5,
+      "perfects": 33,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 387,
+        "y": 2292
+      }
+    },
+    {
+      "style": "ward",
+      "stage": 4,
+      "win": true,
+      "time": 115,
+      "kills": 152,
+      "level": 12,
+      "firstLevel": 1,
+      "damage": 52,
+      "hp": 149,
+      "ultimates": 5,
+      "perfects": 44,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 358,
+        "y": 452
+      }
+    },
+    {
+      "style": "ward",
+      "stage": 5,
+      "win": true,
+      "time": 144,
+      "kills": 163,
+      "level": 12,
+      "firstLevel": 4,
+      "damage": 45,
+      "hp": 145,
+      "ultimates": 6,
+      "perfects": 47,
+      "phase": "stageClear",
+      "room": 5,
+      "wave": 2,
+      "remaining": [],
+      "p": {
+        "x": 359,
+        "y": 3392
       }
     }
   ],
-  "noDodge": [
+  "novice": [
     {
       "style": "azure",
       "stage": 1,
       "win": true,
-      "time": 61,
+      "time": 69,
       "kills": 105,
       "level": 9,
       "firstLevel": 2,
-      "damage": 20,
-      "hp": 109,
-      "ultimates": 3,
+      "damage": 3,
+      "hp": 126,
+      "ultimates": 2,
       "perfects": 0,
       "phase": "stageClear",
       "room": 5,
       "wave": 2,
       "remaining": [],
       "p": {
-        "x": 421,
-        "y": 5807
+        "x": 365,
+        "y": 5789
       }
     }
   ]

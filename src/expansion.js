@@ -39,7 +39,8 @@ function restPreview(){const next=roomRole(game.room+1);return '<div class="rest
 function applyRoomRelic(){if(hasRelic('ward')){p.shield=Math.max(p.shield,20);p.shieldTime=12}}
 function restShopHTML(){
  const needed=p.hp<p.maxHp||p.mp<p.maxMp,disabled=game.restPotionUsed||game.gold<70||!needed;
- return '<div class="rest-shop"><div><b>旅のポーション · 70 G</b><small>HPを約3割・MPを約4割回復。休憩ごとに1本。</small><span>所持 '+game.gold+' G'+(game.restPotionUsed?' · 購入済み':'')+'</span></div><button id="restPotion" '+(disabled?'disabled':'')+'>'+(!needed?'回復不要':game.restPotionUsed?'使用済み':game.gold<70?'ゴールド不足':'購入して回復')+'</button></div>';
+ const hpAfter=Math.min(p.maxHp,p.hp+Math.ceil(p.maxHp*.35)),mpAfter=Math.min(p.maxMp,p.mp+Math.ceil(p.maxMp*.4));
+ return '<details class="rest-supply" '+(needed&&!game.restPotionUsed?'open':'')+'><summary>補給 · 所持 '+game.gold+' G'+(game.restPotionUsed?' · 使用済み':!needed?' · HP・MP満タン':'')+'</summary><div class="rest-shop"><div><b>旅のポーション · 70 G</b><small>休憩ごとに1本。その場で回復します。</small><span class="potion-preview">HP '+Math.ceil(p.hp)+' → '+Math.ceil(hpAfter)+' / '+p.maxHp+'<br>MP '+Math.floor(p.mp)+' → '+Math.floor(mpAfter)+' / '+p.maxMp+'</span></div><button id="restPotion" '+(disabled?'disabled':'')+'>'+(!needed?'回復不要':game.restPotionUsed?'使用済み':game.gold<70?'あと'+(70-game.gold)+' G':'購入して回復')+'</button></div></details>';
 }
 function buyRestPotion(){
  if(game.mode!=='roomEquipment'||game.active||game.phase!=='roomRest'||game.restPotionUsed||game.gold<70||p.hp>=p.maxHp&&p.mp>=p.maxMp)return false;
@@ -108,4 +109,10 @@ function regionArtwork(index){
   '<path d="M0 114L75 81 148 117 254 74 340 107V160H0Z" fill="#3c426b"/><path d="M100 160V59H133V40H208V59H240V160H208V92Q170 57 133 92V160Z" fill="#777fa1"/><path d="M93 59H247V74H93Z" fill="#bdc3d3"/><path d="M108 160V77M232 160V77" stroke="#acb4d0" stroke-width="5"/><path d="M170 78L198 115 170 152 143 115Z" fill="#a6dce1" opacity=".65"/><g fill="#e3d7fc"><circle cx="38" cy="34" r="2"/><circle cx="78" cy="22" r="1.5"/><circle cx="279" cy="28" r="2"/><circle cx="299" cy="65" r="1.5"/></g>'
  ][index];
  return '<svg class="region-artwork" viewBox="0 0 340 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="regionSky'+index+'" x2="0" y2="1"><stop stop-color="'+skies[0]+'"/><stop offset="1" stop-color="'+skies[1]+'"/></linearGradient></defs><path fill="url(#regionSky'+index+')" d="M0 0H340V160H0Z"/><circle cx="252" cy="38" r="22" fill="'+(index===2?'#ffc294':'#edf0d9')+'" opacity=".8"/>'+scenery+'</svg>';
+}
+
+function confirmAbandonExpedition(){
+ if(game.mode!=='pause'||!game.singleStage)return;
+ openModal('<div class="eyebrow">今回の挑戦を終了</div><h2>冒険を切り上げますか？</h2><p>今回のレベル・技・秘宝は失われます。<br>稼いだ未使用の金貨と、解放済みの技・舞台は残ります。</p><p>続きから再開したい場合は、区画クリア後に<br>「中断して保存」を選んでください。</p><button id="cancelAbandon" class="cta">一時停止に戻る</button><button id="confirmAbandon" class="text-button">今回の挑戦を終了する</button>');
+ $('cancelAbandon').onclick=()=>{game.mode='play';pause()};$('confirmAbandon').onclick=()=>{if(game.mode==='pause')finishStageLoss()};
 }

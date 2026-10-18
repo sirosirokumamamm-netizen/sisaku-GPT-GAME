@@ -5,6 +5,7 @@ const results=[];for(const style of novice?['azure']:['azure','storm','ward']){c
   openPreparation(stage);if(!startStageAttempt(stage,102400+stage+['azure','storm','ward'].indexOf(style)*100))throw Error('stage locked '+stage);sounds=false;let frames=0,ultimates=0,firstLevel=0;
   const escape=(w,target)=>{let best={x:1,y:0},score=-Infinity;for(let i=0;i<16;i++){const a=i*Math.PI/8,n={x:Math.cos(a),y:Math.sin(a)},q={x:p.x+n.x*95,y:p.y+n.y*95};if(!canStand(q.x,q.y,p.r)||q.y!==clampPlayerY(q.y))continue;const safe=w.kind?!warningContains(w,q,20):distance(q,w)>w.r+25,value=(safe?500:0)-hazards.filter(z=>distance(q,z)<z.r+25).length*700-warnings.filter(z=>warningContains(z,q,18)).length*250+distance(q,w)-distance(q,target)*.25;if(value>score){score=value;best=n}}return best};
   for(;frames<60*420&&game.mode!=='stageResult'&&game.mode!=='chest';frames++){
+   if(game.mode==='roomEquipment'){$('roomEquipmentDone').click();continue}
    if(game.phase==='roomRest'&&game.mode==='play'){advanceRoom();continue}
    if(game.mode==='draft'){const ranked=game.offers.map((id,i)=>({i,score:(['whirl','orbit','wave','frost','power','haste','guard','focus','ultimatePower','charge'].includes(id)?5:0)+(p.learned[id]?1:0)+(style==='storm'&&getSkill(id).category==='element'?4:0)})).sort((a,b)=>b.score-a.score);chooseOffer(ranked[0].i)}
    if(game.mode==='replace')replaceAcquiredSkill(1+(frames%2));if(game.mode!=='play')continue;

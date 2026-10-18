@@ -16,12 +16,11 @@ const assert = require('node:assert/strict');
     await page.locator('#startButton').click();
     await page.locator('[data-stage="0"]').click();
     await page.locator('#startStageButton').click();
-    await page.evaluate(() => { enemies=[]; game.pendingChoices=0; game.phase='stageClear'; grantStageReward(); p.learned.whirl=1; p.loadout[1]='whirl'; });
+    await page.evaluate(() => { enemies=[]; game.pendingChoices=0; game.phase='stageClear'; p.learned.whirl=1; p.loadout[1]='whirl'; grantStageReward(); });
     const before = await page.evaluate(() => ({ time:game.time, hp:p.hp, mp:p.mp }));
     await page.evaluate(() => update(20));
     assert.deepEqual(await page.evaluate(() => ({ time:game.time,hp:p.hp,mp:p.mp })), before, 'rest neither penalizes time nor grants unlimited regeneration');
-    await page.keyboard.press('Enter');
-    assert.equal(await page.evaluate(() => game.mode), 'roomEquipment', 'Enter retains equipment confirmation');
+    assert.equal(await page.evaluate(() => game.mode), 'roomEquipment', 'clear automatically opens equipment confirmation');
     await page.locator('[data-room-slot="0"]').selectOption('whirl');
     assert.equal(await page.locator('[data-room-slot="1"]').inputValue(), 'crescent', 'swapped slot visibly updates');
     await page.screenshot({path:'/tmp/campaign-room-equipment-320.png'});
@@ -39,7 +38,7 @@ const assert = require('node:assert/strict');
     assert.equal(await page.evaluate(()=>campaign.clears[0].rank),'S','higher score cannot erase the best rank');
     for(let region=0;region<4;region++){
       await page.setViewportSize({width:1280,height:900});
-      await page.evaluate(region=>{campaign.unlocked=4;game.mode='preparation';startStageAttempt(region,451);game.room=5;game.bossPrepared=false;buildTerrain();prepareBoss();update(2);p.invuln=99;game.mode='pause';enemies[0].spawnTime=0;enemies[0].bossPhase=2;bannerTTL=0;$('banner').classList.remove('show');render(1);},region);
+      await page.evaluate(region=>{campaign.unlocked=4;for(let i=0;i<3;i++)campaign.clears[i]={rank:'B',score:1,time:1,visits:1};game.mode='preparation';startStageAttempt(region,451);game.room=5;game.bossPrepared=false;buildTerrain();prepareBoss();update(2);p.invuln=99;game.mode='pause';enemies[0].spawnTime=0;enemies[0].bossPhase=2;bannerTTL=0;$('banner').classList.remove('show');render(1);},region);
       await page.screenshot({path:'/tmp/region-'+region+'-boss.png'});
     }
     assert.deepEqual(errors, []);

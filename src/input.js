@@ -27,7 +27,7 @@ window.addEventListener('keydown',e=>{
  if(k==='Tab'&&!e.repeat&&game.mode==='play'){openSkillBook();return}
  if(k==='p'&&!e.repeat){pause();return}if(game.mode!=='play')return;
  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d','Shift'].includes(k))keys.add(k);
- if(!e.repeat){if(k==='j'||k===' ')action('slash');if(k==='k')action('magic');if(k==='l')action('thunder');if(k==='Shift')action('roll');if(k==='q')action('ultimate');if(k==='e')action('heal')}
+ if(!e.repeat){if(k==='j')action('slash');if(k==='k')action('magic');if(k==='l')action('thunder');if(k==='Shift')action('roll');if(k==='q')action('ultimate');if(k==='e')action('heal')}
 });
 window.addEventListener('keyup',e=>keys.delete(boundKey(normalizeKey(e.key))));window.addEventListener('blur',()=>{resetInput();if(game.mode==='play')pause()});document.addEventListener('visibilitychange',()=>{if(document.hidden){resetInput();if(game.mode==='play')pause()}});
 $('roomExit').onclick=()=>{if(game.phase==='roomRest')roomEquipment()};

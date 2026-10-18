@@ -14,18 +14,22 @@ function compactPreparation(){
 }
 function compactRest(focusSlot){
  if(game.relicOffers?.length)return;
- const potion=document.createElement('button');potion.id='fieldPotion';potion.className='text-button';potion.textContent='樽の回復薬 ×'+(game.fieldPotions||0)+' · HPとMPを回復';potion.disabled=!(game.fieldPotions>0)||p.hp>=p.maxHp&&p.mp>=p.maxMp;potion.onclick=useFieldPotion;
- const needs=p.hp<p.maxHp*.65||p.mp<p.maxMp*.4;
- menuTabs([['次の区画',menuNodes('.rest-next,.relic-summary')],['技の装備',menuNodes('.equipment-list,.automatic-summary')],[(needs?'♥ 回復がおすすめ':'回復'),[potion,...menuNodes('.rest-supply,#roomHeal')]]],Number.isInteger(focusSlot)?1:0);
- const details=$('modal').querySelector('.rest-supply');if(details){details.open=true;details.querySelector('summary').hidden=true}
- $('roomEquipmentDone').textContent='準備完了 · 上の門へ歩く';$('roomEquipmentBack').textContent='区画を見渡す';
+ const modal=$('modal'),vitals=modal.querySelector('.rest-vitals'),equipment=modal.querySelector('.equipment-list'),paid=$('restPotion'),heal=$('roomHeal');
+ for(const n of menuNodes('.expedition-route,.relic-summary,.relic-owned,.automatic-summary,.rest-next,.rest-supply'))n.remove();for(const n of [...modal.children])if(n.tagName==='P'||n.classList.contains('save-note'))n.remove();
+ modal.querySelector('h2').textContent='区画 '+game.room+' クリア';vitals.querySelector('small')?.remove();
+ const recovery=document.createElement('section');recovery.className='rest-recovery';const status=document.createElement('small');status.textContent=p.hp<p.maxHp*.65?'♥ 次へ進む前に回復がおすすめ':'回復と装備を確認して次へ';recovery.append(status);
+ const row=document.createElement('div');row.className='recovery-actions';const potion=document.createElement('button');potion.id='fieldPotion';potion.textContent=controlLabel('potion')+' 回復薬を使う ×'+(game.fieldPotions||0);potion.disabled=!(game.fieldPotions>0)||p.hp>=p.maxHp&&p.mp>=p.maxMp;potion.onclick=useCombatPotion;row.append(potion);
+ if(paid){paid.textContent=game.restPotionUsed?'購入済み':game.gold<70?'購入にあと '+(70-game.gold)+' G':'70 Gで購入して回復';row.append(paid)}recovery.append(row);
+ const preview=document.createElement('small');preview.className='potion-preview';preview.textContent='HP '+Math.ceil(p.hp)+' → '+Math.min(p.maxHp,Math.ceil(p.hp)+Math.ceil(p.maxHp*.35))+' / '+p.maxHp+' · MP '+Math.floor(p.mp)+' → '+Math.min(p.maxMp,Math.floor(p.mp)+Math.ceil(p.maxMp*.4))+' / '+p.maxMp+'　所持 '+game.gold+' G';recovery.append(preview);if(heal)recovery.append(heal);vitals.after(recovery);
+ const toggle=document.createElement('button');toggle.className='text-button';toggle.id='restEquipmentToggle';toggle.textContent='技の装備を変更';toggle.setAttribute('aria-expanded',String(Number.isInteger(focusSlot)));equipment.hidden=!Number.isInteger(focusSlot);toggle.onclick=()=>{equipment.hidden=!equipment.hidden;toggle.setAttribute('aria-expanded',String(!equipment.hidden));fitMenuPages()};recovery.after(toggle,equipment);
+ $('roomEquipmentDone').textContent=game.room===4?'この装備でボスの門へ':'この装備で次の門へ';$('roomEquipmentBack').textContent='区画に戻る';
 }
 function compactResult(){menuTabs([['結果',menuNodes('.score-hero,.reward-received,.new-stage')],['くわしい記録',menuNodes('.result-summary')]])}
 function paginateCollection(){
  const grid=$('modal').querySelector('.collection-grid'),cards=[...grid.children];let page=0;const pageSize=innerWidth<360||innerHeight<500?2:4;const nav=document.createElement('div');nav.className='menu-tabs';const prev=document.createElement('button'),next=document.createElement('button'),label=document.createElement('span');prev.textContent='← 前';next.textContent='次 →';nav.append(prev,label,next);grid.after(nav);
  function show(){cards.forEach((c,i)=>c.hidden=Math.floor(i/pageSize)!==page);label.textContent=(page+1)+' / '+Math.max(1,Math.ceil(cards.length/pageSize));prev.disabled=page===0;next.disabled=(page+1)*pageSize>=cards.length}prev.onclick=()=>{page--;show()};next.onclick=()=>{page++;show()};show();
 }
-function compactSettings(){const bindings=$('modal').querySelector('.comfort-settings details');if(bindings){bindings.open=true;bindings.querySelector('summary').hidden=true}menuTabs([['操作',menuNodes('.help-steps,.settings-note')],['音・演出',menuNodes('.setting-row,.motion-option')],['細かい設定',menuNodes('.comfort-grid')],['キー割当',[bindings]]]);$('modal').querySelector('.comfort-settings')?.remove()}
+function compactSettings(){const bindings=$('modal').querySelector('.comfort-settings details');if(bindings){bindings.open=true;bindings.querySelector('summary').hidden=true}menuTabs([['操作',menuNodes('.help-steps,.settings-note')],['音・演出',menuNodes('.setting-row,.motion-option')],['細かい設定',[...menuNodes('.comfort-grid'),resetSettingsButton()]],['キー割当',[bindings]]]);$('modal').querySelector('.comfort-settings')?.remove()}
 function openWeaponShop(returnMode='stageSelect',page=0){
  if(!['stageSelect','stageResult','weaponShop'].includes(game.mode)||returnMode==='stageResult'&&!campaign.lastResult?.win)return false;
  game.mode='weaponShop';refreshCampaign();const chosen=WEAPONS.slice(page*2,page*2+2);

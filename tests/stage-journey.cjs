@@ -6,11 +6,12 @@ const results=[];for(const style of novice?['azure']:['azure','storm','ward']){c
   const escape=(w,target)=>{let best={x:1,y:0},score=-Infinity;for(let i=0;i<16;i++){const a=i*Math.PI/8,n={x:Math.cos(a),y:Math.sin(a)},q={x:p.x+n.x*95,y:p.y+n.y*95};if(!canStand(q.x,q.y,p.r)||q.y!==clampPlayerY(q.y))continue;const safe=w.kind?!warningContains(w,q,20):distance(q,w)>w.r+25,value=(safe?500:0)-hazards.filter(z=>distance(q,z)<z.r+25).length*700-warnings.filter(z=>warningContains(z,q,18)).length*250+distance(q,w)-distance(q,target)*.25;if(value>score){score=value;best=n}}return best};
   for(;frames<60*420&&game.mode!=='stageResult'&&game.mode!=='chest';frames++){
    if(game.mode==='roomEquipment'){if(game.relicOffers?.length){chooseRelic(0);continue}$('roomEquipmentDone').click();continue}
-   if(game.phase==='exitWalk'&&game.mode==='play'){joystick=norm(380-p.x,STAGES[game.stage].y-240-p.y);update(1/60);updateVisuals(1/60);continue}
+   if(game.phase==='exitWalk'&&game.mode==='play'){const gate={x:380,y:STAGES[game.stage].y-240};joystick=routeClear(p,gate,p.r)?norm(gate.x-p.x,gate.y-p.y):routeDirection(p,gate);update(1/60);updateVisuals(1/60);continue}
    if(game.phase==='roomRest'&&game.mode==='play'){advanceRoom();continue}
    if(game.mode==='draft'){const ranked=game.offers.map((id,i)=>({i,score:(['whirl','orbit','wave','frost','power','haste','guard','focus','ultimatePower','charge'].includes(id)?5:0)+(p.learned[id]?1:0)+(style==='storm'&&getSkill(id).category==='element'?4:0)})).sort((a,b)=>b.score-a.score);chooseOffer(ranked[0].i)}
    if(game.mode==='replace')replaceAcquiredSkill(1+(frames%2));if(game.mode!=='play')continue;
    if(p.lv>1&&!firstLevel)firstLevel=game.time;
+   if(p.hp<p.maxHp*.5&&game.fieldPotions>0)useCombatPotion();
    if(p.ultimate>=100&&activateUltimate())ultimates++;
    let target=nearest(2000)||{x:380,y:STAGES[game.stage].y};const w=novice?null:warnings.find(w=>warningContains(w));
    if(w){const n=escape(w,target);if(w.life<=p.justWindow&&p.cd.roll===0){joystick=n;action('roll')}target={x:p.x+n.x*140,y:p.y+n.y*140}}

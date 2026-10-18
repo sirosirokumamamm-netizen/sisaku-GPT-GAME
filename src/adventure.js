@@ -38,12 +38,10 @@ function explodeLooseBomb(d){
  hostileShots=hostileShots.filter(b=>distance(b,d)>145);particle(d.x,d.y,'#ffc68a',24,220);if(!reduced)shake=Math.max(shake,4);
 }
 function updateFieldItems(dt){
- for(const d of drops){if(d.collected)continue;if(d.type==='fieldPotion'){d.age+=dt;if(distance(p,d)<45){d.collected=true;game.fieldPotions=Math.min(3,(game.fieldPotions||0)+1);floating(p.x,p.y-100,'回復薬を確保 · 休憩で使える','#baf5ca',true)}}else if(d.type==='bomb'){d.age+=dt;if(d.age>.25&&enemies.some(e=>e.hp>0&&distance(e,d)<80)){d.fuse=(d.fuse??.55)-dt;if(d.fuse<=0)explodeLooseBomb(d)}}}
+ for(const d of drops){if(d.collected)continue;if(d.type==='fieldPotion'){d.age+=dt;if(distance(p,d)<45&&(game.fieldPotions||0)<3){d.collected=true;game.fieldPotions=Math.min(3,(game.fieldPotions||0)+1);floating(p.x,p.y-100,'回復薬を確保 · '+controlLabel('potion')+'で使える','#baf5ca',true)}}else if(d.type==='bomb'){d.age+=dt;if(d.age>.25&&enemies.some(e=>e.hp>0&&distance(e,d)<80)){d.fuse=(d.fuse??.55)-dt;if(d.fuse<=0)explodeLooseBomb(d)}}}
 }
-function useFieldPotion(){
- if(game.mode!=='roomEquipment'||game.active||!(game.fieldPotions>0)||p.hp>=p.maxHp&&p.mp>=p.maxMp)return false;
- game.fieldPotions--;p.hp=Math.min(p.maxHp,p.hp+Math.ceil(p.maxHp*.35));p.mp=Math.min(p.maxMp,p.mp+Math.ceil(p.maxMp*.4));roomEquipment();return true;
-}
+function useFieldPotion(){return useCombatPotion()}
+
 function configureRealmBoss(e,index){
  if(e.kind!=='boss')return;e.form=['beast','monster','dragon','sentinel','demon'][game.region];e.speed=135+game.region*5;e.pattern=4;e.atk=12+game.region*2;e.cooldown=.5+index*.8;
  if(game.region===3){e.name=index?'月影の守護獣':'星核の守護者';e.form=index?'beast':'sentinel';e.hp=e.maxHp=Math.round(REGIONS[3].hp*.58);e.r=36}
@@ -57,8 +55,8 @@ function interceptBossDefeat(e){
 function updateRealmBoss(e,dt){
  if(e.form!=='demon'||!e.awakened)return false;
  if(e.state==='revive'){e.timer-=dt;if(e.timer<=0){e.state='chase';e.cooldown=.1}return true}
- e.cycleTime-=dt;if(e.cycleTime<=0){clearHostiles();e.leapFrom=e.leapTo=null;e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?8:5;e.state=e.cycle==='exposed'?'recover':'chase';e.timer=e.cycleTime;e.exposed=e.cycle==='exposed'?e.cycleTime:0;e.cooldown=.15;banner(e.cycle==='exposed'?'核心露出！ 今が攻撃のチャンス':'魔王の猛攻！ 回避に集中', '',1)}
- if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}return false;
+ e.cycleTime-=dt;if(e.cycleTime<=0){clearHostiles();e.barrageClock=.5;e.leapFrom=e.leapTo=null;e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?8:5;e.state=e.cycle==='exposed'?'recover':'chase';e.timer=e.cycleTime;e.exposed=e.cycle==='exposed'?e.cycleTime:0;e.cooldown=.15;banner(e.cycle==='exposed'?'核心露出！ 今が攻撃のチャンス':'魔王の猛攻！ 回避に集中', '',1)}
+ if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}demonBarrage(e,dt);e.state='chase';const direction=norm(380-e.x,STAGES[game.stage].y-110-e.y);moveActor(e,direction.x*65*dt,direction.y*65*dt);return true;
 }
 function realmBossWarning(e,warn,target,dir){
  const count=e.pattern++,phase=e.bossPhase===2,pace=e.form==='demon'&&e.awakened?.9:1,pattern=count%(phase?4:3);

@@ -17,7 +17,7 @@ const RELICS=[
  {id:'vow',name:'紅蓮の誓い',icon:'ϟ',color:'#ffac99',desc:'攻めに賭ける秘宝。強くなるぶん、被弾に注意。',detail:'全ダメージ ＋22%・受けるダメージ ＋12%'}
 ];
 const REGION_SIGNATURES=[['whirl','wave','orbit','parry'],['frost','chain','rain','focus'],['flame','meteor','quake','wisp'],['nova','execute','blink','tornado'],['nova','execute','thunder','guard']];
-function makeRoomRoute(){return ['approach',...shuffle(['horde','elite','treasure']),'boss']}
+function makeRoomRoute(){return ['approach','horde','treasure','elite','boss']}
 function roomRole(room=game.room){return ROOM_ROLES[game.roomRoute?.[room-1]]||ROOM_ROLES[room===5?'boss':room===1?'approach':['horde','elite','treasure'][room-2]]}
 function hasRelic(id){return game.singleStage&&game.relic===id}
 function relicDamage(e,heavy,automatic){return (hasRelic('edge')&&heavy&&!automatic?1.18:1)*(hasRelic('fang')&&e.hp/e.maxHp<=.35?1.25:1)*(hasRelic('vow')?1.22:1)}
@@ -47,7 +47,7 @@ function buyRestPotion(){
  game.gold-=70;game.goldSpent+=70;game.restPotionUsed=true;p.hp=Math.min(p.maxHp,p.hp+Math.ceil(p.maxHp*.35));p.mp=Math.min(p.maxMp,p.mp+Math.ceil(p.maxMp*.4));tone(760,.16,'sine',.03);roomEquipment();return true;
 }
 function decorateCampaignEnemy(e,index){
- if(e.kind==='boss')return;
+ if(e.kind==='boss'||e.kind==='goldSlime')return;
  if(roomRole()===ROOM_ROLES.horde){e.hp=e.maxHp=Math.round(e.hp*.72);e.speed*=1.06;}
  if(roomRole()===ROOM_ROLES.elite&&index<1){e.elite=true;e.trait=game.wave===1?'breaker':'swift';e.name=e.trait==='breaker'?'精鋭・重撃':'精鋭・疾走';e.hp=e.maxHp=Math.round(e.hp*2.1);e.atk*=1.18;if(e.trait==='swift')e.speed*=1.2;}
 }
@@ -76,7 +76,7 @@ function suspendExpedition(){
  if(game.mode!=='roomEquipment'||game.pendingChoices||game.relicOffers?.length||game.active)return false;
  const record=normalizeRest({version:1,weapon:game.weapon,fieldPotions:game.fieldPotions,id:game.attemptId,style:game.style,route:game.roomRoute,relic:game.relic||null,restPotionUsed:game.restPotionUsed,player:{...Object.fromEntries(REST_PLAYER_FIELDS.map(k=>[k,p[k]])),learned:p.learned,loadout:p.loadout},run:Object.fromEntries(REST_GAME_FIELDS.map(k=>[k,game[k]||0])),damageSources:game.damageSources});
  if(!record)return false;const n=cloneCampaign();n.suspended=record;saveCampaign(n);
- if(!storageAvailable){roomEquipment();const note=$('modal').querySelector('.save-note');note.textContent='保存できませんでした。このまま続けられます。';return false}
+ if(!storageAvailable){roomEquipment();const note=$('modal').querySelector('.save-note')||document.createElement('small');note.className='save-note save-error';$('modal').append(note);note.textContent='保存できませんでした。このまま続けられます。';return false}
  openStageSelect();return true;
 }
 function resumeExpedition(){

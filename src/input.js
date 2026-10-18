@@ -29,11 +29,12 @@ window.addEventListener('keydown',e=>{
  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','w','a','s','d','j','k','l','e','Shift','p','Tab','Escape'].includes(k))e.preventDefault();
  if(k==='Escape'&&game.mode==='skills'){closeSkillBook();return}
  if(k==='Tab'&&!e.repeat&&game.mode==='play'){openSkillBook();return}
- if(k==='p'&&!e.repeat){pause();return}if(game.mode!=='play')return;
+ if(k==='h'&&!e.repeat&&['play','roomEquipment'].includes(game.mode)){e.preventDefault();useCombatPotion();return}if(k==='p'&&!e.repeat){pause();return}if(game.mode!=='play')return;
  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d','Shift'].includes(k))keys.add(k);
  if(!e.repeat){if(k==='j')action('slash');if(k==='k')action('magic');if(k==='l')action('thunder');if(k==='Shift')action('roll');if(k==='q')action('ultimate');if(k==='e')action('heal')}
 });
 window.addEventListener('keyup',e=>keys.delete(boundKey(normalizeKey(e.key))));window.addEventListener('blur',()=>{resetInput();if(game.mode==='play')pause()});document.addEventListener('visibilitychange',()=>{if(document.hidden){resetInput();if(game.mode==='play')pause()}});
+$('combatPotion').onclick=useCombatPotion;
 $('roomExit').onclick=()=>{if(game.phase==='exitWalk')game.phase='roomRest';if(game.phase==='roomRest')roomEquipment()};
 $('growthButton').onclick=()=>{if(game.mode==='play'&&game.pendingChoices>0){game.draftDeferred=0;openDraft()}};
 $('ultimate').onclick=()=>action('ultimate');

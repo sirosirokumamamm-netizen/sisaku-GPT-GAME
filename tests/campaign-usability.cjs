@@ -21,7 +21,7 @@ const assert = require('node:assert/strict');
     await page.evaluate(() => update(20));
     assert.deepEqual(await page.evaluate(() => ({ time:game.time,hp:p.hp,mp:p.mp })), before, 'rest neither penalizes time nor grants unlimited regeneration');
     assert.equal(await page.evaluate(() => game.mode), 'roomEquipment', 'clear automatically opens equipment confirmation');
-    await page.getByRole('tab',{name:'技の装備'}).click();await page.locator('[data-room-slot="0"]').selectOption('whirl');
+    await page.locator('#restEquipmentToggle').click();await page.locator('[data-room-slot="0"]').selectOption('whirl');
     assert.equal(await page.locator('[data-room-slot="1"]').inputValue(), 'crescent', 'swapped slot visibly updates');
     await page.screenshot({path:'/tmp/campaign-room-equipment-320.png'});
     await page.locator('#roomEquipmentDone').click();await page.evaluate(()=>{p.x=380;p.y=STAGES[game.stage].y-240;update(.016)});

@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-18",
+  "environment": "Headless Chromium 154, 1280x900, this cloud host",
+  "method": "Current campaign horde room, 4 surviving enemies plus final wave, automatic and manual skills, 30 warmup + 180 measured update/render frames per region. Not a physical mobile benchmark.",
+  "rows": [
+    {
+      "region": "陽だまりの草原",
+      "enemies": 24,
+      "samples": 180,
+      "medianMs": 1.8999999985098839,
+      "p95Ms": 3.600000001490116,
+      "maxMs": 6.5,
+      "maxEffects": 275,
+      "autoCasts": 4,
+      "finite": true
+    },
+    {
+      "region": "翡翠の水路",
+      "enemies": 26,
+      "samples": 180,
+      "medianMs": 1.7000000029802322,
+      "p95Ms": 3.899999998509884,
+      "maxMs": 17.799999997019768,
+      "maxEffects": 313,
+      "autoCasts": 4,
+      "finite": true
+    },
+    {
+      "region": "熾火の火山",
+      "enemies": 28,
+      "samples": 180,
+      "medianMs": 1.8999999985098839,
+      "p95Ms": 3.0999999940395355,
+      "maxMs": 12,
+      "maxEffects": 379,
+      "autoCasts": 4,
+      "finite": true
+    },
+    {
+      "region": "星霜の遺跡",
+      "enemies": 30,
+      "samples": 180,
+      "medianMs": 1.9000000059604645,
+      "p95Ms": 3.399999998509884,
+      "maxMs": 9.100000001490116,
+      "maxEffects": 350,
+      "autoCasts": 4,
+      "finite": true
+    }
+  ]
+}

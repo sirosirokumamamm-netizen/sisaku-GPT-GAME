@@ -36,7 +36,7 @@ const assert=require('node:assert/strict');
     while(!['chest','stageResult'].includes(game.mode)&&guard++<600){
      if(game.mode==='draft'){chooseOffer(0);continue}
      if(game.mode==='replace'){replaceAcquiredSkill(-1);continue}
-     if(game.mode==='roomEquipment'){confirmations++;$('roomEquipmentDone').click();continue}
+     if(game.mode==='roomEquipment'){if(game.relicOffers?.length){chooseRelic(0);continue}confirmations++;$('roomEquipmentDone').click();continue}
      if(game.mode!=='play')throw Error('unexpected stopped mode '+game.mode);
      if(game.phase==='combat')for(const e of [...enemies])if(e.hp>0){e.spawnTime=0;e.hp=1;hurtEnemy(e,1000)}
      update(.1);updateVisuals(.1);

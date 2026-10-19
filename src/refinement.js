@@ -21,7 +21,7 @@ function chooseNewEnemy(){
  if(runRandom()<.18)return ['harpy','beetle','wraith'][Math.floor(runRandom()*3)];return null;
 }
 function newEnemyTick(e,dt){
- if(e.kind==='goldSlime'){e.escapeTime=(e.escapeTime??14)-dt;if(e.escapeTime<=0){e.hp=0;floating(e.x,e.y-65,'金色のスライムは逃げた','#ffe397',true);return true}const n=norm(e.x-p.x,e.y-p.y);moveActor(e,n.x*e.speed*dt,n.y*e.speed*dt);return true}
+ if(e.kind==='goldSlime'){if(!e.announced){e.announced=true;banner('超レア！ 金色のスライム','逃げる前に連続攻撃！',2);particle(e.x,e.y,'#ffe493',28,190)}e.escapeTime=(e.escapeTime??14)-dt;if(e.escapeTime<=0){e.hp=0;floating(e.x,e.y-65,'金色のスライムは逃げた','#ffe397',true);return true}e.runClock=(e.runClock||0)-dt;if(e.runClock<=0||!e.runTarget||distance(e,e.runTarget)<25){const y=STAGES[game.stage].y,points=[[160,-110],[590,-80],[620,240],[160,260],[380,50]].map(([x,dy])=>safePoint(x,y+dy,e.r));e.runTarget=points.filter(q=>distance(q,e)>130).sort((a,b)=>distance(b,p)-distance(a,p))[0]||points[0];e.runClock=1.3}const n=routeClear(e,e.runTarget,e.r)?norm(e.runTarget.x-e.x,e.runTarget.y-e.y):routeDirection(e,e.runTarget);moveActor(e,n.x*e.speed*dt,n.y*e.speed*dt);e.sparkClock=(e.sparkClock||0)-dt;if(e.sparkClock<=0){particle(e.x,e.y-15,'#ffde73',2,45);e.sparkClock=.12}return true}
  if(e.kind==='harpy'&&e.state==='chase'&&(distance(e,p)>170||!canStand(e.x,e.y,e.r)||!coverClear(e,p))){const n=norm(p.x-e.x,p.y-e.y);e.x=clamp(e.x+n.x*e.speed*dt,100,660);e.y=clamp(e.y+n.y*e.speed*dt,STAGES[game.stage].y-170,STAGES[game.stage].y+320)}
  if(e.kind==='wraith'&&e.state==='recover'&&e.timer<.1){const q=safePoint(p.x+(runRandom()<.5?-160:160),clampPlayerY(p.y-70),e.r);particle(e.x,e.y,'#c4d2ff',8,75);e.x=q.x;e.y=q.y;particle(e.x,e.y,'#c4d2ff',8,75)}return false;
 }
@@ -33,17 +33,21 @@ function drawNewEnemy(e,t){
  if(e.kind==='goldSlime'){const g=ctx.createRadialGradient(-7,-25,1,0,-12,29);g.addColorStop(0,'#fff8cd');g.addColorStop(.5,'#f4cf54');g.addColorStop(1,'#a67524');ellipse(0,-15,24,24,g);path([[-14,-34],[-18,-48],[-5,-42],[0,-54],[5,-42],[18,-48],[14,-34]],'#ffe7a2','#fff7dc');ellipse(-8,-17,3,4,'#674b25');ellipse(8,-17,3,4,'#674b25');ctx.font='bold 10px system-ui';ctx.textAlign='center';ctx.fillStyle='#ffed9a';ctx.fillText('超レア · 経験値大量',0,-66)}ctx.restore();
 }
 function demonBarrage(e,dt){
- e.barrageClock=(e.barrageClock||0)-dt;if(e.barrageClock>0)return;e.barrageClock=2.2;const center=STAGES[game.stage].y,pattern=(e.barrageIndex||0)%3;e.barrageIndex=(e.barrageIndex||0)+1;
- const warn=(kind,x,y,r,time,extra)=>warnings.push({owner:e.id,kind,x,y,r,dir:{x:0,y:1},life:time,max:time,atk:18,perfectUsed:false,attack:'barrage',...extra});
+ e.barrageClock=(e.barrageClock||0)-dt;if(e.barrageClock>0)return;e.barrageClock=2.2;e.demonCast=1.6;const center=STAGES[game.stage].y,pattern=(e.barrageIndex||0)%3;e.barrageIndex=(e.barrageIndex||0)+1;
+ const warn=(kind,x,y,r,time,extra)=>warnings.push({owner:e.id,sourceX:e.x,sourceY:e.y-100,kind,x,y,r,dir:{x:0,y:1},life:time,max:time,atk:18,perfectUsed:false,attack:'barrage',...extra});
  if(pattern===0){const safeLane=clamp(Math.round((p.x-140)/120),0,4);for(let lane=0;lane<5;lane++)if(lane!==safeLane)warn('line',140+lane*120,center-210,0,1.25,{length:570,width:82,barrage:'breath'});banner('冥炎の息吹','縦の炎！ 光のない通路へ',1.1)}
  else if(pattern===1){warn('circle',p.x,p.y,112,1.4,{barrage:'meteor',atk:23});for(const s of [-1,1])warn('circle',clamp(p.x+s*195,120,640),clampPlayerY(p.y-120),72,1.7,{barrage:'meteor',atk:17});banner('巨星落下','大きな影から離れよう',1)}
  else{for(let i=0;i<3;i++)warn('line',i%2?670:90,center-90+i*140,0,1+i*.3,{dir:{x:i%2?-1:1,y:0},length:580,width:58,barrage:'sweep',atk:15});banner('冥界の奔流','横切る炎のすき間へ',1)}
 }
 function resolveBarrage(w){hitExplosives(q=>warningContains(w,q,16),w.atk);
- if(warningContains(w)&&!w.perfectUsed){game.hitSource=w.barrage==='meteor'?'着地':'範囲攻撃';takeHit(w.atk,w.x,w.y)}effects.push({...w,shape:w.kind,kind:'telegraphHit',life:w.barrage==='breath'?.6:.4,max:w.barrage==='breath'?.6:.4});
+ effects.push({kind:'beam',x:w.sourceX??w.x,y:w.sourceY??w.y,ex:w.x,ey:w.y,color:'#d49aff',life:.28,max:.28});if(warningContains(w)&&!w.perfectUsed){game.hitSource=w.barrage==='meteor'?'着地':'範囲攻撃';takeHit(w.atk,w.x,w.y)}effects.push({...w,shape:w.kind,kind:'telegraphHit',life:w.barrage==='breath'?.6:.4,max:w.barrage==='breath'?.6:.4});
  if(w.barrage==='breath'){effects.push({...w,kind:'demonFlame',life:.85,max:.85});hazards.push({...w,life:.8,tick:.3,protected:w.perfectUsed,atk:10})}if(w.barrage==='meteor'){effects.push({kind:'nova',x:w.x,y:w.y,r:w.r,color:'#e8adff',life:.65,max:.65});particle(w.x,w.y,'#dfb3ff',22,240);if(!reduced&&preferences.shake)shake=Math.max(shake,4)}
 }
-function drawBarrageSky(t){for(const w of warnings)if(w.barrage==='meteor'){const progress=warningProgress(w),height=(1-progress)*280;ctx.save();ctx.strokeStyle='#e8b9ff66';ctx.lineWidth=18;ctx.beginPath();ctx.moveTo(w.x+45,w.y-height-100);ctx.lineTo(w.x,w.y-height);ctx.stroke();ellipse(w.x,w.y-height,w.r*.22,w.r*.25,'#a17aab');ellipse(w.x-5,w.y-height-5,w.r*.13,w.r*.14,'#ffdab2');ctx.restore()}}
+function drawBarrageSky(t){for(const w of warnings)if(w.attack==='barrage'){
+ const progress=warningProgress(w),sx=w.sourceX??w.x,sy=w.sourceY??w.y;ctx.save();ctx.strokeStyle='#e2b3ff88';ctx.lineWidth=2;ctx.setLineDash([5,9]);ctx.beginPath();ctx.moveTo(sx,sy);ctx.quadraticCurveTo((sx+w.x)/2,Math.min(sy,w.y)-110,w.x,w.y);ctx.stroke();ctx.setLineDash([]);ellipse(sx,sy,13+Math.sin(t*16)*3,13,'#efbbffaa');
+ if(w.barrage==='meteor'){const launch=Math.min(1,progress/.4),fall=Math.max(0,(progress-.4)/.6),x=sx+(w.x-sx)*launch,y=progress<.4?sy-210*launch:w.y-(1-fall)*Math.max(210,w.y-sy+210);ctx.strokeStyle='#edb9ff99';ctx.lineWidth=13;ctx.beginPath();ctx.moveTo(x+14,y-55);ctx.lineTo(x,y);ctx.stroke();ellipse(x,y,w.r*.22,w.r*.25,'#a17aab');ellipse(x-5,y-5,w.r*.13,w.r*.14,'#ffdab2')}
+ else{const q=progress;ellipse(sx+(w.x-sx)*q,sy+(w.y-sy)*q,9,12,'#ffd6a2')}ctx.restore();}}
+
 
 function resetSettingsButton(){const b=document.createElement('button');b.id='resetData';b.className='text-button danger-button';b.textContent='冒険データを初期化';b.onclick=confirmDataReset;return b}
 

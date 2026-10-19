@@ -37,15 +37,8 @@ function relicSummary(){const r=RELICS.find(r=>r.id===game.relic);return r?'<div
 function routeStrip(){return '<ol class="expedition-route" aria-label="今回の区画構成">'+Array.from({length:5},(_,i)=>{const role=roomRole(i+1);return '<li class="'+(i+1<game.room?'done':i+1===game.room?'current':'')+'" style="--room-color:'+role.color+'"><span>'+(i+1<game.room?'✓':role.icon)+'</span><b>'+role.name+'</b><small>'+(i+1)+'/5</small></li>'}).join('')+'</ol>'}
 function restPreview(){const next=roomRole(game.room+1);return '<div class="rest-next" style="--room-color:'+next.color+'"><small>次の区画 '+(game.room+1)+'/5</small><b>'+next.icon+' '+(game.room===4?REGIONS[game.region].boss:next.name)+'</b><span>'+next.hint+'</span></div>'}
 function applyRoomRelic(){if(hasRelic('ward')){p.shield=Math.max(p.shield,20);p.shieldTime=12}}
-function restShopHTML(){
- const needed=p.hp<p.maxHp||p.mp<p.maxMp,disabled=game.restPotionUsed||game.gold<70||!needed;
- const hpAfter=Math.min(p.maxHp,p.hp+Math.ceil(p.maxHp*.35)),mpAfter=Math.min(p.maxMp,p.mp+Math.ceil(p.maxMp*.4));
- return '<details class="rest-supply" '+(needed&&!game.restPotionUsed?'open':'')+'><summary>補給 · 所持 '+game.gold+' G'+(game.restPotionUsed?' · 使用済み':!needed?' · HP・MP満タン':'')+'</summary><div class="rest-shop"><div><b>旅のポーション · 70 G</b><small>休憩ごとに1本。その場で回復します。</small><span class="potion-preview">HP '+Math.ceil(p.hp)+' → '+Math.ceil(hpAfter)+' / '+p.maxHp+'<br>MP '+Math.floor(p.mp)+' → '+Math.floor(mpAfter)+' / '+p.maxMp+'</span></div><button id="restPotion" '+(disabled?'disabled':'')+'>'+(!needed?'回復不要':game.restPotionUsed?'使用済み':game.gold<70?'あと'+(70-game.gold)+' G':'購入して回復')+'</button></div></details>';
-}
-function buyRestPotion(){
- if(game.mode!=='roomEquipment'||game.active||game.phase!=='roomRest'||game.restPotionUsed||game.gold<70||p.hp>=p.maxHp&&p.mp>=p.maxMp)return false;
- game.gold-=70;game.goldSpent+=70;game.restPotionUsed=true;p.hp=Math.min(p.maxHp,p.hp+Math.ceil(p.maxHp*.35));p.mp=Math.min(p.maxMp,p.mp+Math.ceil(p.maxMp*.4));tone(760,.16,'sine',.03);roomEquipment();return true;
-}
+function restShopHTML(){return ''}
+function buyRestPotion(){return false}
 function decorateCampaignEnemy(e,index){
  if(e.kind==='boss'||e.kind==='goldSlime')return;
  if(roomRole()===ROOM_ROLES.horde){e.hp=e.maxHp=Math.round(e.hp*.72);e.speed*=1.06;}

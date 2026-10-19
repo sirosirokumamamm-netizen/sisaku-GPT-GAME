@@ -13,9 +13,9 @@ const assert=require('node:assert/strict');
   assert(await page.evaluate(()=>!openPreparation(3)&&!startStageAttempt(3)),'hidden final stage cannot be entered');
   await page.screenshot({path:'/tmp/clear-flow-first-three.png'});
   await page.locator('[data-stage="0"]').click();await page.locator('#startStageButton').click();
-  await page.evaluate(()=>{sounds=false;p.invuln=999;game.autoCd=999});
+  await page.evaluate(()=>{sounds=false;p.invuln=999;p.autoCd=999;terrain=[];p.x=200});
   const before=await page.evaluate(()=>({rolls:game.rolls,skills:game.skillUses}));
-  await page.keyboard.down('d');await page.keyboard.down('Space');await page.waitForTimeout(1150);await page.keyboard.up('Space');await page.keyboard.up('d');
+  await page.keyboard.down('d');await page.keyboard.down('Space');await page.waitForFunction(old=>game.rolls>=old+2,before.rolls,{timeout:5000});await page.keyboard.up('Space');await page.keyboard.up('d');
   assert(await page.evaluate(old=>game.rolls>=old.rolls+2&&game.skillUses===old.skills,before),'held Space repeats dodge and does not cast a sword skill');
   assert(await page.evaluate(()=>!keys.has('Shift')),'Space key release ends held dodge');
   // Regression: a pending level at room rest used to freeze its deferral timer and hide both exits.

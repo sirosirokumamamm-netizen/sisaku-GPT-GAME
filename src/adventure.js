@@ -1,11 +1,11 @@
 // Fifth realm, equipment and room-entry rules. No remote assets or dependencies.
 const WEAPONS=[
  {id:'traveler',name:'旅立ちの剣',price:0,icon:'⚔',color:'#a9e6ff',power:1,speed:1,reach:1,element:'無',extra:'なし',desc:'癖のない標準の剣。'},
- {id:'rapier',name:'風切りの細剣',price:280,icon:'➶',color:'#a5f3cf',power:.85,speed:1.3,reach:.95,element:'風',extra:'なし',desc:'一撃は軽いが、通常攻撃が速い。'},
- {id:'greatsword',name:'巨人の大剣',price:360,icon:'♜',color:'#f4d4a2',power:1.3,speed:.8,reach:1.25,element:'無',extra:'なし',desc:'大きな刃で薙ぎ払う。振りは遅い。'},
- {id:'ember',name:'焔の牙',price:450,icon:'♨',color:'#ffb080',power:1.05,speed:1,reach:1,element:'炎',extra:'3撃ごとに炎上',desc:'通常攻撃の3撃ごとに、命中した敵を燃やす。'},
- {id:'frostblade',name:'氷晶の剣',price:450,icon:'❄',color:'#adf1ff',power:1,speed:1,reach:1.12,element:'氷',extra:'3撃ごとに減速',desc:'広めの刃。3撃ごとに敵の移動を遅くする。'},
- {id:'echo',name:'雷鳴の双剣',price:650,icon:'ϟ',color:'#d7beff',power:.92,speed:1.15,reach:1,element:'雷',extra:'4撃ごとに追撃',desc:'4撃ごとに、近くの別の敵へ雷が跳ぶ。'}
+ {id:'rapier',name:'風切りの細剣',price:280,icon:'➶',color:'#a5f3cf',power:.95,speed:1.35,reach:.95,element:'風',extra:'なし',desc:'一撃は軽いが、通常攻撃が速い。'},
+ {id:'greatsword',name:'巨人の大剣',price:360,icon:'♜',color:'#f4d4a2',power:1.4,speed:.9,reach:1.25,element:'無',extra:'なし',desc:'大きな刃で薙ぎ払う。振りは遅い。'},
+ {id:'ember',name:'焔の牙',price:450,icon:'♨',color:'#ffb080',power:1.18,speed:1.05,reach:1,element:'炎',extra:'3撃ごとに炎上',desc:'通常攻撃の3撃ごとに、命中した敵を燃やす。'},
+ {id:'frostblade',name:'氷晶の剣',price:450,icon:'❄',color:'#adf1ff',power:1.12,speed:1.05,reach:1.12,element:'氷',extra:'3撃ごとに減速',desc:'広めの刃。3撃ごとに敵の移動を遅くする。'},
+ {id:'echo',name:'雷鳴の双剣',price:650,icon:'ϟ',color:'#d7beff',power:1.1,speed:1.2,reach:1,element:'雷',extra:'4撃ごとに追撃',desc:'4撃ごとに、近くの別の敵へ雷が跳ぶ。'}
 ];
 function getWeapon(id=game.weapon||'traveler'){return WEAPONS.find(w=>w.id===id)||WEAPONS[0]}
 function applyWeapon(){const w=getWeapon();p.power*=w.power;p.autoInterval/=w.speed;p.reach*=w.reach;game.weaponHits=0}
@@ -21,12 +21,12 @@ function openDarkReveal(done){
 }
 function prepareExitWalk(){
  if(game.mode!=='roomEquipment'||game.active||game.pendingChoices||game.relicOffers?.length)return false;
- game.mode='play';game.phase='exitWalk';game.campReady=false;closeModal();resetInput();banner('前へ進もう','上の光る門を越えると、次の区画へ。',1.6);updateUI();return true;
+ game.mode='play';game.phase='exitWalk';game.campReady=false;p.rollTime=0;p.swing=0;inputBuffer=null;closeModal();resetInput();banner('前へ進もう','上の光る門を越えると、次の区画へ。',1.6);updateUI();return true;
 }
 function walkToNextRoom(dt){
  const input=movement();if(Math.hypot(input.x,input.y)>.1)p.face=norm(input.x,input.y);
- p.swing=Math.max(0,p.swing-dt);p.cd.roll=Math.max(0,p.cd.roll-dt);p.invuln=Math.max(0,p.invuln-dt);p.autoCd-=dt;if((keys.has('Shift')||p.rollHeld)&&p.cd.roll<=0)action('roll');if(p.rollTime>0){p.rollTime=Math.max(0,p.rollTime-dt);moveActor(p,p.rollDir.x*470*dt,p.rollDir.y*470*dt)}else moveActor(p,input.x*225*dt,input.y*225*dt);if(p.autoCd<=0)autoAttack();updateFieldItems(dt);drops=drops.filter(d=>!d.collected);
- if(p.y<STAGES[game.stage].y-228&&Math.abs(p.x-380)<75){game.phase='roomRest';advanceRoom();return}updateUI();
+ moveActor(p,input.x*225*dt,input.y*225*dt);p.autoCd-=dt;if(p.autoCd<=0)autoAttack();updateFieldItems(dt);drops=drops.filter(d=>!d.collected);
+ if(p.y<=STAGES[game.stage].y-195&&Math.abs(p.x-380)<=60){game.phase='roomRest';advanceRoom();return}updateUI();
 }
 function openSupplyBarrel(t){
  if(t.broken)return;t.broken=true;particle(t.x,t.y,'#edce94',10,130);
@@ -38,7 +38,7 @@ function explodeLooseBomb(d){
  hitExplosives(q=>distance(q,d)<145,10);hostileShots=hostileShots.filter(b=>distance(b,d)>145);particle(d.x,d.y,'#ffc68a',24,220);if(!reduced)shake=Math.max(shake,4);
 }
 function updateFieldItems(dt){
- for(const d of drops){if(d.collected)continue;if(d.type==='fieldPotion'){d.age+=dt;if(distance(p,d)<45&&(game.fieldPotions||0)<3){d.collected=true;game.roomPotionCollected=true;game.fieldPotions=Math.min(3,(game.fieldPotions||0)+1);floating(p.x,p.y-100,'回復薬を確保 · '+controlLabel('potion')+'で使える','#baf5ca',true)}}else if(d.type==='bomb'){d.age+=dt;if(Number.isFinite(d.fuse)){d.fuse-=dt;if(d.fuse<=0)explodeLooseBomb(d)}}}
+ for(const d of drops){if(d.collected)continue;if(d.type==='fieldPotion'){d.age+=dt;if(distance(p,d)<45&&(game.fieldPotions||0)>=3&&!d.fullNotified){d.fullNotified=true;banner('ポーションは最大3個','これ以上持てません。Hで使うと拾えます。',2);floating(p.x,p.y-95,'所持上限 · 3 / 3','#ffe0a1',true)}if(distance(p,d)>70)d.fullNotified=false;if(distance(p,d)<45&&(game.fieldPotions||0)<3){d.collected=true;game.roomPotionCollected=true;game.fieldPotions=Math.min(3,(game.fieldPotions||0)+1);floating(p.x,p.y-100,'回復薬を確保 · '+controlLabel('potion')+'で使える','#baf5ca',true)}}else if(d.type==='bomb'){d.age+=dt;if(Number.isFinite(d.fuse)){d.fuse-=dt;if(d.fuse<=0)explodeLooseBomb(d)}}}
 }
 function useFieldPotion(){return useCombatPotion()}
 
@@ -49,10 +49,11 @@ function configureRealmBoss(e,index){
 }
 function interceptBossDefeat(e){
  if(!game.singleStage||e.kind!=='boss'||e.form!=='demon'||e.awakened)return false;
- e.awakened=true;e.hp=e.maxHp=Math.round(REGIONS[4].hp*.8);e.r=56;e.bossPhase=2;e.state='revive';e.timer=1.8;e.cycle='assault';e.cycleTime=8;clearHostiles();e.burn=e.bleed=e.frost=0;
+ e.awakened=true;e.hp=e.maxHp=Math.round(REGIONS[4].hp*.8);e.r=64;Object.assign(e,safePoint(e.x,e.y,e.r));e.bossPhase=2;e.state='revive';e.timer=1.8;e.cycle='assault';e.cycleTime=8;clearHostiles();e.burn=e.bleed=e.frost=0;
  banner('魔王、復活！','巨大化した！ 猛攻を避け、核心露出を狙え。',2);particle(e.x,e.y,'#d597ff',44,220);return true;
 }
 function updateRealmBoss(e,dt){
+ e.demonCast=Math.max(0,(e.demonCast||0)-dt);
  if(e.form!=='demon'||!e.awakened)return repositionBoss(e,dt);
  if(e.state==='revive'){e.timer-=dt;if(e.timer<=0){e.state='chase';e.cooldown=.1}return true}
  e.cycleTime-=dt;if(e.cycleTime<=0){clearHostiles();e.barrageClock=.5;e.leapFrom=e.leapTo=null;e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?8:5;e.state=e.cycle==='exposed'?'recover':'chase';e.timer=e.cycleTime;e.exposed=e.cycle==='exposed'?e.cycleTime:0;e.cooldown=.15;banner(e.cycle==='exposed'?'核心露出！ 今が攻撃のチャンス':'魔王の猛攻！ 回避に集中', '',1)}
@@ -68,7 +69,7 @@ function realmBossWarning(e,warn,target,dir){
  warn('fan',e.x,e.y,0,.95*pace,{length:620,spread:.75,rays:7,attack:'fan'});
 }
 function drawCreatureBoss(e,t){
- ctx.save();if(e.awakened)ctx.scale(1.4,1.4);const color=e.flash>0?'#fff4d9':({beast:'#699c86',monster:'#537faa',dragon:'#b95649',demon:'#704b9c'}[e.form]);const edge=e.form==='demon'?'#d5a6ff':'#e8c7a0';
+ ctx.save();if(e.awakened)ctx.scale(1.65,1.65);const color=e.flash>0?'#fff4d9':({beast:'#699c86',monster:'#537faa',dragon:'#b95649',demon:'#704b9c'}[e.form]);const edge=e.form==='demon'?'#d5a6ff':'#e8c7a0';
  if(e.form==='dragon'||e.form==='demon'){const flap=Math.sin(t*4+e.phase)*12;for(const s of [-1,1])path([[s*19,-72],[s*72,-138+flap],[s*112,-63],[s*66,-80],[s*44,-30]],e.form==='dragon'?'#762f45':'#36274f',edge)}
  if(e.form==='monster'){for(let i=0;i<6;i++){const x=(i-2.5)*16;ctx.strokeStyle=color;ctx.lineWidth=12;ctx.beginPath();ctx.moveTo(x,-30);ctx.quadraticCurveTo(x+Math.sin(t*3+i)*25,0,x*1.4,8);ctx.stroke()}}
  else for(const s of [-1,1]){rounded(s<0?-37:15,-38,22,44,8,color,edge);path([[s*25,-1],[s*41,8],[s*12,8]],'#e7d4b2')}
@@ -76,6 +77,7 @@ function drawCreatureBoss(e,t){
  for(const s of [-1,1]){path([[s*18,-109],[s*40,-143],[s*29,-100]],'#e3c39d',edge);ellipse(s*12,-91,5,3,e.cycle==='exposed'?'#aaffef':'#ffda92');path([[s*23,-59],[s*58,-73],[s*66,-19],[s*49,-12],[s*39,-44]],color,edge)}
  path([[-14,-73],[0,-65],[14,-73],[9,-58],[-9,-58]],'#202134');for(const s of [-1,1])path([[s*9,-70],[s*7,-58],[s*3,-70]],'#fff1cd');
  if(e.form==='beast'){for(const s of [-1,1])path([[s*24,-107],[s*42,-129],[s*44,-157],[s*52,-148],[s*51,-127],[s*68,-137],[s*61,-114]],'#c9cca4',edge)}
+ if(e.form==='demon'&&e.demonCast>0){for(const side of [-1,1]){ctx.strokeStyle=color;ctx.lineWidth=15;ctx.beginPath();ctx.moveTo(side*28,-65);ctx.lineTo(side*52,-111);ctx.stroke();ellipse(side*52,-118,12,15,'#e3acff')}ellipse(0,-75,12+Math.sin(t*18)*3,10,'#ffe3b9')}
  if(e.form==='demon'){const glow=e.awakened&&e.cycle==='exposed'?'#b2ffee':'#d398ff';ctx.shadowBlur=reduced?0:18;ctx.shadowColor=glow;path([[0,-66],[12,-49],[0,-31],[-12,-49]],glow,'#f6e2ff');ctx.shadowBlur=0;if(e.awakened&&e.cycle==='assault'){ctx.strokeStyle='#d69fff';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,-54,57,85,0,0,Math.PI*2);ctx.stroke()}}
  ctx.restore();
 }

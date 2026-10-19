@@ -5,7 +5,7 @@ function useCombatPotion(){
  for(const [kind,r,life]of [['nova',95,.6],['sigil',65,1]])effects.push({kind,x:p.x,y:p.y,r,color:'#aaffd6',life,max:life});particle(p.x,p.y,'#baffdf',32,160);floating(p.x,p.y-100,'HP +'+Math.round(hp)+' / MP +'+Math.round(mp),'#c5ffe1',true);tone(880,.25,'sine',.04);game.healGlow=.8;updateUI();if(game.mode==='roomEquipment')roomEquipment();return true;
 }
 function updatePotionUI(){
- if(!game.singleStage)return;const b=$('combatPotion');b.setAttribute('aria-label','回復薬 '+controlLabel('potion'));b.hidden=game.mode!=='play'||!(game.fieldPotions>0);b.disabled=(game.potionLock||0)>0||p.hp>=p.maxHp&&p.mp>=p.maxMp||game.phase==='bossIntro';b.innerHTML='<kbd>'+controlLabel('potion')+'</kbd><b>回復 ×'+(game.fieldPotions||0)+'</b><small>HP・MP</small>';b.classList.toggle('needed',p.hp<p.maxHp*.45);document.querySelector('.scene').classList.toggle('potion-glow',!reduced&&preferences.flashes&&(game.healGlow||0)>0);
+ if(!game.singleStage)return;const b=$('combatPotion');b.setAttribute('aria-label','回復薬 '+controlLabel('potion'));b.hidden=game.mode!=='play'||!(game.fieldPotions>0);b.disabled=(game.potionLock||0)>0||p.hp>=p.maxHp&&p.mp>=p.maxMp||game.phase==='bossIntro'||p.cutin>0;b.title=p.hp>=p.maxHp&&p.mp>=p.maxMp?'HP・MPは満タン':'HP・MPを回復';b.innerHTML='<kbd>'+controlLabel('potion')+'</kbd><span class="potion-count"><i class="potion-bottle" aria-hidden="true"></i><b>×'+(game.fieldPotions||0)+'</b></span>';b.classList.toggle('needed',p.hp<p.maxHp*.45);document.querySelector('.scene').classList.toggle('potion-glow',!reduced&&preferences.flashes&&(game.healGlow||0)>0);
 }
 function confirmDataReset(){
  if(game.mode!=='settings')return;game.mode='resetConfirm';openModal('<h2>冒険データを初期化しますか？</h2><p>ステージ解放・技・剣・所持金・記録・中断中の冒険を削除し、最初から始めます。元には戻せません。<br>音量と操作設定は残ります。</p><button id="cancelReset" class="cta">戻る</button><button id="confirmReset" class="text-button">冒険データを削除する</button>',false,'#cancelReset');$('cancelReset').onclick=()=>{game.mode='settings';openSettings()};$('confirmReset').onclick=resetGameData;
@@ -16,7 +16,7 @@ function resetGameData(){
  for(const k of Object.keys(meta))delete meta[k];for(const k of ['runs','wins','perfects','combo','score','bestTime'])meta[k]=0;reset();openStageSelect();return true;
 }
 function chooseNewEnemy(){
- if(game.room===1)return runRandom()<.9?'slime':'bat';
+ if(game.room===1)return runRandom()<.8?'slime':'bat';
  if(!game.goldSlimePlanned&&runRandom()<.0015){game.goldSlimePlanned=true;return 'goldSlime'}
  if(runRandom()<.18)return ['harpy','beetle','wraith'][Math.floor(runRandom()*3)];return null;
 }
@@ -39,7 +39,7 @@ function demonBarrage(e,dt){
  else if(pattern===1){warn('circle',p.x,p.y,112,1.4,{barrage:'meteor',atk:23});for(const s of [-1,1])warn('circle',clamp(p.x+s*195,120,640),clampPlayerY(p.y-120),72,1.7,{barrage:'meteor',atk:17});banner('巨星落下','大きな影から離れよう',1)}
  else{for(let i=0;i<3;i++)warn('line',i%2?670:90,center-90+i*140,0,1+i*.3,{dir:{x:i%2?-1:1,y:0},length:580,width:58,barrage:'sweep',atk:15});banner('冥界の奔流','横切る炎のすき間へ',1)}
 }
-function resolveBarrage(w){
+function resolveBarrage(w){hitExplosives(q=>warningContains(w,q,16),w.atk);
  if(warningContains(w)&&!w.perfectUsed){game.hitSource=w.barrage==='meteor'?'着地':'範囲攻撃';takeHit(w.atk,w.x,w.y)}effects.push({...w,shape:w.kind,kind:'telegraphHit',life:w.barrage==='breath'?.6:.4,max:w.barrage==='breath'?.6:.4});
  if(w.barrage==='breath'){effects.push({...w,kind:'demonFlame',life:.85,max:.85});hazards.push({...w,life:.8,tick:.3,protected:w.perfectUsed,atk:10})}if(w.barrage==='meteor'){effects.push({kind:'nova',x:w.x,y:w.y,r:w.r,color:'#e8adff',life:.65,max:.65});particle(w.x,w.y,'#dfb3ff',22,240);if(!reduced&&preferences.shake)shake=Math.max(shake,4)}
 }

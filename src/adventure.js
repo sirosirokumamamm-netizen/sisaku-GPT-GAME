@@ -30,20 +30,20 @@ function walkToNextRoom(dt){
 }
 function openSupplyBarrel(t){
  if(t.broken)return;t.broken=true;particle(t.x,t.y,'#edce94',10,130);
- drops.push({type:t.content==='potion'?'fieldPotion':'bomb',x:t.x,y:t.y,vx:0,vy:0,age:0,value:1});floating(t.x,t.y-50,t.content==='potion'?'回復薬を発見':'爆薬を発見',t.content==='potion'?'#aff2c5':'#ffc08c',true);
+ drops.push({type:t.content==='potion'?'fieldPotion':'bomb',x:t.x,y:t.y,vx:0,vy:0,age:0,value:1,...(t.content==='bomb'?{fuse:.25}:{})});floating(t.x,t.y-50,t.content==='potion'?'回復薬を発見':'爆薬を発見',t.content==='potion'?'#aff2c5':'#ffc08c',true);
 }
 function explodeLooseBomb(d){
  if(d.collected)return;d.collected=true;game.barrels++;effects.push({kind:'nova',x:d.x,y:d.y,r:145,color:'#ffba72',life:.4,max:.4});
  for(const e of enemies)if(e.hp>0&&distance(e,d)<145+e.r)hurtEnemy(e,60+game.region*12,true,'#ffd39b',true);
- hostileShots=hostileShots.filter(b=>distance(b,d)>145);particle(d.x,d.y,'#ffc68a',24,220);if(!reduced)shake=Math.max(shake,4);
+ hitExplosives(q=>distance(q,d)<145,10);hostileShots=hostileShots.filter(b=>distance(b,d)>145);particle(d.x,d.y,'#ffc68a',24,220);if(!reduced)shake=Math.max(shake,4);
 }
 function updateFieldItems(dt){
- for(const d of drops){if(d.collected)continue;if(d.type==='fieldPotion'){d.age+=dt;if(distance(p,d)<45&&(game.fieldPotions||0)<3){d.collected=true;game.fieldPotions=Math.min(3,(game.fieldPotions||0)+1);floating(p.x,p.y-100,'回復薬を確保 · '+controlLabel('potion')+'で使える','#baf5ca',true)}}else if(d.type==='bomb'){d.age+=dt;if(d.age>.25&&enemies.some(e=>e.hp>0&&distance(e,d)<80)){d.fuse=(d.fuse??.55)-dt;if(d.fuse<=0)explodeLooseBomb(d)}}}
+ for(const d of drops){if(d.collected)continue;if(d.type==='fieldPotion'){d.age+=dt;if(distance(p,d)<45&&(game.fieldPotions||0)<3){d.collected=true;game.roomPotionCollected=true;game.fieldPotions=Math.min(3,(game.fieldPotions||0)+1);floating(p.x,p.y-100,'回復薬を確保 · '+controlLabel('potion')+'で使える','#baf5ca',true)}}else if(d.type==='bomb'){d.age+=dt;if(Number.isFinite(d.fuse)){d.fuse-=dt;if(d.fuse<=0)explodeLooseBomb(d)}}}
 }
 function useFieldPotion(){return useCombatPotion()}
 
 function configureRealmBoss(e,index){
- if(e.kind!=='boss')return;e.form=['beast','monster','dragon','sentinel','demon'][game.region];e.speed=135+game.region*5;e.pattern=4;e.atk=12+game.region*2;e.cooldown=.5+index*.8;
+ if(e.kind!=='boss')return;e.form=['beast','monster','dragon','sentinel','demon'][game.region];e.speed=135+game.region*5;e.pattern=4;e.atk=14+game.region*2;e.cooldown=.5+index*.8;
  if(game.region===3){e.name=index?'月影の守護獣':'星核の守護者';e.form=index?'beast':'sentinel';e.hp=e.maxHp=Math.round(REGIONS[3].hp*.58);e.r=36}
  e.awakened=false;e.cycle='assault';e.cycleTime=8;
 }
@@ -53,15 +53,15 @@ function interceptBossDefeat(e){
  banner('魔王、復活！','巨大化した！ 猛攻を避け、核心露出を狙え。',2);particle(e.x,e.y,'#d597ff',44,220);return true;
 }
 function updateRealmBoss(e,dt){
- if(e.form!=='demon'||!e.awakened)return false;
+ if(e.form!=='demon'||!e.awakened)return repositionBoss(e,dt);
  if(e.state==='revive'){e.timer-=dt;if(e.timer<=0){e.state='chase';e.cooldown=.1}return true}
  e.cycleTime-=dt;if(e.cycleTime<=0){clearHostiles();e.barrageClock=.5;e.leapFrom=e.leapTo=null;e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?8:5;e.state=e.cycle==='exposed'?'recover':'chase';e.timer=e.cycleTime;e.exposed=e.cycle==='exposed'?e.cycleTime:0;e.cooldown=.15;banner(e.cycle==='exposed'?'核心露出！ 今が攻撃のチャンス':'魔王の猛攻！ 回避に集中', '',1)}
- if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}demonBarrage(e,dt);e.state='chase';const direction=norm(380-e.x,STAGES[game.stage].y-110-e.y);moveActor(e,direction.x*65*dt,direction.y*65*dt);return true;
+ if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}demonBarrage(e,dt);e.state='chase';e.roamClock=(e.roamClock||0)-dt;if(e.roamClock<=0){e.roamClock=2.5;e.roamIndex=((e.roamIndex||0)+1)%4;const spots=[[190,-70],[560,70],[210,230],[550,240]],spot=spots[e.roamIndex];e.roamTarget=safePoint(spot[0],STAGES[game.stage].y+spot[1],e.r)}const direction=routeClear(e,e.roamTarget,e.r)?norm(e.roamTarget.x-e.x,e.roamTarget.y-e.y):routeDirection(e,e.roamTarget);moveActor(e,direction.x*155*dt,direction.y*155*dt);return true;
 }
 function realmBossWarning(e,warn,target,dir){
  const count=e.pattern++,phase=e.bossPhase===2,pace=e.form==='demon'&&e.awakened?.9:1,pattern=count%(phase?4:3);
- if(pattern===0||pattern===3){const point=safePoint(clamp(target.x,145,615),clamp(target.y,STAGES[game.stage].y-175,STAGES[game.stage].y+300),e.r);warn('circle',point.x,point.y,e.form==='beast'?90:115,1.05*pace,{attack:'leap'});e.leapFrom={x:e.x,y:e.y};e.leapTo=point;return}
- if(pattern===1){warn('line',e.x,e.y,0,.9*pace,{length:Math.min(470,distance(e,target)+140),width:e.form==='dragon'?140:105,attack:'bossDash'});return}
+ if(pattern===0||pattern===3){const point=safePoint(clamp(target.x,125,635),clamp(target.y,STAGES[game.stage].y-175,STAGES[game.stage].y+305),e.r);warn('circle',point.x,point.y,e.form==='beast'?105:120,1.05*pace,{attack:'leap'});e.leapFrom={x:e.x,y:e.y};e.leapTo=point;return}
+ if(pattern===1){warn('line',e.x,e.y,0,.9*pace,{length:Math.min(470,Math.max(330,distance(e,target)+140)),width:e.form==='dragon'?140:105,attack:'bossDash'});return}
  if(e.form==='dragon'){warn('fan',e.x,e.y,0,1.05,{length:600,spread:.8,rays:7,attack:'fan'});return}
  if(e.form==='beast'){warn('ring',e.x,e.y,210,.95,{inner:80,attack:'shockwave'});return}
  if(e.form==='monster'){warn('circle',target.x,target.y,115,1.05,{attack:'stomp'});return}
@@ -89,4 +89,18 @@ function drawBossBars(){
 }
 function drawDarkFloor(t){
  if(!game.singleStage||game.region!==4)return;const y=STAGES[game.stage].y;ctx.save();ctx.fillStyle='#29193655';ctx.fillRect(65,y-230,630,610);ctx.strokeStyle='#b28bc333';ctx.lineWidth=2;for(const side of [-1,1])for(let i=0;i<4;i++){const x=380+side*(170+i*23),yy=y-130+i*116;ctx.beginPath();ctx.moveTo(x,yy);ctx.lineTo(x+side*34,yy+28);ctx.lineTo(x+side*14,yy+57);ctx.lineTo(x+side*48,yy+90);ctx.stroke();ellipse(x,yy-10,2,3,'#b89bdc66')}ctx.restore();
+}
+function scatterSupplies(){
+ terrain=terrain.filter(t=>t.kind!=='barrel');const y=STAGES[game.stage].y,slots=shuffle([[-1,-1],[1,-1],[-1,1],[1,1]]),placed=[];
+ for(let i=0;i<4;i++){let q;for(let attempt=0;attempt<100;attempt++){const [sx,sy]=slots[i],candidate={x:380+sx*runRange(115,235),y:y+(sy<0?runRange(-140,0):runRange(130,290))};if(canStand(candidate.x,candidate.y,22)&&placed.every(a=>distance(a,candidate)>105)){q=candidate;break}}q??=safePoint(380+slots[i][0]*190,y+(slots[i][1]<0?-65:210),22);placed.push(q);terrain.push({kind:'barrel',...q,r:16,solid:false,broken:i===0&&!!game.roomPotionCollected,content:i===0?'potion':'bomb'})}
+}
+function hitExplosives(contains,damage=1){
+ if(!game.singleStage||damage<1)return;for(const t of terrain)if(t.kind==='barrel'&&t.content==='bomb'&&!t.broken&&contains(t))openSupplyBarrel(t);
+ for(const d of drops)if(d.type==='bomb'&&!d.collected&&contains(d))d.fuse=Math.min(d.fuse??Infinity,.22);
+}
+function segmentHits(a,b,q,r){const dx=b.x-a.x,dy=b.y-a.y,l=dx*dx+dy*dy,u=l?clamp(((q.x-a.x)*dx+(q.y-a.y)*dy)/l,0,1):0;return Math.hypot(q.x-a.x-dx*u,q.y-a.y-dy*u)<r}
+function repositionBoss(e,dt){
+ if(e.state==='recover'&&e.timer<=.16){const y=STAGES[game.stage].y,points=[[185,-70],[565,60],[215,255],[535,250],[380,-95]].map(([x,dy])=>safePoint(x,y+dy,e.r));e.roamIndex=((e.roamIndex||0)+2)%points.length;e.roamTarget=points[e.roamIndex];if(distance(e,e.roamTarget)<200)e.roamTarget=points[(e.roamIndex+2)%points.length];e.state='reposition';e.roamTime=1.8;e.exposed=0;}
+ if(e.state!=='reposition')return false;e.roamTime-=dt;const n=routeClear(e,e.roamTarget,e.r)?norm(e.roamTarget.x-e.x,e.roamTarget.y-e.y):routeDirection(e,e.roamTarget);moveActor(e,n.x*285*dt,n.y*285*dt);e.facing=n;
+ if(distance(e,e.roamTarget)<25||e.roamTime<=0){e.state='chase';e.cooldown=.12}return true;
 }

@@ -62,7 +62,7 @@ function buySupply(id){refreshCampaign();const item=SUPPLIES[id];if(game.mode!==
 function startStageAttempt(index,seed){
  refreshCampaign();if(!availableStage(index)||campaign.pending||!['preparation','stageResult','stageSelect'].includes(game.mode))return false;
  const n=cloneCampaign(),carry=n.carry,prepared={...n.prepared};n.selected=index;n.suspended=null;for(const id of ['hp','mp'])if(prepared[id]&&n.stock[id]>0){n.stock[id]--;n.prepared[id]=false}else prepared[id]=false;saveCampaign(n);
- selectedStyle=n.style;reset(seed);game.singleStage=true;game.roomRoute=makeRoomRoute();game.relic=null;game.relicOffers=[];game.weapon=campaign.weapon;game.fieldPotions=0;game.restPotionUsed=false;game.region=index;game.stage=REGIONS[index].stage;game.room=1;game.waves=2;game.attemptId=Date.now().toString(36)+'-'+game.seed.toString(36)+'-'+Math.random().toString(36).slice(2,8);game.settled=false;game.damageSources={};game.roomEntryKills=0;game.bossDamage=0;game.nextAttackAt=0;game.draftDeferred=0;game.targetId=null;game.restHealing=0;
+ selectedStyle=n.style;reset(seed);game.singleStage=true;game.roomRoute=makeRoomRoute();game.relic=null;game.relicOffers=[];game.weapon=campaign.weapon;game.fieldPotions=0;game.roomPotionCollected=false;game.restPotionUsed=false;game.region=index;game.stage=REGIONS[index].stage;game.room=1;game.waves=2;game.attemptId=Date.now().toString(36)+'-'+game.seed.toString(36)+'-'+Math.random().toString(36).slice(2,8);game.settled=false;game.damageSources={};game.roomEntryKills=0;game.bossDamage=0;game.nextAttackAt=0;game.draftDeferred=0;game.targetId=null;game.restHealing=0;
  applyStyle();p.x=380;p.y=STAGES[game.stage].y+145;p.maxHp+=index*6+(prepared.hp?24:0);p.maxMp+=Math.floor(index/2)+(prepared.mp?10:0);p.hp=p.maxHp;p.mp=p.maxMp;p.power=1+index*.08;p.magicPower=p.power;p.xpNext=18;p.potions=0;p.ultimate=20;applyWeapon();
  if(carry&&RARE_IDS.includes(carry)){p.learned[carry]=1;const s=getSkill(carry);if(isManualSkill(s))p.loadout[1]=carry;else if(s.category==='passive')s.apply();else p.autoSkillTimers[carry]=0;}
  game.mode='play';closeModal();buildTerrain();
@@ -76,7 +76,7 @@ function stageResult(win){
 }
 function lossAdvice(){const worst=Object.entries(game.damageSources||{}).sort((a,b)=>b[1]-a[1])[0]?.[0];if(!worst)return game.blocks>8?'盾持ちの正面は硬い。背後か攻撃後を狙おう。':'技で群れをまとめて倒し、成長を重ねよう。';return ({'突進':'突進は進路の横へ。止まった直後に反撃。','弾':'射手は弾の間を抜けて接近すると倒しやすい。','残る炎':'地面に残る炎から離れ、安全な場所で戦おう。','着地':'跳躍の着地点から離れ、着地したら反撃。'})[worst]||'広がる予兆の外へ移動し、発動後に近づこう。'}
 function attackLabel(attack){return ({bossDash:'突進',dash:'突進',leap:'着地',hop:'着地',mine:'残る炎',volley:'弾',fan:'弾'})[attack]||'範囲攻撃'}
-function collectStageGold(){for(const d of drops){if(d.type==='coin')gainGold(d.value);if(d.type==='fieldPotion'&&!d.collected)game.fieldPotions=Math.min(3,(game.fieldPotions||0)+1)}drops=[]}
+function collectStageGold(){for(const d of drops)if(d.type==='coin'&&!d.collected)gainGold(d.value);drops=drops.filter(d=>['fieldPotion','bomb'].includes(d.type)&&!d.collected)}
 function chestOffers(first){
  const signature=first?shuffle(REGION_SIGNATURES[game.region].filter(id=>!campaign.rares.includes(id))).slice(0,2):[];
  const pool=shuffle(RARE_IDS.filter(id=>!campaign.rares.includes(id)&&!signature.includes(id)));
@@ -141,7 +141,7 @@ function finishRoom(){
 }
 function advanceRoom(){
  if(!game.singleStage||game.mode!=='play'||game.phase!=='roomRest'||game.active)return false;if(game.pendingChoices>0){game.draftDeferred=0;openDraft();return false}
- if(game.relicOffers?.length){roomEquipment();return false}game.restPotionUsed=false;game.room++;game.roomEntryKills=game.kills;game.wave=0;game.waves=game.room===5?1:2;game.phase='travel';game.campReady=false;game.bossPrepared=false;game.bossFallen=false;game.stageGoalDone=false;game.nextAttackAt=game.time+.5;game.spawnPlan=[];game.waveQueued=false;enemies=[];p.x=380;p.y=STAGES[game.stage].y+145;buildTerrain();makeDecor();resetInput();cam={x:p.x,y:p.y-view.h/(view.scale*CAMERA.depth)*((view.w<600?CAMERA.mobileAnchor:CAMERA.desktopAnchor)-.5)};encounter();updateUI();return true;
+ if(game.relicOffers?.length){roomEquipment();return false}game.restPotionUsed=false;game.roomPotionCollected=false;game.room++;game.roomEntryKills=game.kills;game.wave=0;game.waves=game.room===5?1:2;game.phase='travel';game.campReady=false;game.bossPrepared=false;game.bossFallen=false;game.stageGoalDone=false;game.nextAttackAt=game.time+.5;game.spawnPlan=[];game.waveQueued=false;enemies=[];drops=[];p.x=380;p.y=STAGES[game.stage].y+145;buildTerrain();makeDecor();resetInput();cam={x:p.x,y:p.y-view.h/(view.scale*CAMERA.depth)*((view.w<600?CAMERA.mobileAnchor:CAMERA.desktopAnchor)-.5)};encounter();updateUI();return true;
 }
 function roomEquipment(focusSlot=null){
  const previousScroll=$('modal').scrollTop;
@@ -153,14 +153,14 @@ function roomEquipment(focusSlot=null){
 }
 function generateRoomTerrain(){
  groundChunks.clear();terrain=[];const y=STAGES[game.stage].y,region=game.region,boss=game.room===5;game.roomLayout=[];
- terrain.push({kind:'wall',x:90,y:y-222,w:210,h:24,solid:true},{kind:'wall',x:460,y:y-222,w:210,h:24,solid:true});
+ if(boss)terrain.push({kind:'water',x:35,y:y-290,w:690,h:85,solid:true});else terrain.push({kind:'wall',x:90,y:y-222,w:210,h:24,solid:true},{kind:'wall',x:460,y:y-222,w:210,h:24,solid:true});
  if(region===1){const riverY=y+runRange(-45,50),bridgeWidth=boss?250:190;terrain.push({kind:'water',x:95,y:riverY,w:285-bridgeWidth/2,h:65,solid:true},{kind:'water',x:380+bridgeWidth/2,y:riverY,w:285-bridgeWidth/2,h:65,solid:true},{kind:'bridge',x:380-bridgeWidth/2,y:riverY,w:bridgeWidth,h:65,solid:false})}
  const count=boss?2:region===0?3:5;
  for(let i=0;i<count;i++){let point=null;for(let j=0;j<45;j++){const side=i%2?-1:1,x=380+side*runRange(115,220),yy=y+runRange(-130,220),q={x,y:yy};if(distance(q,p)<95||terrain.some(t=>terrainCollision(x,yy,58,t)))continue;point=q;break}if(!point)continue;const kind=boss&&region<2?'ruin':region>=3?'crystal':region===2&&i===0?'furnace':i%3===0?'ruin':'rock';const item=['ruin','furnace'].includes(kind)?{kind,x:point.x-20,y:point.y-15,w:40,h:40,solid:true}:{kind,...point,r:runRange(22,31),solid:true};terrain.push(item);game.roomLayout.push([kind,Math.round(point.x),Math.round(point.y)]);}
  if(!boss)for(let i=0;i<(region===2?5:2);i++){const q={x:runRange(160,600),y:y+runRange(-110,180)};if(canStand(q.x,q.y,22)&&distance(q,p)>65)terrain.push({kind:'barrel',...q,r:16,solid:false,broken:false})}
  if(region===2)for(const side of [-1,1])terrain.push({kind:'lava',x:380+side*runRange(200,230),y:y+runRange(-80,120),r:runRange(26,42),solid:false});
  if(region===0&&!boss)terrain.push({kind:'shallows',x:runRange(145,235),y:y+runRange(-80,80),r:38,solid:false});
- for(const t of terrain)if(t.kind==='barrel')t.content='bomb';const supply=safePoint(380,y+70,22);terrain.push({kind:'barrel',...supply,r:16,solid:false,broken:false,content:'potion'});if(!terrain.some(t=>t.kind==='barrel'&&t.content==='bomb')){const q=safePoint(240,y+30,22);terrain.push({kind:'barrel',...q,r:16,solid:false,broken:false,content:'bomb'})}
+ scatterSupplies();
  flowCache=null;flowCaches.clear();walkabilityMasks.clear();decals=[];stepClock=0;
 }
 

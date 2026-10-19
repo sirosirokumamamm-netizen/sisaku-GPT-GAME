@@ -24,8 +24,8 @@ function openDarkReveal(done){
  game.mode='darkReveal';game.active=false;openModal('<div class="finale-seal">♜</div><h2>幻の第五世界、出現</h2><p>四つの舞台を越えた剣士へ。<br>闇の世界で、復活する魔王が待っている。</p><button class="cta" id="darkContinue">闇の世界を解放</button>');$('modal').classList.add('finale-reveal-modal');$('darkContinue').onclick=()=>{const n=cloneCampaign();n.darkRevealed=true;saveCampaign(n);done()};
 }
 function prepareExitWalk(){
- if(game.mode!=='roomEquipment'||game.active||game.pendingChoices||game.relicOffers?.length)return false;
- game.mode='play';game.phase='exitWalk';game.campReady=false;p.rollTime=0;p.swing=0;inputBuffer=null;closeModal();resetInput();banner('前へ進もう','上の光る門を越えると、次の区画へ。',1.6);updateUI();return true;
+ if(game.mode!=='roomEquipment'||game.active)return false;
+ game.mode='play';game.phase='exitWalk';game.campReady=false;p.rollTime=0;p.swing=0;inputBuffer=null;closeModal();resetInput();updateUI();return true;
 }
 function walkToNextRoom(dt){
  const input=movement();if(Math.hypot(input.x,input.y)>.1)p.face=norm(input.x,input.y);
@@ -42,7 +42,7 @@ function explodeLooseBomb(d){
  hitExplosives(q=>distance(q,d)<145,10);hostileShots=hostileShots.filter(b=>distance(b,d)>145);particle(d.x,d.y,'#ffc68a',24,220);if(!reduced)shake=Math.max(shake,4);
 }
 function updateFieldItems(dt){
- for(const d of drops){if(d.collected)continue;if(d.type==='fieldPotion'){d.age+=dt;if(distance(p,d)<45&&(game.fieldPotions||0)>=3&&!d.fullNotified){d.fullNotified=true;banner('ポーションは最大3個','これ以上持てません。Hで使うと拾えます。',2);floating(p.x,p.y-95,'所持上限 · 3 / 3','#ffe0a1',true)}if(distance(p,d)>70)d.fullNotified=false;if(distance(p,d)<45&&(game.fieldPotions||0)<3){d.collected=true;game.roomPotionCollected=true;game.fieldPotions=Math.min(3,(game.fieldPotions||0)+1);floating(p.x,p.y-100,'回復薬を確保 · '+controlLabel('potion')+'で使える','#baf5ca',true)}}else if(d.type==='bomb'){d.age+=dt;if(Number.isFinite(d.fuse)){d.fuse-=dt;if(d.fuse<=0)explodeLooseBomb(d)}}}
+ for(const d of drops){if(d.collected)continue;if(d.type==='fieldPotion'){d.age+=dt;if(distance(p,d)<45&&(game.fieldPotions||0)>=3&&!d.fullNotified){d.fullNotified=true;banner('これ以上ポーションは持てない','通常は3個まで · 回復ボタンで使えます',2);floating(p.x,p.y-95,'ポーション ×'+game.fieldPotions,'#ffe0a1',true)}if(distance(p,d)>70)d.fullNotified=false;if(distance(p,d)<45&&(game.fieldPotions||0)<3){d.collected=true;game.roomPotionCollected=true;game.fieldPotions=Math.min(3,(game.fieldPotions||0)+1);acquisitionToast('ポーション獲得！ ×'+game.fieldPotions,'#afffe0')}}else if(d.type==='bomb'){d.age+=dt;if(Number.isFinite(d.fuse)){d.fuse-=dt;if(d.fuse<=0)explodeLooseBomb(d)}}}
 }
 function useFieldPotion(){return useCombatPotion()}
 
@@ -53,15 +53,15 @@ function configureRealmBoss(e,index){
 }
 function interceptBossDefeat(e){
  if(!game.singleStage||e.kind!=='boss'||e.form!=='demon'||e.awakened)return false;
- const before={...e,facing:{...e.facing}};e.awakened=true;e.hp=e.maxHp=Math.round(REGIONS[4].hp*.8);e.r=64;Object.assign(e,safePoint(e.x,e.y,e.r));e.bossPhase=2;e.state='revive';e.timer=2.8;startEpicEvent('変貌','深淵の王、顕現','#d69aff',2.8);e.cycle='assault';e.cycleTime=8;clearHostiles();e.burn=e.bleed=e.frost=0;
- beginBossScene('transform',e,before);banner('魔王、復活！','巨大化した！ 猛攻を避け、核心露出を狙え。',2);particle(e.x,e.y,'#d597ff',44,220);return true;
+ const before={...e,facing:{...e.facing}};e.awakened=true;e.hp=Math.round(e.maxHp*.75);e.r=72;Object.assign(e,safePoint(e.x,e.y,e.r));e.bossPhase=2;e.state='revive';e.timer=2.8;startEpicEvent('変貌','深淵の王、顕現','#d69aff',2.8);e.cycle='assault';e.cycleTime=8;clearHostiles();e.burn=e.bleed=e.frost=0;
+ beginBossScene('transform',e,before);grantPhasePotion(e);banner('魔王、復活！','巨大化した！ 猛攻を避け、核心露出を狙え。',2);particle(e.x,e.y,'#d597ff',44,220);return true;
 }
 function updateRealmBoss(e,dt){
  e.demonCast=Math.max(0,(e.demonCast||0)-dt);if(e.form==='god')return updateGod(e,dt);
  if(e.form!=='demon'||!e.awakened)return repositionBoss(e,dt);
  if(e.state==='revive'){e.timer-=dt;if(e.timer<=0){e.state='chase';e.cooldown=.1}return true}
  e.cycleTime-=dt;if(e.cycleTime<=0){clearHostiles();e.barrageClock=.5;e.leapFrom=e.leapTo=null;e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?8:5;e.state=e.cycle==='exposed'?'recover':'chase';e.timer=e.cycleTime;e.exposed=e.cycle==='exposed'?e.cycleTime:0;e.cooldown=.15;banner(e.cycle==='exposed'?'核心露出！ 今が攻撃のチャンス':'魔王の猛攻！ 回避に集中', '',1)}
- if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}demonBarrage(e,dt);e.state='chase';e.roamClock=(e.roamClock||0)-dt;if(e.roamClock<=0){e.roamClock=2.5;e.roamIndex=((e.roamIndex||0)+1)%4;const spots=[[190,-70],[560,70],[210,230],[550,240]],spot=spots[e.roamIndex];e.roamTarget=safePoint(spot[0],STAGES[game.stage].y+spot[1],e.r)}const direction=routeClear(e,e.roamTarget,e.r)?norm(e.roamTarget.x-e.x,e.roamTarget.y-e.y):routeDirection(e,e.roamTarget);moveActor(e,direction.x*155*dt,direction.y*155*dt);return true;
+ if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}demonBarrage(e,dt);e.state='chase';roamMythicBoss(e,dt,225);return true;
 }
 function realmBossWarning(e,warn,target,dir){
  const count=e.pattern++,phase=e.bossPhase===2,pace=e.form==='demon'&&e.awakened?.9:1,pattern=count%(phase?4:3);
@@ -92,7 +92,7 @@ function drawRoomGate(t){
 }
 function drawBossBars(){
  const bosses=enemies.filter(e=>e.kind==='boss'&&e.hp>0);bosses.forEach((boss,i)=>{const w=Math.min(view.w-44,540),x=(view.w-w)/2,y=(view.w<600?144:138)+([...AUTO_IDS].some(id=>p.learned[id])?27:0)+i*38;
- const invulnerable=boss.form==='god'&&boss.ward>0||boss.awakened&&(boss.cycle==='assault'||boss.state==='revive'),color=invulnerable?'#c298ef':boss.exposed>0?'#93ffe1':boss.bossPhase===2?'#ffad81':'#c4b5ff';ctx.save();ctx.shadowColor=color;ctx.shadowBlur=reduced?0:10;ctx.fillStyle='#162338db';ctx.fillRect(x,y,w,9);ctx.fillStyle=color;ctx.fillRect(x,y,w*Math.max(0,boss.hp/boss.maxHp),9);ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff1dc';const phase=boss.form==='god'?(boss.ward>0?'神の障壁 · 攻撃無効 '+Math.ceil(boss.cycleTime)+'秒':'障壁消失 · 攻撃！ '+Math.ceil(boss.cycleTime)+'秒'):boss.awakened?(boss.state==='revive'?'復活・巨大化':invulnerable?'無敵 · 回避に集中 '+Math.ceil(boss.cycleTime)+'秒':'核心露出 · 攻撃！ '+Math.ceil(boss.cycleTime)+'秒'):boss.exposed>0?'反撃の隙！':boss.bossPhase===2?'本性解放':'';ctx.fillText('BOSS · '+boss.name+(phase?' · '+phase:''),view.w/2,y-8);ctx.restore()});
+ const invulnerable=boss.form==='god'&&boss.ward>0||boss.awakened&&(boss.cycle==='assault'||boss.state==='revive'),color=invulnerable?'#c298ef':boss.exposed>0?'#93ffe1':boss.bossPhase===2?'#ffad81':'#c4b5ff';ctx.save();ctx.shadowColor=color;ctx.shadowBlur=reduced?0:10;ctx.fillStyle='#162338db';ctx.fillRect(x,y,w,9);ctx.fillStyle=color;ctx.fillRect(x,y,w*Math.max(0,boss.hp/boss.maxHp),9);ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff1dc';const phase=boss.form==='god'?(boss.ward>0?'神の障壁 · 攻撃無効 '+Math.ceil(boss.cycleTime)+'秒':'障壁消失 · 攻撃！ '+Math.ceil(boss.cycleTime)+'秒'):boss.awakened?(boss.state==='revive'?'復活・巨大化':invulnerable?'無敵 · 回避に集中 '+Math.ceil(boss.cycleTime)+'秒':'核心露出 · 攻撃！ '+Math.ceil(boss.cycleTime)+'秒'):boss.exposed>0?'反撃の隙！':boss.bossPhase===2?'本性解放':'';const label='BOSS · '+boss.name+(phase?' · '+phase:'');ctx.shadowBlur=0;ctx.strokeStyle='#17324b';ctx.lineWidth=4;ctx.lineJoin='round';ctx.strokeText(label,view.w/2,y-8,w);ctx.fillText(label,view.w/2,y-8,w);ctx.restore()});
 }
 function drawDarkFloor(t){
  if(!game.singleStage||game.region!==4)return;const y=STAGES[game.stage].y;ctx.save();ctx.fillStyle='#29193655';ctx.fillRect(65,y-230,630,610);ctx.strokeStyle='#b28bc333';ctx.lineWidth=2;for(const side of [-1,1])for(let i=0;i<4;i++){const x=380+side*(170+i*23),yy=y-130+i*116;ctx.beginPath();ctx.moveTo(x,yy);ctx.lineTo(x+side*34,yy+28);ctx.lineTo(x+side*14,yy+57);ctx.lineTo(x+side*48,yy+90);ctx.stroke();ellipse(x,yy-10,2,3,'#b89bdc66')}ctx.restore();

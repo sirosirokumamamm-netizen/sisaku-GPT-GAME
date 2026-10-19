@@ -16,7 +16,7 @@ const RELICS=[
  {id:'ward',name:'護りの琥珀',icon:'◇',color:'#a5edbf',desc:'次の区画の開幕を守る。HPは戦闘中に回復しない。',detail:'各区画の開始時、20ダメージ分の盾を12秒付与'},
  {id:'vow',name:'紅蓮の誓い',icon:'ϟ',color:'#ffac99',desc:'攻めに賭ける秘宝。強くなるぶん、被弾に注意。',detail:'全ダメージ ＋22%・受けるダメージ ＋12%'}
 ];
-const REGION_SIGNATURES=[['whirl','wave','orbit','parry'],['frost','chain','rain','focus'],['flame','meteor','quake','wisp'],['nova','execute','blink','tornado'],['nova','execute','thunder','guard']];
+const REGION_SIGNATURES=[['whirl','wave','orbit','parry'],['frost','chain','rain','focus'],['flame','meteor','quake','wisp'],['nova','execute','blink','tornado'],['nova','execute','thunder','guard'],['nova','thunder','guard','focus']];
 function makeRoomRoute(){return ['approach','horde','treasure','elite','boss']}
 function roomRole(room=game.room){return ROOM_ROLES[game.roomRoute?.[room-1]]||ROOM_ROLES[room===5?'boss':room===1?'approach':['horde','elite','treasure'][room-2]]}
 function hasRelic(id){return game.singleStage&&game.relic===id}
@@ -56,14 +56,14 @@ const REST_PLAYER_FIELDS=['hp','maxHp','mp','maxMp','xp','xpNext','lv','power','
 const REST_GAME_FIELDS=['seed','rng','region','room','kills','gold','goldEarned','goldSpent','goldFraction','totalXP','time','combatTime','hitsTaken','damageTaken','damageDealt','perfects','maxCombo','rolls','skillUses','attacks','flanks','blocks','totems','eliteKills','barrels','bossPunishes','resonances','goals','drafts'];
 function normalizeRest(raw){
  if(!raw||raw.version!==1||typeof raw.id!=='string'||raw.id.length>100||!raw.player||!raw.run)return null;
- const g=raw.run,v=raw.player;if(!Number.isInteger(g.region)||g.region<0||g.region>4||!Number.isInteger(g.room)||g.room<1||g.room>4||!STYLES.some(s=>s.id===raw.style))return null;
+ const g=raw.run,v=raw.player;if(!Number.isInteger(g.region)||g.region<0||g.region>5||!Number.isInteger(g.room)||g.room<1||g.room>4||!STYLES.some(s=>s.id===raw.style))return null;
  if(!REST_PLAYER_FIELDS.every(k=>Number.isFinite(v[k])&&v[k]>=0&&v[k]<=1000000)||!REST_GAME_FIELDS.every(k=>Number.isFinite(g[k])&&g[k]>=0&&g[k]<=((k==='seed'||k==='rng')?0xffffffff:100000000)))return null;
  if(!Number.isInteger(g.seed)||!Number.isInteger(g.rng)||!Number.isInteger(v.lv))return null;
  if(v.hp<=0||v.hp>v.maxHp||v.mp>v.maxMp||v.maxMp<=0||v.maxHp<=0||v.xpNext<=0||v.lv<1||v.cooldownFactor<.1||v.autoInterval<.05)return null;
  if(!Array.isArray(raw.route)||raw.route.length!==5||raw.route[0]!=='approach'||raw.route[4]!=='boss'||new Set(raw.route.slice(1,4)).size!==3||!raw.route.slice(1,4).every(x=>['horde','elite','treasure'].includes(x)))return null;
  if(!v.learned||Object.entries(v.learned).some(([id,n])=>!getSkill(id)||!Number.isInteger(n)||n<1||n>3)||!Array.isArray(v.loadout)||v.loadout.length!==3||v.loadout.some(id=>id!==null&&(!v.learned[id]||!isManualSkill(getSkill(id))))||new Set(v.loadout.filter(Boolean)).size!==v.loadout.filter(Boolean).length)return null;
  if(raw.relic!==null&&!RELICS.some(r=>r.id===raw.relic))return null;
- return {version:1,weapon:WEAPONS.some(w=>w.id===raw.weapon)?raw.weapon:'traveler',fieldPotions:finiteInt(raw.fieldPotions,0,3),roomPotionCollected:raw.roomPotionCollected===true,id:raw.id,style:raw.style,route:raw.route.slice(),relic:raw.relic,restPotionUsed:raw.restPotionUsed===true,player:{...Object.fromEntries(REST_PLAYER_FIELDS.map(k=>[k,v[k]])),learned:{...v.learned},loadout:v.loadout.slice()},run:Object.fromEntries(REST_GAME_FIELDS.map(k=>[k,g[k]])),damageSources:Object.fromEntries(Object.entries(raw.damageSources||{}).filter(([k,v])=>['突進','弾','残る炎','着地','範囲攻撃','接近'].includes(k)&&Number.isFinite(v)&&v>=0))};
+ return {version:1,weapon:WEAPONS.some(w=>w.id===raw.weapon)?raw.weapon:'traveler',fieldPotions:finiteInt(raw.fieldPotions,0,3),roomPotionCollected:raw.roomPotionCollected===true,id:raw.id,style:raw.style,route:raw.route.slice(),relic:raw.relic,restPotionUsed:raw.restPotionUsed===true,player:{...Object.fromEntries(REST_PLAYER_FIELDS.map(k=>[k,v[k]])),learned:{...v.learned},loadout:v.loadout.slice()},run:Object.fromEntries(REST_GAME_FIELDS.map(k=>[k,g[k]])),damageSources:Object.fromEntries(Object.entries(raw.damageSources||{}).filter(([k,v])=>['突進','弾','残る炎','着地','範囲攻撃','接近','雷撃','追撃','終末の一撃'].includes(k)&&Number.isFinite(v)&&v>=0))};
 }
 function suspendExpedition(){
  if(game.mode!=='roomEquipment'||game.pendingChoices||game.relicOffers?.length||game.active)return false;

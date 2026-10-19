@@ -5,7 +5,10 @@ const WEAPONS=[
  {id:'greatsword',name:'巨人の大剣',price:360,icon:'♜',color:'#f4d4a2',power:1.4,speed:.9,reach:1.25,element:'無',extra:'なし',desc:'大きな刃で薙ぎ払う。振りは遅い。'},
  {id:'ember',name:'焔の牙',price:450,icon:'♨',color:'#ffb080',power:1.18,speed:1.05,reach:1,element:'炎',extra:'3撃ごとに炎上',desc:'通常攻撃の3撃ごとに、命中した敵を燃やす。'},
  {id:'frostblade',name:'氷晶の剣',price:450,icon:'❄',color:'#adf1ff',power:1.12,speed:1.05,reach:1.12,element:'氷',extra:'3撃ごとに減速',desc:'広めの刃。3撃ごとに敵の移動を遅くする。'},
- {id:'echo',name:'雷鳴の双剣',price:650,icon:'ϟ',color:'#d7beff',power:1.1,speed:1.2,reach:1,element:'雷',extra:'4撃ごとに追撃',desc:'4撃ごとに、近くの別の敵へ雷が跳ぶ。'}
+ {id:'echo',name:'雷鳴の双剣',price:650,icon:'ϟ',color:'#d7beff',power:1.1,speed:1.2,reach:1,element:'雷',extra:'4撃ごとに追撃',desc:'4撃ごとに、近くの別の敵へ雷が跳ぶ。'},
+ {id:'abyss',name:'冥王の黒刃',price:880,icon:'☾',color:'#d99aff',power:1.55,speed:1.05,reach:1.2,element:'闇',extra:'3撃ごとに闇の衝撃波',postDemon:true,desc:'魔王の残滓を鍛えた大剣。重い一撃と衝撃波で敵を砕く。'},
+ {id:'starfall',name:'天穿つ槍剣',price:1080,icon:'✧',color:'#c1f1ff',power:1.4,speed:1.15,reach:1.5,element:'星',extra:'ボスへの与ダメージ＋20%',postDemon:true,desc:'神を穿つ長大な刃。広い間合いから強敵の核心を狙う。'},
+ {id:'dawn',name:'黎明の聖剣',price:1280,icon:'☀',color:'#fff0b1',power:1.3,speed:1.35,reach:1.2,element:'光',extra:'4撃ごとにMPと必殺ゲージ回復',postDemon:true,desc:'連撃で光を蓄える聖剣。剣技と覚醒をつなげる。'}
 ];
 function getWeapon(id=game.weapon||'traveler'){return WEAPONS.find(w=>w.id===id)||WEAPONS[0]}
 function applyWeapon(){const w=getWeapon();p.power*=w.power;p.autoInterval/=w.speed;p.reach*=w.reach;game.weaponHits=0}
@@ -13,6 +16,7 @@ function weaponStrike(targets){
  if(!game.singleStage||!targets.length)return;game.weaponHits=(game.weaponHits||0)+1;const w=getWeapon();
  if(w.id==='ember'&&game.weaponHits%3===0)for(const e of targets){e.burn=3;e.burnTick=0;particle(e.x,e.y-20,w.color,4,70)}
  if(w.id==='frostblade'&&game.weaponHits%3===0)for(const e of targets){e.frost=2.4;particle(e.x,e.y-20,w.color,4,70)}
+ if(w.id==='abyss'&&game.weaponHits%3===0){const from=targets[0];effects.push({kind:'nova',x:from.x,y:from.y,r:150,color:w.color,life:.5,max:.5});for(const enemy of enemies)if(enemy.hp>0&&distance(enemy,from)<150)hurtEnemy(enemy,22*p.power,true,w.color,true,true)}if(w.id==='dawn'&&game.weaponHits%4===0){p.mp=Math.min(p.maxMp,p.mp+2);chargeUltimate(5);particle(p.x,p.y,w.color,7,80)}
  if(w.id==='echo'&&game.weaponHits%4===0){const from=targets[0],other=nearest(220,from,new Set(targets.map(e=>e.id)));if(other){effects.push({kind:'beam',x:from.x,y:from.y-20,ex:other.x,ey:other.y-20,color:w.color,life:.25,max:.25});hurtEnemy(other,18*p.power,false,w.color,true,true)}}
 }
 function darkUnlocked(c=campaign){return [0,1,2,3].every(i=>!!c.clears[i])||!!c.clears[4]}
@@ -43,17 +47,17 @@ function updateFieldItems(dt){
 function useFieldPotion(){return useCombatPotion()}
 
 function configureRealmBoss(e,index){
- if(e.kind!=='boss')return;e.form=['beast','monster','dragon','sentinel','demon'][game.region];e.speed=135+game.region*5;e.pattern=4;e.atk=14+game.region*2;e.cooldown=.5+index*.8;
+ if(e.kind!=='boss')return;e.form=['beast','monster','dragon','sentinel','demon','god'][game.region];e.speed=135+game.region*5;e.pattern=4;e.atk=22+game.region*5;e.cooldown=.5+index*.8;
  if(game.region===3){e.name=index?'月影の守護獣':'星核の守護者';e.form=index?'beast':'sentinel';e.hp=e.maxHp=Math.round(REGIONS[3].hp*.58);e.r=36}
- e.awakened=false;e.cycle='assault';e.cycleTime=8;
+ e.awakened=false;e.cycle='assault';e.cycleTime=8;if(e.form==='dragon'){e.r=60;Object.assign(e,safePoint(e.x,e.y,e.r))}if(e.form==='god'){e.r=56;e.ward=7;e.godCycle=0;e.cycleTime=7;e.atk=54;Object.assign(e,safePoint(e.x,e.y,e.r))}
 }
 function interceptBossDefeat(e){
  if(!game.singleStage||e.kind!=='boss'||e.form!=='demon'||e.awakened)return false;
- e.awakened=true;e.hp=e.maxHp=Math.round(REGIONS[4].hp*.8);e.r=64;Object.assign(e,safePoint(e.x,e.y,e.r));e.bossPhase=2;e.state='revive';e.timer=1.8;e.cycle='assault';e.cycleTime=8;clearHostiles();e.burn=e.bleed=e.frost=0;
+ e.awakened=true;e.hp=e.maxHp=Math.round(REGIONS[4].hp*.8);e.r=64;Object.assign(e,safePoint(e.x,e.y,e.r));e.bossPhase=2;e.state='revive';e.timer=2.8;startEpicEvent('変貌','深淵の王、顕現','#d69aff',2.8);e.cycle='assault';e.cycleTime=8;clearHostiles();e.burn=e.bleed=e.frost=0;
  banner('魔王、復活！','巨大化した！ 猛攻を避け、核心露出を狙え。',2);particle(e.x,e.y,'#d597ff',44,220);return true;
 }
 function updateRealmBoss(e,dt){
- e.demonCast=Math.max(0,(e.demonCast||0)-dt);
+ e.demonCast=Math.max(0,(e.demonCast||0)-dt);if(e.form==='god')return updateGod(e,dt);
  if(e.form!=='demon'||!e.awakened)return repositionBoss(e,dt);
  if(e.state==='revive'){e.timer-=dt;if(e.timer<=0){e.state='chase';e.cooldown=.1}return true}
  e.cycleTime-=dt;if(e.cycleTime<=0){clearHostiles();e.barrageClock=.5;e.leapFrom=e.leapTo=null;e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?8:5;e.state=e.cycle==='exposed'?'recover':'chase';e.timer=e.cycleTime;e.exposed=e.cycle==='exposed'?e.cycleTime:0;e.cooldown=.15;banner(e.cycle==='exposed'?'核心露出！ 今が攻撃のチャンス':'魔王の猛攻！ 回避に集中', '',1)}
@@ -63,12 +67,13 @@ function realmBossWarning(e,warn,target,dir){
  const count=e.pattern++,phase=e.bossPhase===2,pace=e.form==='demon'&&e.awakened?.9:1,pattern=count%(phase?4:3);
  if(pattern===0||pattern===3){const point=safePoint(clamp(target.x,125,635),clamp(target.y,STAGES[game.stage].y-175,STAGES[game.stage].y+305),e.r);warn('circle',point.x,point.y,e.form==='beast'?105:120,1.05*pace,{attack:'leap'});e.leapFrom={x:e.x,y:e.y};e.leapTo=point;return}
  if(pattern===1){warn('line',e.x,e.y,0,.9*pace,{length:Math.min(470,Math.max(330,distance(e,target)+140)),width:e.form==='dragon'?140:105,attack:'bossDash'});return}
- if(e.form==='dragon'){warn('fan',e.x,e.y,0,1.05,{length:600,spread:.8,rays:7,attack:'fan'});return}
+ if(e.form==='dragon'){epicWarning(e,'line',e.x,e.y,0,1.45,{dir,length:620,width:115,style:'flame',atk:48,persist:3.4});banner('灼熱の竜息','進路の横へ！ 炎はしばらく残る',1.2);return}
  if(e.form==='beast'){warn('ring',e.x,e.y,210,.95,{inner:80,attack:'shockwave'});return}
  if(e.form==='monster'){warn('circle',target.x,target.y,115,1.05,{attack:'stomp'});return}
  warn('fan',e.x,e.y,0,.95*pace,{length:620,spread:.75,rays:7,attack:'fan'});
 }
 function drawCreatureBoss(e,t){
+ if(drawEpicCreature(e,t))return;
  ctx.save();if(e.awakened)ctx.scale(1.65,1.65);const color=e.flash>0?'#fff4d9':({beast:'#699c86',monster:'#537faa',dragon:'#b95649',demon:'#704b9c'}[e.form]);const edge=e.form==='demon'?'#d5a6ff':'#e8c7a0';
  if(e.form==='dragon'||e.form==='demon'){const flap=Math.sin(t*4+e.phase)*12;for(const s of [-1,1])path([[s*19,-72],[s*72,-138+flap],[s*112,-63],[s*66,-80],[s*44,-30]],e.form==='dragon'?'#762f45':'#36274f',edge)}
  if(e.form==='monster'){for(let i=0;i<6;i++){const x=(i-2.5)*16;ctx.strokeStyle=color;ctx.lineWidth=12;ctx.beginPath();ctx.moveTo(x,-30);ctx.quadraticCurveTo(x+Math.sin(t*3+i)*25,0,x*1.4,8);ctx.stroke()}}
@@ -87,7 +92,7 @@ function drawRoomGate(t){
 }
 function drawBossBars(){
  const bosses=enemies.filter(e=>e.kind==='boss'&&e.hp>0);bosses.forEach((boss,i)=>{const w=Math.min(view.w-44,540),x=(view.w-w)/2,y=(view.w<600?144:138)+([...AUTO_IDS].some(id=>p.learned[id])?27:0)+i*38;
- const invulnerable=boss.awakened&&(boss.cycle==='assault'||boss.state==='revive'),color=invulnerable?'#c298ef':boss.exposed>0?'#93ffe1':boss.bossPhase===2?'#ffad81':'#c4b5ff';ctx.save();ctx.shadowColor=color;ctx.shadowBlur=reduced?0:10;ctx.fillStyle='#162338db';ctx.fillRect(x,y,w,9);ctx.fillStyle=color;ctx.fillRect(x,y,w*Math.max(0,boss.hp/boss.maxHp),9);ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff1dc';const phase=boss.awakened?(boss.state==='revive'?'復活・巨大化':invulnerable?'無敵 · 回避に集中 '+Math.ceil(boss.cycleTime)+'秒':'核心露出 · 攻撃！ '+Math.ceil(boss.cycleTime)+'秒'):boss.exposed>0?'反撃の隙！':boss.bossPhase===2?'本性解放':'';ctx.fillText('BOSS · '+boss.name+(phase?' · '+phase:''),view.w/2,y-8);ctx.restore()});
+ const invulnerable=boss.form==='god'&&boss.ward>0||boss.awakened&&(boss.cycle==='assault'||boss.state==='revive'),color=invulnerable?'#c298ef':boss.exposed>0?'#93ffe1':boss.bossPhase===2?'#ffad81':'#c4b5ff';ctx.save();ctx.shadowColor=color;ctx.shadowBlur=reduced?0:10;ctx.fillStyle='#162338db';ctx.fillRect(x,y,w,9);ctx.fillStyle=color;ctx.fillRect(x,y,w*Math.max(0,boss.hp/boss.maxHp),9);ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff1dc';const phase=boss.form==='god'?(boss.ward>0?'神の障壁 · 攻撃無効 '+Math.ceil(boss.cycleTime)+'秒':'障壁消失 · 攻撃！ '+Math.ceil(boss.cycleTime)+'秒'):boss.awakened?(boss.state==='revive'?'復活・巨大化':invulnerable?'無敵 · 回避に集中 '+Math.ceil(boss.cycleTime)+'秒':'核心露出 · 攻撃！ '+Math.ceil(boss.cycleTime)+'秒'):boss.exposed>0?'反撃の隙！':boss.bossPhase===2?'本性解放':'';ctx.fillText('BOSS · '+boss.name+(phase?' · '+phase:''),view.w/2,y-8);ctx.restore()});
 }
 function drawDarkFloor(t){
  if(!game.singleStage||game.region!==4)return;const y=STAGES[game.stage].y;ctx.save();ctx.fillStyle='#29193655';ctx.fillRect(65,y-230,630,610);ctx.strokeStyle='#b28bc333';ctx.lineWidth=2;for(const side of [-1,1])for(let i=0;i<4;i++){const x=380+side*(170+i*23),yy=y-130+i*116;ctx.beginPath();ctx.moveTo(x,yy);ctx.lineTo(x+side*34,yy+28);ctx.lineTo(x+side*14,yy+57);ctx.lineTo(x+side*48,yy+90);ctx.stroke();ellipse(x,yy-10,2,3,'#b89bdc66')}ctx.restore();

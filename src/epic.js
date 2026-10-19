@@ -1,12 +1,12 @@
 // Mythic expansion: readable threats, distinct silhouettes and bounded cinematic effects.
 function heavenUnlocked(c=campaign){return !!c.clears[4]||!!c.clears[5]}
 function openHeavenReveal(){
- game.mode='heavenReveal';game.active=false;resetInput();openModal('<div class="celestial-seal">☀</div><div class="eyebrow">魔王を越えた者へ</div><h2>天界への扉が開いた</h2><p>雲海の向こうで、神が剣士を待っている。<br>剣の店に、神へ挑むための新たな三振りが届いた。</p><button id="heavenContinue" class="cta">新しい世界を地図に刻む</button>');$('modal').classList.add('heaven-reveal');$('heavenContinue').onclick=()=>{const n=cloneCampaign();n.heavenRevealed=true;saveCampaign(n);openStageSelect()};tone(520,.6,'sine',.04);
+ game.mode='heavenReveal';game.active=false;resetInput();openModal('<div class="celestial-seal">☀</div><div class="eyebrow">魔王を越えた者へ</div><h2>天界への扉が開いた</h2><p>雲海の向こうで、神が剣士を待っている。<br>よろずやに、神へ挑むための新たな三振りが届いた。</p><button id="heavenContinue" class="cta">新しい世界を地図に刻む</button>');$('modal').classList.add('heaven-reveal');$('heavenContinue').onclick=()=>{const n=cloneCampaign();n.heavenRevealed=true;saveCampaign(n);openStageSelect()};tone(520,.6,'sine',.04);
 }
 function availableWeapons(){return WEAPONS.filter(w=>!w.postDemon||heavenUnlocked())}
 function startEpicEvent(label,title,color,life=2){game.epicEvent={label,title,color,life:preferences.shortCinematics?Math.min(life,1):life,max:preferences.shortCinematics?Math.min(life,1):life};announce(label+' '+title)}
 function drawEpicEvent(){
- const e=game.epicEvent;if(!e||e.life<=0||!['play','roomEquipment','chest','stageResult'].includes(game.mode))return;const progress=1-e.life/e.max,fade=Math.min(1,progress*7,(1-progress)*6),h=view.h,w=view.w;ctx.save();ctx.globalAlpha=fade;
+ const e=game.epicEvent;if(game.bossScene||!e||e.life<=0||!['play','roomEquipment','chest','stageResult'].includes(game.mode))return;const progress=1-e.life/e.max,fade=Math.min(1,progress*7,(1-progress)*6),h=view.h,w=view.w;ctx.save();ctx.globalAlpha=fade;
  const band=Math.min(108,h*.16);ctx.fillStyle='#07101bd9';ctx.fillRect(0,h*.34,w,band);ctx.strokeStyle=e.color;ctx.lineWidth=1.5;const slide=reduced?0:(1-Math.min(1,progress*5))*w;ctx.beginPath();ctx.moveTo(slide,h*.34);ctx.lineTo(w,h*.34);ctx.moveTo(0,h*.34+band);ctx.lineTo(w-slide,h*.34+band);ctx.stroke();ctx.textAlign='center';ctx.fillStyle=e.color;ctx.font='700 12px system-ui';ctx.fillText(e.label,w/2,h*.34+28);ctx.fillStyle='#fff9e8';ctx.font='900 '+Math.min(30,w*.065)+'px serif';ctx.fillText(e.title,w/2,h*.34+66);ctx.restore();
 }
 function epicBossProtected(e){

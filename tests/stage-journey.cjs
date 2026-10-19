@@ -21,7 +21,7 @@ const results=[];for(const style of novice||quick?['azure']:['azure','storm','wa
    for(let slot=0;slot<3;slot++){const s=getSkill(p.loadout[slot]);if(s&&nearest(s.r||s.range||180)&&!(p.skillCooldowns[s.id]>0))action(SLOT_NAMES[slot])}
    update(1/60);updateVisuals(1/60);
   }
-  const win=game.mode==='chest';const row={style,stage:stage+1,win,time:Math.round(game.time),kills:game.kills,level:p.lv,firstLevel:Math.round(firstLevel),damage:Math.round(game.damageTaken),hp:Math.round(p.hp),ultimates,perfects:game.perfects,phase:game.phase,room:game.room,wave:game.wave,remaining:enemies.map(e=>({kind:e.kind,hp:Math.round(e.hp),x:Math.round(e.x),y:Math.round(e.y)})),p:{x:Math.round(p.x),y:Math.round(p.y)}};results.push(row);
+  const win=game.mode==='chest';const row={style,stage:stage+1,win,time:Math.round(game.time),kills:game.kills,earnedGold:game.goldEarned,weapon:game.weapon,level:p.lv,firstLevel:Math.round(firstLevel),damage:Math.round(game.damageTaken),hp:Math.round(p.hp),ultimates,perfects:game.perfects,phase:game.phase,room:game.room,wave:game.wave,remaining:enemies.map(e=>({kind:e.kind,hp:Math.round(e.hp),x:Math.round(e.x),y:Math.round(e.y)})),p:{x:Math.round(p.x),y:Math.round(p.y)}};results.push(row);
   if(win){const q=campaign.pending;let pick=q.offers.findIndex(o=>o.kind==='rare'&&['whirl','orbit','wave','guard'].includes(o.id));claimChest(q.id,pick>=0?pick:0)}else break;
  }
 }return results;

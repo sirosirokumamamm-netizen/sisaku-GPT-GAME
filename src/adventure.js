@@ -1,14 +1,14 @@
 // Fifth realm, equipment and room-entry rules. No remote assets or dependencies.
 const WEAPONS=[
  {id:'traveler',name:'旅立ちの剣',price:0,icon:'⚔',color:'#a9e6ff',power:1,speed:1,reach:1,element:'無',extra:'なし',desc:'癖のない標準の剣。'},
- {id:'rapier',name:'風切りの細剣',price:280,icon:'➶',color:'#a5f3cf',power:.95,speed:1.35,reach:.95,element:'風',extra:'なし',desc:'一撃は軽いが、通常攻撃が速い。'},
- {id:'greatsword',name:'巨人の大剣',price:360,icon:'♜',color:'#f4d4a2',power:1.4,speed:.9,reach:1.25,element:'無',extra:'なし',desc:'大きな刃で薙ぎ払う。振りは遅い。'},
- {id:'ember',name:'焔の牙',price:450,icon:'♨',color:'#ffb080',power:1.18,speed:1.05,reach:1,element:'炎',extra:'3撃ごとに炎上',desc:'通常攻撃の3撃ごとに、命中した敵を燃やす。'},
- {id:'frostblade',name:'氷晶の剣',price:450,icon:'❄',color:'#adf1ff',power:1.12,speed:1.05,reach:1.12,element:'氷',extra:'3撃ごとに減速',desc:'広めの刃。3撃ごとに敵の移動を遅くする。'},
- {id:'echo',name:'雷鳴の双剣',price:650,icon:'ϟ',color:'#d7beff',power:1.1,speed:1.2,reach:1,element:'雷',extra:'4撃ごとに追撃',desc:'4撃ごとに、近くの別の敵へ雷が跳ぶ。'},
- {id:'abyss',name:'冥王の黒刃',price:880,icon:'☾',color:'#d99aff',power:1.55,speed:1.05,reach:1.2,element:'闇',extra:'3撃ごとに闇の衝撃波',postDemon:true,desc:'魔王の残滓を鍛えた大剣。重い一撃と衝撃波で敵を砕く。'},
- {id:'starfall',name:'天穿つ槍剣',price:1080,icon:'✧',color:'#c1f1ff',power:1.4,speed:1.15,reach:1.5,element:'星',extra:'ボスへの与ダメージ＋20%',postDemon:true,desc:'神を穿つ長大な刃。広い間合いから強敵の核心を狙う。'},
- {id:'dawn',name:'黎明の聖剣',price:1280,icon:'☀',color:'#fff0b1',power:1.3,speed:1.35,reach:1.2,element:'光',extra:'4撃ごとにMPと必殺ゲージ回復',postDemon:true,desc:'連撃で光を蓄える聖剣。剣技と覚醒をつなげる。'}
+ {id:'rapier',name:'風切りの細剣',price:1200,icon:'➶',color:'#a5f3cf',power:.95,speed:1.35,reach:.95,element:'風',extra:'なし',desc:'一撃は軽いが、通常攻撃が速い。'},
+ {id:'greatsword',name:'巨人の大剣',price:1500,icon:'♜',color:'#f4d4a2',power:1.4,speed:.9,reach:1.25,element:'無',extra:'なし',desc:'大きな刃で薙ぎ払う。振りは遅い。'},
+ {id:'ember',name:'焔の牙',price:2200,icon:'♨',color:'#ffb080',power:1.18,speed:1.05,reach:1,element:'炎',extra:'3撃ごとに炎上',desc:'通常攻撃の3撃ごとに、命中した敵を燃やす。'},
+ {id:'frostblade',name:'氷晶の剣',price:2200,icon:'❄',color:'#adf1ff',power:1.12,speed:1.05,reach:1.12,element:'氷',extra:'3撃ごとに減速',desc:'広めの刃。3撃ごとに敵の移動を遅くする。'},
+ {id:'echo',name:'雷鳴の双剣',price:3200,icon:'ϟ',color:'#d7beff',power:1.1,speed:1.2,reach:1,element:'雷',extra:'4撃ごとに追撃',desc:'4撃ごとに、近くの別の敵へ雷が跳ぶ。'},
+ {id:'abyss',name:'冥王の黒刃',price:4800,icon:'☾',color:'#d99aff',power:1.55,speed:1.05,reach:1.2,element:'闇',extra:'3撃ごとに闇の衝撃波',postDemon:true,desc:'魔王の残滓を鍛えた大剣。重い一撃と衝撃波で敵を砕く。'},
+ {id:'starfall',name:'天穿つ槍剣',price:5800,icon:'✧',color:'#c1f1ff',power:1.4,speed:1.15,reach:1.5,element:'星',extra:'ボスへの与ダメージ＋20%',postDemon:true,desc:'神を穿つ長大な刃。広い間合いから強敵の核心を狙う。'},
+ {id:'dawn',name:'黎明の聖剣',price:6800,icon:'☀',color:'#fff0b1',power:1.3,speed:1.35,reach:1.2,element:'光',extra:'4撃ごとにMPと必殺ゲージ回復',postDemon:true,desc:'連撃で光を蓄える聖剣。剣技と覚醒をつなげる。'}
 ];
 function getWeapon(id=game.weapon||'traveler'){return WEAPONS.find(w=>w.id===id)||WEAPONS[0]}
 function applyWeapon(){const w=getWeapon();p.power*=w.power;p.autoInterval/=w.speed;p.reach*=w.reach;game.weaponHits=0}
@@ -53,8 +53,8 @@ function configureRealmBoss(e,index){
 }
 function interceptBossDefeat(e){
  if(!game.singleStage||e.kind!=='boss'||e.form!=='demon'||e.awakened)return false;
- e.awakened=true;e.hp=e.maxHp=Math.round(REGIONS[4].hp*.8);e.r=64;Object.assign(e,safePoint(e.x,e.y,e.r));e.bossPhase=2;e.state='revive';e.timer=2.8;startEpicEvent('変貌','深淵の王、顕現','#d69aff',2.8);e.cycle='assault';e.cycleTime=8;clearHostiles();e.burn=e.bleed=e.frost=0;
- banner('魔王、復活！','巨大化した！ 猛攻を避け、核心露出を狙え。',2);particle(e.x,e.y,'#d597ff',44,220);return true;
+ const before={...e,facing:{...e.facing}};e.awakened=true;e.hp=e.maxHp=Math.round(REGIONS[4].hp*.8);e.r=64;Object.assign(e,safePoint(e.x,e.y,e.r));e.bossPhase=2;e.state='revive';e.timer=2.8;startEpicEvent('変貌','深淵の王、顕現','#d69aff',2.8);e.cycle='assault';e.cycleTime=8;clearHostiles();e.burn=e.bleed=e.frost=0;
+ beginBossScene('transform',e,before);banner('魔王、復活！','巨大化した！ 猛攻を避け、核心露出を狙え。',2);particle(e.x,e.y,'#d597ff',44,220);return true;
 }
 function updateRealmBoss(e,dt){
  e.demonCast=Math.max(0,(e.demonCast||0)-dt);if(e.form==='god')return updateGod(e,dt);

@@ -1,11 +1,11 @@
 // Combat supplies, readable controls and late-game survival encounters.
 function useCombatPotion(){
- if(!game.singleStage||!['play','roomEquipment'].includes(game.mode)||game.phase==='bossIntro'||p.cutin>0||!(game.fieldPotions>0)||(game.potionLock||0)>0||p.hp<=0||p.hp>=p.maxHp&&p.mp>=p.maxMp)return false;
- const hp=Math.min(p.maxHp-p.hp,Math.ceil(p.maxHp*.35)),mp=Math.min(p.maxMp-p.mp,Math.ceil(p.maxMp*.4));game.fieldPotions--;game.potionLock=.65;p.hp+=hp;p.mp+=mp;
+ if(game.bossScene||!game.singleStage||!['play','roomEquipment'].includes(game.mode)||game.phase==='bossIntro'||p.cutin>0||!(game.fieldPotions>0)||(game.potionLock||0)>0||p.hp<=0||p.hp>=p.maxHp&&p.mp>=p.maxMp)return false;
+ const hp=Math.min(p.maxHp-p.hp,Math.ceil(p.maxHp*.35)),mp=Math.min(p.maxMp-p.mp,Math.ceil(p.maxMp*.4));game.fieldPotions--;playCue('heal');game.potionLock=.65;p.hp+=hp;p.mp+=mp;
  for(const [kind,r,life]of [['nova',95,.6],['sigil',65,1]])effects.push({kind,x:p.x,y:p.y,r,color:'#aaffd6',life,max:life});particle(p.x,p.y,'#baffdf',32,160);floating(p.x,p.y-100,'HP +'+Math.round(hp)+' / MP +'+Math.round(mp),'#c5ffe1',true);tone(880,.25,'sine',.04);game.healGlow=.8;updateUI();if(game.mode==='roomEquipment')roomEquipment();return true;
 }
 function updatePotionUI(){
- if(!game.singleStage)return;const b=$('combatPotion');b.setAttribute('aria-label','回復薬 '+controlLabel('potion'));b.hidden=game.mode!=='play'||!(game.fieldPotions>0);b.disabled=(game.potionLock||0)>0||p.hp>=p.maxHp&&p.mp>=p.maxMp||game.phase==='bossIntro'||p.cutin>0;b.title=p.hp>=p.maxHp&&p.mp>=p.maxMp?'HP・MPは満タン':'HP・MPを回復';b.innerHTML='<kbd>'+controlLabel('potion')+'</kbd><span class="potion-count"><i class="potion-bottle" aria-hidden="true"></i><b>×'+(game.fieldPotions||0)+'</b></span>';b.classList.toggle('needed',p.hp<p.maxHp*.45);document.querySelector('.scene').classList.toggle('potion-glow',!reduced&&preferences.flashes&&(game.healGlow||0)>0);
+ if(!game.singleStage)return;const b=$('combatPotion');b.setAttribute('aria-label','回復薬 '+controlLabel('potion'));b.hidden=game.mode!=='play'||!(game.fieldPotions>0);b.disabled=!!game.bossScene||(game.potionLock||0)>0||p.hp>=p.maxHp&&p.mp>=p.maxMp||game.phase==='bossIntro'||p.cutin>0;b.title=p.hp>=p.maxHp&&p.mp>=p.maxMp?'HP・MPは満タン':'HP・MPを回復';b.innerHTML='<kbd>'+controlLabel('potion')+'</kbd><span class="potion-count"><i class="potion-bottle" aria-hidden="true"></i><b>×'+(game.fieldPotions||0)+'</b></span>';b.classList.toggle('needed',p.hp<p.maxHp*.45);document.querySelector('.scene').classList.toggle('potion-glow',!reduced&&preferences.flashes&&(game.healGlow||0)>0);
 }
 function confirmDataReset(){
  if(game.mode!=='settings')return;game.mode='resetConfirm';openModal('<h2>冒険データを初期化しますか？</h2><p>ステージ解放・技・剣・所持金・記録・中断中の冒険を削除し、最初から始めます。元には戻せません。<br>音量と操作設定は残ります。</p><button id="cancelReset" class="cta">戻る</button><button id="confirmReset" class="text-button">冒険データを削除する</button>',false,'#cancelReset');$('cancelReset').onclick=()=>{game.mode='settings';openSettings()};$('confirmReset').onclick=resetGameData;
@@ -17,11 +17,11 @@ function resetGameData(){
 }
 function chooseNewEnemy(){
  if(game.room===1)return runRandom()<.8?'slime':'bat';
- if(!game.goldSlimePlanned&&runRandom()<.0015){game.goldSlimePlanned=true;return 'goldSlime'}
+ if(!game.goldSlimePlanned&&runRandom()<rareEncounterChance()){game.goldSlimePlanned=true;return 'goldSlime'}
  if(runRandom()<.18)return ['harpy','beetle','wraith'][Math.floor(runRandom()*3)];return null;
 }
 function newEnemyTick(e,dt){
- if(e.kind==='goldSlime'){if(!e.announced){e.announced=true;banner('超レア！ 金色のスライム','逃げる前に連続攻撃！',2);particle(e.x,e.y,'#ffe493',28,190)}e.escapeTime=(e.escapeTime??14)-dt;if(e.escapeTime<=0){e.hp=0;floating(e.x,e.y-65,'金色のスライムは逃げた','#ffe397',true);return true}e.runClock=(e.runClock||0)-dt;if(e.runClock<=0||!e.runTarget||distance(e,e.runTarget)<25){const y=STAGES[game.stage].y,points=[[160,-110],[590,-80],[620,240],[160,260],[380,50]].map(([x,dy])=>safePoint(x,y+dy,e.r));e.runTarget=points.filter(q=>distance(q,e)>130).sort((a,b)=>distance(b,p)-distance(a,p))[0]||points[0];e.runClock=1.3}const n=routeClear(e,e.runTarget,e.r)?norm(e.runTarget.x-e.x,e.runTarget.y-e.y):routeDirection(e,e.runTarget);moveActor(e,n.x*e.speed*dt,n.y*e.speed*dt);e.sparkClock=(e.sparkClock||0)-dt;if(e.sparkClock<=0){particle(e.x,e.y-15,'#ffde73',2,45);e.sparkClock=.12}return true}
+ if(e.kind==='goldSlime'){if(!e.announced){e.announced=true;playCue('rare');banner('超レア！ 金色のスライム','逃げる前に連続攻撃！',2);particle(e.x,e.y,'#ffe493',28,190)}e.escapeTime=(e.escapeTime??14)-dt;if(e.escapeTime<=0){e.hp=0;floating(e.x,e.y-65,'金色のスライムは逃げた','#ffe397',true);return true}e.runClock=(e.runClock||0)-dt;if(e.runClock<=0||!e.runTarget||distance(e,e.runTarget)<25){const y=STAGES[game.stage].y,points=[[160,-110],[590,-80],[620,240],[160,260],[380,50]].map(([x,dy])=>safePoint(x,y+dy,e.r));e.runTarget=points.filter(q=>distance(q,e)>130).sort((a,b)=>distance(b,p)-distance(a,p))[0]||points[0];e.runClock=1.3}const n=routeClear(e,e.runTarget,e.r)?norm(e.runTarget.x-e.x,e.runTarget.y-e.y):routeDirection(e,e.runTarget);moveActor(e,n.x*e.speed*dt,n.y*e.speed*dt);e.sparkClock=(e.sparkClock||0)-dt;if(e.sparkClock<=0){particle(e.x,e.y-15,'#ffde73',2,45);e.sparkClock=.12}return true}
  if(e.kind==='harpy'&&e.state==='chase'&&(distance(e,p)>170||!canStand(e.x,e.y,e.r)||!coverClear(e,p))){const n=norm(p.x-e.x,p.y-e.y);e.x=clamp(e.x+n.x*e.speed*dt,100,660);e.y=clamp(e.y+n.y*e.speed*dt,STAGES[game.stage].y-170,STAGES[game.stage].y+320)}
  if(e.kind==='wraith'&&e.state==='recover'&&e.timer<.1){const q=safePoint(p.x+(runRandom()<.5?-160:160),clampPlayerY(p.y-70),e.r);particle(e.x,e.y,'#c4d2ff',8,75);e.x=q.x;e.y=q.y;particle(e.x,e.y,'#c4d2ff',8,75)}return false;
 }

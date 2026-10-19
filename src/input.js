@@ -1,4 +1,5 @@
 window.addEventListener('keydown',e=>{
+ if(game.bossScene&&e.key==='Enter'&&!e.repeat){e.preventDefault();endBossScene();return}
  if(e.ctrlKey||e.metaKey||e.altKey)return;
  if(game.mode!=='play'&&e.repeat&&[' ','Enter'].includes(e.key)){e.preventDefault();return;}
  if(e.key==='Escape'&&game.mode==='collection'){e.preventDefault();openStageSelect();return}

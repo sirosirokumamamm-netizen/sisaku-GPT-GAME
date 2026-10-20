@@ -94,13 +94,14 @@ function drawExpeditionFloor(t){
 }
 
 function regionArtwork(index){const artId=index,dark=index===4;index=Math.min(index,3);
- const skies=dark?['#150e30','#81416f']:[['#416f9c','#c4e2b0'],['#1c527c','#78d6cf'],['#352c59','#e59169'],['#1c224a','#9183bb']][index];
- const scenery=[
+ const skies=dark?['#150e30','#81416f']:[['#416f9c','#c4e2b0'],['#1c527c','#78d6cf'],['#352c59','#e59169'],['#142f38','#b0c393']][index];
+ let scenery=[
   '<path d="M0 84 Q80 28 155 80 T340 68V160H0Z" fill="#3f7e68"/><path d="M0 119 Q110 50 220 105 T340 78V160H0Z" fill="#245c52"/><path d="M160 160Q110 127 191 100L202 100Q153 129 220 160" fill="#d5c696"/><g fill="#214b49"><path d="M38 30L13 112H63Z"/><path d="M298 13L265 120H330Z"/></g><g fill="#75bd80"><path d="M38 32L22 79H53Z"/><path d="M298 15L276 77H320Z"/></g>',
   '<path d="M0 80L65 42 105 90 161 36 217 88 280 30 340 75V160H0Z" fill="#326f7a"/><path d="M105 90Q235 105 135 160H280Q326 122 165 90" fill="#7bd4d9"/><path d="M0 120H340V142H0Z" fill="#697e88"/><path d="M34 160V137Q60 101 86 137V160M132 160V137Q158 101 184 137V160M230 160V137Q256 101 282 137V160" fill="#254e65"/><path d="M0 117H340" stroke="#d6d4b5" stroke-width="6"/>',
   '<path d="M0 125L73 60 120 91 191 27 259 96 303 71 340 110V160H0Z" fill="#493d57"/><path d="M191 27L171 50 183 46 192 55 202 44 214 49Z" fill="#ffcb83"/><path d="M191 55L183 83 201 111 187 160H219L214 115 199 83 202 44" fill="#f38955"/><path d="M0 153L51 120 94 160M253 160L291 118 340 140V160" fill="#2f3048"/><path d="M192 19Q168 2 199 -14" fill="none" stroke="#bc8094" stroke-width="16" opacity=".4"/>',
   '<path d="M0 114L75 81 148 117 254 74 340 107V160H0Z" fill="#3c426b"/><path d="M100 160V59H133V40H208V59H240V160H208V92Q170 57 133 92V160Z" fill="#777fa1"/><path d="M93 59H247V74H93Z" fill="#bdc3d3"/><path d="M108 160V77M232 160V77" stroke="#acb4d0" stroke-width="5"/><path d="M170 78L198 115 170 152 143 115Z" fill="#a6dce1" opacity=".65"/><g fill="#e3d7fc"><circle cx="38" cy="34" r="2"/><circle cx="78" cy="22" r="1.5"/><circle cx="279" cy="28" r="2"/><circle cx="299" cy="65" r="1.5"/></g>'
  ][index];
+ if(artId===3)scenery='<path d="M0 91Q80 34 160 88T340 74V160H0Z" fill="#28543f"/><path d="M76 153V130H96V106H116V82H138V58H160V36H183V58H205V82H227V106H249V130H270V153Z" fill="#926847" stroke="#c4a57a" stroke-width="2"/><path d="M174 44L174 153M96 130H249M116 106H227M138 82H205M160 58H183" fill="none" stroke="#543f32" stroke-width="4"/><path d="M138 82L145 91 152 73 164 79 171 60 177 66 185 53 190 74 202 82" fill="#6d9953"/><path d="M0 160V117L15 140 22 110 38 137 44 119 60 160M264 160L273 130 287 140 301 102 311 129 325 110 340 125V160" fill="#4c7b42"/>';
  return '<svg class="region-artwork" viewBox="0 0 340 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="regionSky'+artId+'" x2="0" y2="1"><stop stop-color="'+skies[0]+'"/><stop offset="1" stop-color="'+skies[1]+'"/></linearGradient></defs><path fill="url(#regionSky'+artId+')" d="M0 0H340V160H0Z"/><circle cx="252" cy="38" r="22" fill="'+(index===2?'#ffc294':'#edf0d9')+'" opacity=".8"/>'+scenery+'</svg>';
 }
 

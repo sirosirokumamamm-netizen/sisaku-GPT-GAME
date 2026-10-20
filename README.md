@@ -149,7 +149,7 @@ node scripts/measure-campaign.cjs
 NOVICE=1 node tests/stage-journey.cjs
 ```
 
-`node scripts/test.cjs --mobile` は今回の仕様に対応した検証です。旧仕様を含む全回帰テストは既定の `node scripts/test.cjs` に残しています（今回の全件実行はしていません）。`node scripts/test.cjs --journeys` で通し検証も含められます。`BASE_URL`で試験対象を変更できます。Chromiumは標準で `/usr/bin/chromium`。主要テストは `CHROMIUM_PATH` に対応します。スクリーンショットは `/tmp/`。
+`node scripts/test.cjs --mobile` は今回の仕様に対応した検証です。既定の `node scripts/test.cjs` は全26本の回帰テストを実行します。開始時の地図、任意の準備画面、現在の価格・演出・技仕様に検証内容を更新し、スマホ操作も既定の対象に含めています。`node scripts/test.cjs --journeys` は、3流派×6ステージの18ケースと、ジャスト回避を使わない初ステージも実行します。`BASE_URL`で試験対象を変更できます。Chromiumは標準で `/usr/bin/chromium`。主要テストは `CHROMIUM_PATH` に対応します。スクリーンショットは `/tmp/`。
 
 休憩の実キー操作・購入プレビュー・装備フォーカス・終了確認・長押し誤選択は `comfort`。秘宝の効果・支払い・中断再開・破損セーブ・図鑑・狭幅UIは `expansion`。区画クリアの停止・Space回避・隠し舞台の出現は `clear-flow`。新しいプレイ経路の検証は `campaign`、`regions`、`campaign-usability`、`stage-journey`。既存の戦闘回帰テストは内部の旧進行用フィクスチャを使うため、それだけで新しい舞台選択を検証したとは扱いません。`journey.cjs`は新しい通しテストへの互換入口です。
 

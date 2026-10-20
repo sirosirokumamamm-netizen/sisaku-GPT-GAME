@@ -265,7 +265,7 @@ for(const id of AUTO_IDS){const s=getSkill(id);s.desc=({orbit:'自動で双剣�
 function runRandom(){let t=game.rng=(game.rng+0x6D2B79F5)>>>0;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}
 function runRange(a,b){return a+runRandom()*(b-a)}
 const PATHS=[
- {id:'blade',name:'剣舞',color:'#86e7ff',ids:'crescent whirl pierce flurry dash cross wave orbit execute power haste reach crit critpower ultimatePower',small:'5回命中で、近くへ追撃の斬波',large:'斬波が強くなり、さらに広く届く'},
+ {id:'blade',name:'剣舞',color:'#86e7ff',ids:'crescent whirl pierce flurry dash cross wave orbit execute dawn power haste reach crit critpower ultimatePower',small:'5回命中で、近くへ追撃の斬波',large:'斬波が強くなり、さらに広く届く'},
  {id:'storm',name:'雷鳴',color:'#dbbaff',ids:'thunder chain frost tornado rain quake magicpower mana cooldown charge',small:'攻撃技の命中後、近くの敵へ追加の雷',large:'追加の雷が強くなり、もう1体へ連鎖'},
  {id:'ember',name:'紅蓮',color:'#ffad83',ids:'flame meteor blood nova leech',small:'攻撃技の命中で炎上。燃える敵を倒すと爆発',large:'炎上と撃破時の爆発が強くなる'},
  {id:'ward',name:'見切り',color:'#a9f4bb',ids:'guard parry heal blink wisp focus vital armor perfect counter killshield magnet',small:'ジャスト回避でバリアを獲得',large:'回避のバリアが強まり、休憩時のHP回復も増える'}

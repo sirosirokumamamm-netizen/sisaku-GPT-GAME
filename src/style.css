@@ -213,3 +213,5 @@ body{background:radial-gradient(ellipse at 50% 0,#182238,#080e1c 75%);color:#f3e
 }
 @media(max-height:450px) and (min-width:600px){.draft-modal{padding:12px!important;max-width:820px!important}.draft-modal>.eyebrow,.draft-modal>p,.draft-modal>.draft-loadout,.draft-modal>.draft-details{display:none}.draft-modal h2{font-size:18px!important;margin:2px 0 8px!important}.draft-modal .draft-card.illustrated .draft-icon{display:none}.draft-modal .draft-card.illustrated{min-height:180px!important}.draft-modal #deferChoice{min-height:44px;margin:7px 0 0}}
 .modal #deferChoice{color:#faedd5!important;background:#283b4c;border-color:#7895a4}
+/* Keep all key bindings usable on a short landscape display. */
+@media(max-height:450px) and (min-width:600px){.settings-modal .binding-grid{grid-template-columns:repeat(5,minmax(0,1fr))}.settings-modal .binding-grid button{min-height:44px;padding:6px;font-size:11px}.settings-modal .menu-panel p{font-size:11px;line-height:1.5;margin:4px auto 8px}.settings-modal .menu-panel details>button{min-height:44px;margin-top:6px}}

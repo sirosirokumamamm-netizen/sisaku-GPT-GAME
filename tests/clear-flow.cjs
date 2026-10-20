@@ -6,7 +6,7 @@ const assert=require('node:assert/strict');
   const page=await browser.newPage({viewport:{width:390,height:844}}),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   await page.goto(process.env.BASE_URL||'http://127.0.0.1:8000');
-  await page.locator('#startButton').click();
+  await page.locator('[data-stage="0"]').waitFor({state:'visible'});
   assert.equal(await page.locator('[data-stage]').count(),3,'only the first three stages are visible');
   assert.equal(await page.locator('[data-stage]:not(:disabled)').count(),1,'only the easiest starts unlocked');
   assert(await page.locator('[data-stage="2"]').isDisabled());
@@ -20,11 +20,12 @@ const assert=require('node:assert/strict');
   assert(await page.evaluate(()=>!keys.has('Shift')),'Space key release ends held dodge');
   // Regression: a pending level at room rest used to freeze its deferral timer and hide both exits.
   await page.evaluate(()=>{enemies=[];game.phase='stageClear';game.pendingChoices=1;game.choiceDelay=.22;grantStageReward()});
-  assert.equal(await page.evaluate(()=>game.mode),'draft','pending growth opens before resting instead of freezing');
-  assert(await page.locator('#deferChoice').isHidden(),'resting growth cannot be deferred into a frozen state');
+  assert.equal(await page.evaluate(()=>game.mode),'play','pending growth does not force a modal after clear');
+  assert(await page.locator('#overlay').isHidden());await page.locator('#roomExit').click();await page.locator('#restGrowth').click();
+  assert.equal(await page.evaluate(()=>game.mode),'draft');assert(await page.locator('#deferChoice').isHidden());
   await page.locator('[data-offer="0"]').click();
   if(await page.evaluate(()=>game.mode==='replace'))await page.locator('#skipReplacement').click();
-  assert(await page.locator('#roomEquipmentDone').isVisible(),'choosing growth automatically reaches the next-room confirmation');
+  await page.evaluate(()=>roomEquipment());assert(await page.locator('#roomEquipmentDone').isVisible(),'preparation is still available after growth');
   await page.screenshot({path:'/tmp/clear-flow-room-confirm.png'});
   await page.locator('#roomEquipmentDone').click();await page.evaluate(()=>{if(game.phase==='exitWalk'){p.x=380;p.y=STAGES[game.stage].y-240;update(.016)}});
   assert.equal(await page.evaluate(()=>game.room),2);
@@ -38,25 +39,24 @@ const assert=require('node:assert/strict');
      if(game.mode==='replace'){replaceAcquiredSkill(-1);continue}
      if(game.mode==='roomEquipment'){if(game.relicOffers?.length){chooseRelic(0);continue}confirmations++;$('roomEquipmentDone').click();if(game.phase==='exitWalk'){p.x=380;p.y=STAGES[game.stage].y-240;update(.016)}continue}
      if(game.mode!=='play')throw Error('unexpected stopped mode '+game.mode);
-     if(game.phase==='combat')for(const e of [...enemies])if(e.hp>0){e.spawnTime=0;e.hp=1;hurtEnemy(e,1000)}
+     if(game.bossScene){endBossScene();continue}if(game.phase==='exitWalk'){confirmations++;p.x=380;p.y=STAGES[game.stage].y-240;update(.016);continue}if(game.phase==='combat')for(const e of [...enemies])if(e.hp>0){e.spawnTime=0;e.hp=1;hurtEnemy(e,1000)}
      update(.1);updateVisuals(.1);
     }
     return {mode:game.mode,room:game.room,confirmations,guard};
    });
    assert.equal(result.mode,'chest','combat clear reaches chest in stage '+region);
-   assert.equal(result.room,5);assert(result.confirmations>=3,'room confirmations are not skipped');
+   assert.equal(result.room,5);assert(result.confirmations>=3,'all four room exits are traversed');
    await page.locator('[data-reward="0"]').click();
-   if(region<2){assert.equal(await page.evaluate(()=>game.mode),'stageResult');await page.locator('#resultStages').click();assert.equal(await page.locator('[data-stage]').count(),3);assert(await page.locator('[data-stage="'+(region+1)+'"]').isEnabled())}
+   if(region<2){assert.equal(await page.evaluate(()=>game.mode),'stageSelect');assert.equal(await page.locator('[data-stage]').count(),3);assert(await page.locator('[data-stage="'+(region+1)+'"]').isEnabled())}
   }
-  assert.equal(await page.evaluate(()=>game.mode),'finaleReveal','third clear triggers the final-stage discovery');
+  assert.equal(await page.evaluate(()=>game.mode),'finaleReveal','map reveals final stage');
   assert(await page.getByRole('heading',{name:'最後の舞台が現れた'}).isVisible());
   await page.screenshot({path:'/tmp/clear-flow-finale-discovery.png'});
-  await page.locator('#finaleContinue').click();assert.equal(await page.evaluate(()=>game.mode),'stageResult');
-  await page.locator('#resultStages').click();assert.equal(await page.locator('[data-stage]').count(),4);assert(await page.locator('[data-stage="3"]').isEnabled());
+  await page.locator('#finaleContinue').click();assert.equal(await page.evaluate(()=>game.mode),'stageSelect');assert.equal(await page.locator('[data-stage]').count(),4);assert(await page.locator('[data-stage="3"]').isEnabled());
   await page.screenshot({path:'/tmp/clear-flow-four-stages.png'});
-  await page.reload();await page.locator('#startButton').click();assert.equal(await page.evaluate(()=>game.mode),'stageSelect');assert.equal(await page.locator('[data-stage]').count(),4,'discovery and clear progress survive reload');
+  await page.reload();await page.locator('[data-stage="0"]').waitFor({state:'visible'});assert.equal(await page.evaluate(()=>game.mode),'stageSelect');assert.equal(await page.locator('[data-stage]').count(),4,'discovery and clear progress survive reload');
   await page.evaluate(()=>{const old={...preferences,bindings:{...preferences.bindings,roll:'Shift'}};localStorage.setItem('azure-settings',JSON.stringify(old))});await page.reload();assert(await page.evaluate(()=>preferences.bindings.roll===' '&&boundKey(' ')==='Shift'),'saved default Shift binding migrates to Space');
   assert.deepEqual(errors,[]);
-  console.log('PASS held Space dodge, deferred-growth deadlock regression, automatic rest confirmation, all five-room transitions, difficulty unlocks, hidden finale reveal and reload persistence');
+  console.log('PASS held Space dodge, deferred-growth deadlock regression, optional rest confirmation, all five-room transitions, difficulty unlocks, hidden finale reveal and reload persistence');
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});

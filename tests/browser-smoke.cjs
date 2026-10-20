@@ -3,7 +3,7 @@ const{chromium}=require('playwright');const assert=require('node:assert/strict')
  const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
  const page=await browser.newPage({viewport:{width:1440,height:1040}}),errors=[];page.on('pageerror',e=>{errors.push(e.message);console.error('Browser error:',e.message)});
  const url=process.env.BASE_URL||'http://127.0.0.1:8000';await page.goto(url);await page.evaluate(()=>{reset();begin()});
- await page.keyboard.down('w');await page.waitForTimeout(2100);await page.keyboard.up('w');assert(await page.evaluate(()=>game.active&&game.wave===1));await page.screenshot({path:'/tmp/swordsman-desktop.png',fullPage:true});
+ await page.keyboard.down('w');await page.waitForFunction(()=>game.active&&game.wave===1,{},{timeout:8000});await page.keyboard.up('w');assert(await page.evaluate(()=>game.active&&game.wave===1));await page.screenshot({path:'/tmp/swordsman-desktop.png',fullPage:true});
  const checks=await page.evaluate(()=>{
  const tests=[],ok=(condition,name)=>{if(!condition)throw Error(name);tests.push(name)};
  const clean=()=>{reset();begin();sounds=false;p.autoCd=999;p.crit=0;hitstop=0};

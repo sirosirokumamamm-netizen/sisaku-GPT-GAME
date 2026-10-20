@@ -26,9 +26,18 @@ function godMotion(e){
  const phase=((game.time||0)+(e.phase||0)*.1)%5.2,flare=phase<2.6?.05:phase<3.4?Math.sin((phase-2.6)/.8*Math.PI):.18;
  return{phase:phase<2.6?'still':phase<3.4?'surge':'settle',speed:phase<2.6?18:phase<3.4?295:95,lift:phase<2.6?0:Math.sin((phase-2.6)/2.6*Math.PI)*17,flare};
 }
+// One original illustration for every skill; the unsealed dawn blade has its own art.
+const SKILL_ART_SHEETS={
+ blade:['crescent','whirl','pierce','flurry','dash','cross','wave','orbit','blood'],
+ arcane:['execute','nova','dawn','guard','parry','heal','blink','wisp','focus'],
+ elements:['flame','frost','thunder','meteor','chain','tornado','rain','quake','ultimatePower'],
+ training:['power','haste','reach','vital','armor','crit','critpower','leech','magicpower'],
+ mastery:['mana','cooldown','perfect','counter','killshield','magnet','charge','dawn-upgraded','fallback']
+};
+const SKILL_ART_INDEX=Object.fromEntries(Object.entries(SKILL_ART_SHEETS).flatMap(([sheet,ids])=>ids.map((id,cell)=>[id,{sheet,cell}])));
 function skillArtwork(s){
- const group=['nova','dawn','blood','execute'].includes(s.id)?1:s.category==='sword'?0:s.category==='element'||s.id==='charge'?2:3;
- return '<span class="skill-art painting" style="background-position:'+((group%2)*100)+'% '+(Math.floor(group/2)*100)+'%" aria-hidden="true"></span>';
+ const key=s?.id==='dawn'&&campaign.dawnUpgrade?'dawn-upgraded':s?.id||'fallback',art=SKILL_ART_INDEX[key]||SKILL_ART_INDEX.fallback;
+ return '<span class="skill-art skill-illustration art-'+art.sheet+'" data-art-key="'+(SKILL_ART_INDEX[key]?key:'fallback')+'" style="--art-x:'+((art.cell%3)*50)+'%;--art-y:'+(Math.floor(art.cell/3)*50)+'%" aria-hidden="true"></span>';
 }
 // Vegetation is deterministic and the pyramid remains outside walkable terrain.
 function drawOvergrownRuins(t){

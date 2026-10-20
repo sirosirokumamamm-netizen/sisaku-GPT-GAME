@@ -16,18 +16,19 @@ function weaponStrike(targets){
  if(!game.singleStage||!targets.length)return;game.weaponHits=(game.weaponHits||0)+1;const w=getWeapon();
  if(w.id==='ember'&&game.weaponHits%3===0)for(const e of targets){e.burn=3;e.burnTick=0;particle(e.x,e.y-20,w.color,4,70)}
  if(w.id==='frostblade'&&game.weaponHits%3===0)for(const e of targets){e.frost=2.4;particle(e.x,e.y-20,w.color,4,70)}
- if(w.id==='abyss'&&game.weaponHits%3===0){const from=targets[0];effects.push({kind:'nova',x:from.x,y:from.y,r:150,color:w.color,life:.5,max:.5});for(const enemy of enemies)if(enemy.hp>0&&distance(enemy,from)<150)hurtEnemy(enemy,22*p.power,true,w.color,true,true)}if(w.id==='dawn'&&game.weaponHits%4===0){p.mp=Math.min(p.maxMp,p.mp+2);chargeUltimate(5);particle(p.x,p.y,w.color,7,80)}
- if(w.id==='echo'&&game.weaponHits%4===0){const from=targets[0],other=nearest(220,from,new Set(targets.map(e=>e.id)));if(other){effects.push({kind:'beam',x:from.x,y:from.y-20,ex:other.x,ey:other.y-20,color:w.color,life:.25,max:.25});hurtEnemy(other,18*p.power,false,w.color,true,true)}}
+ if(w.id==='abyss'&&game.weaponHits%3===0){const from=targets[0];effects.push({kind:'nova',x:from.x,y:from.y,r:150,color:w.color,life:.5,max:.5});for(const enemy of enemies)if(enemy.hp>0&&distance(enemy,from)<150)hurtEnemy(enemy,22*p.power,true,w.color,true,true,false,weaponElement())}if(w.id==='dawn'&&game.weaponHits%4===0){p.mp=Math.min(p.maxMp,p.mp+2);chargeUltimate(5);particle(p.x,p.y,w.color,7,80)}
+ if(w.id==='echo'&&game.weaponHits%4===0){const from=targets[0],other=nearest(220,from,new Set(targets.map(e=>e.id)));if(other){effects.push({kind:'beam',x:from.x,y:from.y-20,ex:other.x,ey:other.y-20,color:w.color,life:.25,max:.25});hurtEnemy(other,18*p.power,false,w.color,true,true,false,weaponElement())}}
 }
 function darkUnlocked(c=campaign){return [0,1,2,3].every(i=>!!c.clears[i])||!!c.clears[4]}
 function openDarkReveal(done){
  game.mode='darkReveal';game.active=false;openModal('<div class="finale-seal">♜</div><h2>幻の第五世界、出現</h2><p>四つの舞台を越えた剣士へ。<br>闇の世界で、復活する魔王が待っている。</p><button class="cta" id="darkContinue">闇の世界を解放</button>');$('modal').classList.add('finale-reveal-modal');$('darkContinue').onclick=()=>{const n=cloneCampaign();n.darkRevealed=true;saveCampaign(n);done()};
 }
 function prepareExitWalk(){
- if(game.mode!=='roomEquipment'||game.active)return false;
+ if(game.mode!=='roomEquipment'||game.active)return false;if(game.pendingChoices>0){game.choiceDelay=0;openDraft();return false}
  game.mode='play';game.phase='exitWalk';game.campReady=false;p.rollTime=0;p.swing=0;inputBuffer=null;closeModal();resetInput();updateUI();return true;
 }
 function walkToNextRoom(dt){
+ if(game.pendingChoices>0){game.choiceDelay=0;flushLevelChoices();return}
  const input=movement();if(Math.hypot(input.x,input.y)>.1)p.face=norm(input.x,input.y);
  moveActor(p,input.x*225*dt,input.y*225*dt);p.autoCd-=dt;if(p.autoCd<=0)autoAttack();updateFieldItems(dt);drops=drops.filter(d=>!d.collected);
  if(p.y<=STAGES[game.stage].y-195&&Math.abs(p.x-380)<=60){game.phase='roomRest';advanceRoom();return}updateUI();

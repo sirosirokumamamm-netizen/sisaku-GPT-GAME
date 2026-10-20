@@ -3,7 +3,7 @@ let bossRetrySnapshot=null,lootNotices=[],lootClock=0;
 function syncPlayLayout(){
  const body=document.body,rest=String(!!game.singleStage&&['roomRest','exitWalk'].includes(game.phase));
  if(body.dataset.gameMode!==game.mode)body.dataset.gameMode=game.mode;
- if(body.dataset.fieldRest!==rest)body.dataset.fieldRest=rest;
+ if(body.dataset.fieldRest!==rest){body.dataset.fieldRest=rest;requestAnimationFrame(applyTouchLayout)}const motion=String(reduced);if(body.dataset.reducedMotion!==motion)body.dataset.reducedMotion=motion;
 }
 function initFullscreen(){
  const root=document.documentElement,request=root.requestFullscreen||root.webkitRequestFullscreen;
@@ -36,7 +36,7 @@ function tickMobile(dt){
 function drawAcquisitionLog(){if(game.mode!=='play'||game.bossScene)return;ctx.save();ctx.textAlign='left';ctx.font='bold 13px system-ui';let y=view.h*.32;for(const n of lootNotices){ctx.globalAlpha=Math.min(1,n.life*2);ctx.lineWidth=4;ctx.strokeStyle='#193c50';ctx.strokeText('＋ '+n.text,18,y);ctx.fillStyle=n.color;ctx.fillText('＋ '+n.text,18,y);y+=23}ctx.restore()}
 function drawThreatHUD(){
  if(game.mode!=='play'||game.bossScene||p.cutin>0)return;
- const warning=warnings.some(w=>!w.perfectUsed&&warningContains(w)),burning=hazards.some(z=>z.kind?warningContains(z):distance(z,p)<z.r+p.r*.4),pending=!!game.pendingHit;
+ const warning=warnings.some(w=>showAttackWarning(w)&&!w.perfectUsed&&warningContains(w)),burning=hazards.some(z=>showAttackWarning(z)&&(z.kind?warningContains(z):distance(z,p)<z.r+p.r*.4)),pending=!!game.pendingHit&&showAttackWarning(game.pendingHit.warning);
  ctx.save();ctx.textAlign='center';if(warning||burning||pending){const y=view.h*.36,x=view.w/2,scale=view.w<450?.8:1;ctx.translate(x,y);ctx.scale(scale,scale);path([[-112,-20],[-132,16],[-92,16]],'#fff3c1','#843c20');ctx.font='900 27px system-ui';ctx.fillStyle='#903519';ctx.fillText('!',-112,11);ctx.font='900 30px system-ui';ctx.lineWidth=6;ctx.strokeStyle='#5b2f31';ctx.strokeText('注意！！',20,12);ctx.fillStyle='#fff0ba';ctx.fillText('注意！！',20,12);ctx.font='bold 13px system-ui';ctx.fillStyle='#fff';ctx.lineWidth=3;const hint=burning?'攻撃中！ 外へ':warnings.some(w=>w.follow&&w.life>w.lockTime&&warningContains(w))?'追尾中！ 動き続けよう':'範囲の外へ回避！';ctx.strokeText(hint,0,38);ctx.fillText(hint,0,38);}
  ctx.restore();if(game.lastHit?.life>0){ctx.save();ctx.textAlign='center';ctx.font='bold 14px system-ui';ctx.strokeStyle='#442c37';ctx.lineWidth=4;const text=game.lastHit.source+' −'+game.lastHit.amount+' HP';ctx.strokeText(text,view.w/2,view.h*.48);ctx.fillStyle='#fff0df';ctx.fillText(text,view.w/2,view.h*.48);ctx.restore()}
 }
@@ -79,7 +79,7 @@ function skillDisplayName(s,rank){if(!s)return '';const level=rank??p?.learned?.
 function darkCrashUnlocked(){return !!campaign&&(campaign.rares.includes('nova')||!!campaign.clears[4])}
 function darkCrashDamage(rank=p.learned.nova||1){return (rank>=3?(campaign.dawnUpgrade?460:300):rank===2?240:190)*p.power}
 function castDarkCrash(boost,manual=false){
- const rank=p.learned.nova||1,target=nearest(rank>=3&&campaign.dawnUpgrade?480:260);if(!target){acquisitionToast('敵に近づこう');return}const color=rank>=3?'#e8b6ff':'#a880de';p.face=norm(target.x-p.x,target.y-p.y);slashEffect(true,p.face,color);hurtEnemy(target,darkCrashDamage(rank)*boost,true,color,false,false,manual);effects.push({kind:'astralSlash',x:p.x,y:p.y,ex:target.x,ey:target.y,life:rank>=3?.8:.45,max:rank>=3?.8:.45});if(rank>=3)trueSkillEffect(getSkill('nova'));playCue('impact');
+ const rank=p.learned.nova||1,target=nearest(rank>=3&&campaign.dawnUpgrade?480:260);if(!target){acquisitionToast('敵に近づこう');return}const color=rank>=3?'#e8b6ff':'#a880de';p.face=norm(target.x-p.x,target.y-p.y);slashEffect(true,p.face,color);hurtEnemy(target,darkCrashDamage(rank)*boost,true,color,false,false,manual,'dark');effects.push({kind:'astralSlash',x:p.x,y:p.y,ex:target.x,ey:target.y,life:rank>=3?.8:.45,max:rank>=3?.8:.45});if(rank>=3)trueSkillEffect(getSkill('nova'));playCue('impact');
 }
 function trueSkillEffect(s){
  if(effects.length>260)return;const color=s.color||'#d7f8ff';effects.push({kind:'sigil',x:p.x,y:p.y,r:65,color,life:.65,max:.65},{kind:'burst',x:p.x,y:p.y,r:115,color,life:.45,max:.45});particle(p.x,p.y-20,color,10,150);

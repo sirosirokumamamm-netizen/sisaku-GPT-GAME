@@ -2,16 +2,9 @@
 function rareEncounterChance(){return [.0015,.004,.007][campaign.luckCharm||0]}
 function applyCarrySkills(ids){
  const manual=ids.filter(id=>isManualSkill(getSkill(id)));if(manual.length>=3)p.loadout=[null,null,null];
- for(const id of ids){const s=getSkill(id);if(!s||!RARE_IDS.includes(id))continue;p.learned[id]=1;if(isManualSkill(s)){const slot=p.loadout.indexOf(null);if(slot>=0)p.loadout[slot]=id;}else if(s.category==='passive')s.apply();else p.autoSkillTimers[id]=0;}
+ for(const id of ids){const s=getSkill(id);if(!s||!RARE_IDS.includes(id))continue;p.learned[id]=1;if(isManualSkill(s)){const slot=p.loadout.indexOf(null);if(slot>=0&&!p.loadout.includes(id))p.loadout[slot]=id;}else if(s.category==='passive')s.apply();else p.autoSkillTimers[id]=0;}
 }
-function openPreparation(index){
- refreshCampaign();if(campaign.pending){openChest();return false}if(!availableStage(index))return false;
- const n=cloneCampaign();n.selected=index;saveCampaign(n);game.mode='preparation';game.active=false;selectedStyle=campaign.style;
- openModal('<div class="eyebrow">出発の準備 · '+difficultyStars(index)+'</div><h2>'+REGIONS[index].name+'</h2><div class="prep-equipped">⚔ '+getWeapon(campaign.weapon).name+' <small>必殺：'+getUltimateArt(campaign.ultimate).name+' · HP/MP満タン</small></div><h3 id="carryCount">持ち込む技 '+campaign.carries.length+' / '+campaign.carrySlots+' 枠</h3><div class="carry-grid"><button data-carry="" aria-pressed="'+!campaign.carries.length+'">選択を外す</button>'+campaign.rares.map(id=>{const s=getSkill(id);return '<button data-carry="'+id+'" aria-pressed="'+campaign.carries.includes(id)+'"><i class="carry-skill-illustration">'+skillArtwork(s)+'</i>'+skillDisplayName(s,0)+'</button>'}).join('')+'</div><p id="carryDetail" class="carry-detail" role="status">'+(campaign.carries.length?campaign.carries.map(id=>getSkill(id).name).join(' / '):'宝箱で解放した技を選べます。枠はよろずやで拡張。')+'</p><label class="prep-style">戦い方 <select id="prepStyle">'+STYLES.map(s=>'<option value="'+s.id+'" '+(s.id===campaign.style?'selected':'')+'>'+s.name+'</option>').join('')+'</select></label><button id="startStageButton" class="cta">この装備で出発</button><div class="prep-footer"><button id="prepStore">🏪 よろずや</button><button id="backStages">地図へ</button><button id="prepSettings">設定</button></div>');
- $('modal').classList.add('preparation-modal','carry-preparation');paginateTouchChoices();$('prepStyle').onchange=e=>{const n=cloneCampaign();n.style=e.target.value;selectedStyle=n.style;saveCampaign(n)};
- menuNodes('[data-carry]').forEach(b=>b.onclick=()=>{const n=cloneCampaign(),id=b.dataset.carry;let note='';if(!id)n.carries=[];else if(n.carries.includes(id))n.carries=n.carries.filter(x=>x!==id);else if(n.carries.length<n.carrySlots)n.carries.push(id);else if(n.carrySlots===1)n.carries=[id];else{note='枠がいっぱいです。選択中の技を押して外してください。';playCue('deny')}n.carry=n.carries[0]||null;saveCampaign(n);menuNodes('[data-carry]').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.carry?campaign.carries.includes(c.dataset.carry):!campaign.carries.length)));$('carryCount').textContent='持ち込む技 '+n.carries.length+' / '+n.carrySlots+' 枠';$('carryDetail').textContent=note||(id?getSkill(id).desc:'蒼月斬で出発します。')});
- $('startStageButton').onclick=()=>startStageAttempt(index);$('prepStore').onclick=()=>openWeaponShop('preparation');$('backStages').onclick=openStageSelect;$('prepSettings').onclick=openSettings;return true;
-}
+function openPreparation(index){return renderEmbark(index)}
 function storeProducts(){return [
  {id:'carryExpansion',icon:'▣',name:'持ち込み枠',level:campaign.carrySlots,max:3,price:campaign.carrySlots===1?1800:3600,desc:'宝箱で解放した技を、出発時にもう1つ持ち込めます。',effect:'持ち込み '+campaign.carrySlots+' → '+Math.min(3,campaign.carrySlots+1)+' 枠',note:'永続強化。戦闘中の手動ボタンは3個のままです。'},
  {id:'luckCharm',icon:'✦',name:'金運のお守り',level:campaign.luckCharm,max:2,price:campaign.luckCharm===0?1600:3200,desc:'金色のスライムに出会う抽選確率を高めます。',effect:campaign.luckCharm===0?'出会いやすさ 約2.7倍':'出会いやすさ 約4.7倍',note:'永続効果。第2区画から抽選、1挑戦で最大1体。必ず出る効果ではありません。'}
@@ -31,6 +24,7 @@ function openWeaponShop(returnMode='stageSelect',selection,tab='swords'){
 // Full danger outline from the first frame; fill and a clock show when it strikes.
 function threatName(w){return w.style==='doom'?'大技 · 安全地帯へ':w.follow?(w.life>w.lockTime?'追尾中 → 動き続ける':'位置確定 → 外へ'):w.kind==='line'?'直線攻撃 → 横へ':w.kind==='ring'?'光の輪の内側へ':w.persist||w.attack==='mine'?'着弾後も危険':'範囲の外へ'}
 function drawWarning(w,t){
+ if(!showAttackWarning(w))return;
  const progress=warningProgress(w),inside=warningContains(w),urgent=w.life<.45,color=urgent?'#fff0a3':inside?'#ff896b':'#ffc295';ctx.save();warningShape(w);ctx.fillStyle=inside?'#d7373438':'#b4363026';ctx.fill('evenodd');ctx.strokeStyle='#271c2d';ctx.lineWidth=7;ctx.stroke();ctx.strokeStyle=color;ctx.lineWidth=inside?3.5:2.5;ctx.stroke();
  warningShape(w,progress);ctx.fillStyle='rgba(255,91,49,'+(.08+progress*.19)+')';ctx.fill('evenodd');
  if(w.kind==='circle'){ctx.beginPath();ctx.arc(w.x,w.y,w.r+9,-Math.PI/2,-Math.PI/2+progress*Math.PI*2);ctx.strokeStyle=color;ctx.lineWidth=5;ctx.stroke()}
@@ -39,7 +33,7 @@ function drawWarning(w,t){
  ctx.restore();
 }
 function updateReadableThreats(dt){
- for(const w of warnings){if(!w.readable){w.readable=true;const min=w.style==='doom'?2:w.follow?1.35:w.atk>=35?1.15:.7;if(w.max<min){w.life+=min-w.max;w.max=min;const e=enemies.find(e=>e.id===w.owner);if(e?.state==='windup')e.timer=Math.max(e.timer,w.life)}}if(warningContains(w)&&w.life<.55&&!w.alerted){w.alerted=true;playCue('danger')}}
+ for(const w of warnings){if(!w.readable){w.readable=true;const min=w.style==='doom'?2:w.follow?1.35:w.atk>=35?1.15:.7;if(w.max<min){w.life+=min-w.max;w.max=min;const e=enemies.find(e=>e.id===w.owner);if(e?.state==='windup')e.timer=Math.max(e.timer,w.life)}}if(showAttackWarning(w)&&warningContains(w)&&w.life<.55&&!w.alerted){w.alerted=true;playCue('danger')}}
 }
 function recordReadableHit(dmg,before){
  game.lastHit={amount:Math.min(dmg,before),source:game.hitSource||'敵の攻撃',life:2.2};playCue(p.hp<=p.maxHp*.3?'critical':'hurt');
@@ -76,7 +70,7 @@ function activateUltimate(){
 }
 function releaseAstralSlash(){
  const target=enemies.find(e=>e.id===p.ultimateTarget&&e.hp>0);p.ultimateTarget=null;if(!target)return;const from={x:p.x,y:p.y},to={x:target.x,y:target.y};p.face=norm(to.x-from.x,to.y-from.y);slashEffect(true,p.face,'#bffbff');effects.push({kind:'astralSlash',x:from.x,y:from.y,ex:to.x,ey:to.y,life:.9,max:.9,art:p.ultimateArt});const art=getUltimateArt(p.ultimateArt),power=(art.damage+70*(p.learned.ultimatePower||0))*p.power;
- hurtEnemy(target,power,true,'#c9fbff',true);for(const e of enemies)if(art.id!=='raigai'&&e!==target&&e.hp>0&&(art.id==='raika'?distance(e,to)<210:segmentHits(from,to,e,e.r+45)))hurtEnemy(e,power*(art.id==='raika'?.8:.45),true,'#a9eaff',true);if(art.id==='raika'){effects.push({kind:'nova',x:to.x,y:to.y,r:210,color:'#d2a6ff',life:.8,max:.8});for(let i=0;i<8;i++){const a=i*Math.PI/4;effects.push({kind:'beam',x:to.x,y:to.y,ex:to.x+Math.cos(a)*210,ey:to.y+Math.sin(a)*210,color:'#d6c1ff',life:.45,max:.45})}}if(art.id==='raigai'){effects.push({kind:'thunder',x:to.x,y:to.y,r:100,color:'#ffc890',life:.7,max:.7});floating(to.x,to.y-95,'轟雷貫斬！','#ffddb4',true)}playCue('impact');particle(to.x,to.y-30,'#d0fbff',35,260);p.invuln=Math.max(p.invuln,.8);
+ hurtEnemy(target,power,true,'#c9fbff',true,false,false,'lightning');for(const e of enemies)if(art.id!=='raigai'&&e!==target&&e.hp>0&&(art.id==='raika'?distance(e,to)<210:segmentHits(from,to,e,e.r+45)))hurtEnemy(e,power*(art.id==='raika'?.8:.45),true,'#a9eaff',true,false,false,'lightning');if(art.id==='raika'){effects.push({kind:'nova',x:to.x,y:to.y,r:210,color:'#d2a6ff',life:.8,max:.8});for(let i=0;i<8;i++){const a=i*Math.PI/4;effects.push({kind:'beam',x:to.x,y:to.y,ex:to.x+Math.cos(a)*210,ey:to.y+Math.sin(a)*210,color:'#d6c1ff',life:.45,max:.45})}}if(art.id==='raigai'){effects.push({kind:'thunder',x:to.x,y:to.y,r:100,color:'#ffc890',life:.7,max:.7});floating(to.x,to.y-95,'轟雷貫斬！','#ffddb4',true)}playCue('impact');particle(to.x,to.y-30,'#d0fbff',35,260);p.invuln=Math.max(p.invuln,.8);
 }
 function drawAstralSlash(e){
  const q=1-e.life/e.max,n=norm(e.ex-e.x,e.ey-e.y),length=Math.hypot(e.ex-e.x,e.ey-e.y)+100,end={x:e.x+n.x*length,y:e.y+n.y*length},width=(1-q)*60+3;ctx.save();ctx.globalCompositeOperation='lighter';ctx.lineCap='round';for(const [color,w] of [['#167fff77',width*2],['#74e8ffcc',width],['#edffff',width*.25]]){ctx.strokeStyle=color;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(e.x,e.y-30);ctx.lineTo(end.x,end.y-30);ctx.stroke()}ctx.translate(e.x+n.x*length*Math.min(1,q*3),e.y+n.y*length*Math.min(1,q*3)-30);ctx.rotate(Math.atan2(n.y,n.x));ctx.strokeStyle='#e6ffff';ctx.lineWidth=8*(1-q)+1;ctx.beginPath();ctx.arc(-40,0,80,-1.1,1.1);ctx.stroke();ctx.restore();ctx.save();ctx.strokeStyle='#c7f8ff';ctx.lineWidth=2;for(const side of [-1,1]){ctx.beginPath();for(let i=0;i<=10;i++){const f=i/10,offset=(i%2?1:-1)*side*width*.6,x=e.x+(end.x-e.x)*f-n.y*offset,y=e.y-30+(end.y-e.y)*f+n.x*offset;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.stroke()}ctx.restore();
@@ -89,21 +83,12 @@ function playCue(name){
  let delay=0;for(const [f,d,type='sine',vol=.035]of(cues[name]||cues.select)){if(soundQueue.length<32)soundQueue.push({at:soundTime+delay,f,d,type,vol});delay+=name==='explosion'?.07:.11}
 }
 function updateSoundCues(dt){soundTime+=dt;for(let i=soundQueue.length-1;i>=0;i--)if(soundQueue[i].at<=soundTime){const n=soundQueue.splice(i,1)[0];if(sounds)tone(n.f,n.d,n.type,n.vol)}}
-function scoreNote(f,d,type,volume,delay=0){
- if(!sounds||!audio||audio.state!=='running'||preferences.music<=0)return;const start=audio.currentTime+delay,o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(.00001,start);g.gain.linearRampToValueAtTime(volume*preferences.music,start+.018);g.gain.exponentialRampToValueAtTime(.00001,start+d);o.connect(g);g.connect(audioBus||audio.destination);o.start(start);o.stop(start+d+.02);
-}
-function updateMusic(dt){
- if(!sounds||!audio||audio.state!=='running'||preferences.music<=0||['pause','settings'].includes(game.mode)||document.hidden)return;
- const scene=game.bossScene?game.bossScene.kind==='defeat'?'victory':'omen':game.mode==='weaponShop'?'shop':['stageSelect','preparation','start'].includes(game.mode)?'map':game.mode==='stageResult'||game.mode==='chest'?'victory':game.mode==='play'&&game.active?(isBossStage()?(game.region===5?'god':game.region===4?'demon':'boss'):'battle'):'rest';
- if(scene!==musicScene){musicScene=scene;musicClock=0;musicBeat=0}musicClock-=dt;if(musicClock>0)return;
- const patterns={map:[0,4,7,12,9,7,4,2,0,4,7,11,9,7,2,4],shop:[0,7,9,7,4,7,2,4,0,7,12,9,7,4,2,7],battle:[0,7,3,10,7,12,10,7,5,8,12,10,7,5,3,2],boss:[0,0,7,3,2,7,8,7,0,3,7,10,8,7,5,2],demon:[0,1,7,6,0,3,8,7,1,0,6,7,10,8,7,1],god:[0,7,11,12,6,7,14,11,0,6,7,12,11,7,6,2],rest:[0,4,7,11,9,7,4,2],omen:[0,1,7,6,0,3,1,0],victory:[0,4,7,12,7,9,11,12]};
- const calm=['map','shop','rest','victory'].includes(scene),step=calm?.32:scene==='omen'?.4:.22,base=scene==='demon'?146.83:scene==='god'?196:calm?220:164.81,notes=patterns[scene],i=musicBeat++%notes.length,f=base*2**(notes[i]/12),duck=game.bossScene?.45:1;musicClock=step;
- scoreNote(f,step*1.5,calm?'sine':'triangle',.035*duck);if(i%2===0)scoreNote(base/2,step*1.7,'triangle',.035*duck);if(i%4===0){scoreNote(base*2**(calm?4/12:3/12),step*3,'sine',.012*duck);scoreNote(base*2**(7/12),step*3,'sine',.012*duck)}if(!calm&&i%2===1)scoreNote(i%4===3?65:110,.08,'triangle',.035*duck);
-}
+function scoreNote(f,d,type,volume,delay=0){layeredScoreNote(f,d,type,volume,delay)}
+function updateMusic(dt){updateLayeredMusic(dt)}
 document.addEventListener('pointerdown',()=>{if(sounds){tone(440,.015,'sine',.0001);audio?.resume()}},{passive:true});
 document.addEventListener('click',e=>{if(e.target.closest('button:not(:disabled)')&&!e.target.closest('#movePad'))playCue('select')});
 function drawThreatClocks(){
- const visible=warnings.filter(w=>w.kind!=='ring').sort((a,b)=>distance(a,p)-distance(b,p)).slice(0,5);for(const w of visible){const x=w.kind==='line'?w.x+w.dir.x*Math.min(110,w.length*.4):w.x+w.r*.65,y=w.kind==='line'?w.y+w.dir.y*Math.min(110,w.length*.4):w.y-w.r*.65;ctx.save();ctx.translate(x,y);ctx.scale(1,1/CAMERA.depth);rounded(-20,-12,40,24,6,'#271c2df5','#ffe3aa');ctx.font='900 13px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff1c4';ctx.fillText(Math.max(0,w.life).toFixed(1),0,5);ctx.restore()}
+ const visible=warnings.filter(w=>showAttackWarning(w)&&w.kind!=='ring').sort((a,b)=>distance(a,p)-distance(b,p)).slice(0,5);for(const w of visible){const x=w.kind==='line'?w.x+w.dir.x*Math.min(110,w.length*.4):w.x+w.r*.65,y=w.kind==='line'?w.y+w.dir.y*Math.min(110,w.length*.4):w.y-w.r*.65;ctx.save();ctx.translate(x,y);ctx.scale(1,1/CAMERA.depth);rounded(-20,-12,40,24,6,'#271c2df5','#ffe3aa');ctx.font='900 13px system-ui';ctx.textAlign='center';ctx.fillStyle='#fff1c4';ctx.fillText(Math.max(0,w.life).toFixed(1),0,5);ctx.restore()}
 }
 function ultimateArts(){return [
  {id:'sorai',name:'蒼雷斬',icon:'ϟ',price:0,damage:260,desc:'残りHPが最も多い敵へ、雷をまとう必中の剣閃。',effect:'単体への一撃重視',note:'最初から習得。直線上の敵にも余波。発動後は8秒間覚醒。'},

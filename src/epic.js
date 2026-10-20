@@ -78,7 +78,7 @@ function drawEpicCreature(e,t){
  }
  ctx.restore();return true;
 }
-function drawEpicTelegraphs(t){for(const w of warnings)if(w.attack==='epic'){
+function drawEpicTelegraphs(t){for(const w of warnings)if(w.attack==='epic'&&showAttackWarning(w)){
  ctx.save();if(w.style==='doom'){const q=1-w.life/w.max,yy=w.y-220;ellipse(w.x,yy,35+q*55,35+q*55,epicGradient(w.x,yy,100,'#d4a2e477','#22152a00'));ellipse(w.x,yy,26+q*39,26+q*39,'#170f25');ctx.strokeStyle='#e3a2f3';ctx.lineWidth=2;ctx.beginPath();ctx.arc(w.x,yy,32+q*45,t,t+Math.PI*1.7);ctx.stroke()}if(w.kind==='ring'&&w.inner){ctx.strokeStyle='#b9ffda';ctx.fillStyle='#7fffc522';ctx.lineWidth=3;ctx.setLineDash([10,8]);ctx.beginPath();ctx.arc(w.x,w.y,w.inner,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.setLineDash([]);ctx.font='bold 14px system-ui';ctx.textAlign='center';ctx.fillStyle='#dcffeb';ctx.fillText('安全地帯',w.x,w.y+5)}
  if(w.follow){ctx.strokeStyle=w.life>w.lockTime?'#ffb1da':'#fff1b3';ctx.lineWidth=2;for(let i=0;i<4;i++){const a=i*Math.PI/2+t;ctx.beginPath();ctx.arc(w.x,w.y,w.r+10,a,a+.6);ctx.stroke()}if(w.life<=w.lockTime){ctx.beginPath();ctx.moveTo(w.x-10,w.y);ctx.lineTo(w.x+10,w.y);ctx.moveTo(w.x,w.y-10);ctx.lineTo(w.x,w.y+10);ctx.stroke()}}
  if(w.style==='lightning'){const f=1-w.life/w.max;ctx.globalAlpha=.3+f*.5;ellipse(w.x,w.y-180,35,14,'#fff2ad');ctx.strokeStyle='#fff2ac';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(w.x,w.y-175);ctx.lineTo(w.x-12,w.y-120);ctx.lineTo(w.x+12,w.y-85);ctx.lineTo(w.x,w.y-50);ctx.stroke()}ctx.restore();}}

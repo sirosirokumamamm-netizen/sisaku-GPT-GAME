@@ -8,7 +8,7 @@ function dawnRadius(rank=p.learned.dawn||1){return campaign.dawnUpgrade?Infinity
 function castDawnBlade(boost,manual=false){
  const rank=p.learned.dawn||1,r=dawnRadius(rank),color=campaign.dawnUpgrade?'#fff2bd':'#f2cb83';
  // Unsealed dawn reaches all living enemies, including beyond the camera. Cosmetic radius is bounded.
- for(const e of enemies)if(e.hp>0&&distance(p,e)<=r+e.r)hurtEnemy(e,dawnDamage(rank)*boost,true,color,false,false,manual);
+ for(const e of enemies)if(e.hp>0&&distance(p,e)<=r+e.r)hurtEnemy(e,dawnDamage(rank)*boost,true,color,false,false,manual,'light');
  const visual=Math.min(Number.isFinite(r)?r:620,620);effects.push({kind:'nova',x:p.x,y:p.y,r:visual,color,life:.65,max:.65},{kind:'sigil',x:p.x,y:p.y,r:visual*.75,color,life:.55,max:.55});
  for(let i=0;i<(reduced?3:6);i++){const a=i*Math.PI/3;effects.push({kind:'beam',x:p.x,y:p.y,ex:p.x+Math.cos(a)*visual,ey:p.y+Math.sin(a)*visual,color,life:.32,max:.32})}
  if(rank>=3)trueSkillEffect(getSkill('dawn'));playCue('impact');

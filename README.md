@@ -105,7 +105,9 @@
 
 設定の「細かい設定」から冒険データを初期化できます。確認後、解放・所持品・記録・中断冒険を削除。音量と操作設定は残ります。
 
-技ボタンは左からJ・K・Lの順でキーを大きく表示。スマホでは回避を一段上へ配置。
+プレイ画面は枠なしで表示領域いっぱいに表示し、画面上のメニューは「一時停止」のみ。HP・MPは左上、移動と技は左右下へ配置します。戦闘後は技ボタンを隠し、小さな「装備を整える」ボタンから任意で準備できます。
+
+読み込み時にブラウザの全画面表示を試み、制限された場合は最初のタップ完了時に再試行します。全画面APIのない環境ではブラウザの表示領域いっぱいを使います。ブラウザによるユーザー操作の制限は回避しません。
 
 設定でキー割当、効果音・音楽、画面揺れ、閃光、ダメージ数字、粒子量、演出短縮を変更できます。フォーカスが外れると一時停止。途中終了は確認してから確定します。タイムは選択・休憩・一時停止を除きます。
 
@@ -130,7 +132,8 @@ python -m http.server 8000 --bind 127.0.0.1
 | src/art/ | スキル別イラストのシート5枚（各3×3）、対応表はdark-fantasy.js |
 | src/expansion.js | 区画の役割、秘宝8種、中断復元、図鑑、舞台イラスト |
 | src/input.js | キー、タッチ、起動 |
-| src/template.html / style.css | 画面構造、レトロな青いUI |
+| src/template.html / style.css | 画面構造、メニューの配色・装飾 |
+| src/play-layout.css | 枠なしのプレイ画面、HUD、縦横のタッチ操作配置 |
 | scripts/build.cjs | 単一HTMLへの統合と同期チェック |
 
 ## 検証
@@ -140,6 +143,9 @@ Node.js、Playwright、Chromium、ローカルHTTPサーバーが必要です。
 ```sh
 node scripts/build.cjs --check
 node scripts/test.cjs --mobile
+# 今回のスマホ表示・操作に絞る場合
+node tests/play-layout.cjs
+node tests/mobile-touch.cjs
 node tests/stage-journey.cjs
 # 神話拡張の集中検証・1構成で全6舞台を通す短縮検証
 node tests/epic.cjs
@@ -150,7 +156,7 @@ node scripts/measure-campaign.cjs
 NOVICE=1 node tests/stage-journey.cjs
 ```
 
-`node scripts/test.cjs --mobile` は今回の仕様に対応した検証です。既定の `node scripts/test.cjs` は全27本の回帰テストを実行します。開始時の地図、任意の準備画面、現在の価格・演出・技仕様に検証内容を更新し、スマホ操作も既定の対象に含めています。`node scripts/test.cjs --journeys` は、3流派×6ステージの18ケースと、ジャスト回避を使わない初ステージも実行します。`BASE_URL`で試験対象を変更できます。Chromiumは標準で `/usr/bin/chromium`。主要テストは `CHROMIUM_PATH` に対応します。スクリーンショットは `/tmp/`。
+`node scripts/test.cjs --mobile` は今回の仕様に対応した検証です。既定の `node scripts/test.cjs` は全28本の回帰テストを実行します。開始時の地図、任意の準備画面、現在の価格・演出・技仕様に検証内容を更新し、スマホ操作も既定の対象に含めています。`node scripts/test.cjs --journeys` は、3流派×6ステージの18ケースと、ジャスト回避を使わない初ステージも実行します。`BASE_URL`で試験対象を変更できます。Chromiumは標準で `/usr/bin/chromium`。主要テストは `CHROMIUM_PATH` に対応します。スクリーンショットは `/tmp/`。
 
 休憩の実キー操作・購入プレビュー・装備フォーカス・終了確認・長押し誤選択は `comfort`。秘宝の効果・支払い・中断再開・破損セーブ・図鑑・狭幅UIは `expansion`。区画クリアの停止・Space回避・隠し舞台の出現は `clear-flow`。新しいプレイ経路の検証は `campaign`、`regions`、`campaign-usability`、`stage-journey`。既存の戦闘回帰テストは内部の旧進行用フィクスチャを使うため、それだけで新しい舞台選択を検証したとは扱いません。`journey.cjs`は新しい通しテストへの互換入口です。
 

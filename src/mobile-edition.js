@@ -1,5 +1,31 @@
 // Touch-first flows. Real-time feedback is bounded; no additional assets or timers.
 let bossRetrySnapshot=null,lootNotices=[],lootClock=0;
+function syncPlayLayout(){
+ const body=document.body,rest=String(!!game.singleStage&&['roomRest','exitWalk'].includes(game.phase));
+ if(body.dataset.gameMode!==game.mode)body.dataset.gameMode=game.mode;
+ if(body.dataset.fieldRest!==rest)body.dataset.fieldRest=rest;
+}
+function initFullscreen(){
+ const root=document.documentElement,request=root.requestFullscreen||root.webkitRequestFullscreen;
+ if(!request||document.fullscreenEnabled===false)return;
+ let pending=false;
+ const isFullscreen=()=>document.fullscreenElement||document.webkitFullscreenElement;
+ async function enter(){
+  if(pending||isFullscreen())return;
+  pending=true;
+  try{await request.call(root,{navigationUI:'hide'})}catch{/* Browsers may require a user gesture; the field still fills the viewport. */}
+  finally{pending=false}
+ }
+ function firstGesture(e){
+  if(!e.isTrusted||e.type==='keydown'&&(e.ctrlKey||e.metaKey||e.altKey||e.key==='Escape'))return;
+  document.removeEventListener('pointerup',firstGesture,true);
+  document.removeEventListener('keydown',firstGesture,true);
+  enter();
+ }
+ document.addEventListener('pointerup',firstGesture,true);
+ document.addEventListener('keydown',firstGesture,true);
+ enter();
+}
 function acquisitionToast(message,color='#baffdf'){
  const text=String(message).slice(0,48);lootNotices.push({text,color,life:3.2});lootNotices=lootNotices.slice(-3);lootClock=3.2;
  let toast=$('lootToast');if(!toast){toast=document.createElement('div');toast.id='lootToast';toast.setAttribute('role','status');toast.setAttribute('aria-live','polite');document.body.append(toast)}toast.textContent=text;toast.hidden=false;toast.style.borderColor=color;announce(text);

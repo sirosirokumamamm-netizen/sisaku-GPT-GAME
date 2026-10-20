@@ -103,7 +103,7 @@ function updateStageAttempt(dt){
  if(game.phase==='waveBreak'&&!enemies.some(e=>e.hp>0)&&game.restHealing>0){p.hp=Math.min(p.maxHp,p.hp+game.restHealing);game.restHealing=0;}
 }
 function updateStageHUD(){
- $('roomExit').hidden=!['roomRest','exitWalk'].includes(game.phase)||game.mode!=='play';$('roomExit').textContent='装備などを整える'+(game.pendingChoices?' · 成長 '+game.pendingChoices:game.relicOffers?.length?' · 秘宝あり':'');
+ $('roomExit').hidden=!['roomRest','exitWalk'].includes(game.phase)||game.mode!=='play';$('roomExit').textContent='装備を整える'+(game.pendingChoices?' · 成長 '+game.pendingChoices:game.relicOffers?.length?' · 秘宝あり':'');
  $('growthButton').hidden=!(game.active&&game.pendingChoices>0&&game.draftDeferred>0&&game.mode==='play');$('growthButton').textContent='成長を選ぶ ×'+game.pendingChoices;
  $('battleHint').hidden=game.mode!=='play'||game.phase==='stageClear';let text='';if(game.phase==='exitWalk')text='↑ 光る門へ進むと、次の区画が始まる';else if(game.stage===0&&game.kills<3)text='敵に近づくと、自動で斬る';else if(game.stage===0&&game.skillUses===0)text='群れへ蒼月斬 · '+controlLabel('slash');else if(p.counter>0)text='反撃の好機！ 次の技が強化';else if(p.ultimate>=100)text='必殺技の準備完了 · '+controlLabel('ultimate');else if(enemies.some(e=>e.elite))text='金の冠が精鋭 · 攻撃後の隙を狙おう';else if(game.region<2&&enemies.some(e=>e.kind==='boss'&&e.bossPhase===2))text='突進を石柱へ誘い、装甲を崩そう';else if(game.region===3&&isBossStage())text='ジャスト回避で核心露出';else if(game.stage<2&&game.rolls===0&&warnings.length)text='予兆の外へ。回避は '+controlLabel('roll')+' 長押し';$('battleHint').textContent=text;
 }

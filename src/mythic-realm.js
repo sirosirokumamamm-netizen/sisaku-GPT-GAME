@@ -31,7 +31,7 @@ function drawDemonWarrior(e,t){
  ctx.translate(0,large?-15:Math.sin(t*1.8)*3);if(large)ctx.scale(1.45,1.45);
  if(!large){
   const sway=Math.sin(t*1.6)*7;path([[-32,-87],[-52+sway,-3],[-25,6],[-7,-3],[10,6],[46+sway,0],[30,-88]],'#252033',edge);path([[-17,-81],[0,-45],[19,-82],[27,0],[-28,0]],'#50305c');
-  for(const side of [-1,1]){const raised=e.demonCast>0;ctx.strokeStyle='#39273f';ctx.lineWidth=15;ctx.beginPath();ctx.moveTo(side*26,-79);ctx.lineTo(side*49,raised?-108:-57);ctx.stroke();ellipse(side*49,raised?-109:-56,7,9,skin)}
+  for(const side of [-1,1]){const echo=shadowAttackProgress(e),raised=e.demonCast>0&&(!e.shadowLord||echo===null||echo>.5);ctx.strokeStyle='#39273f';ctx.lineWidth=15;ctx.beginPath();ctx.moveTo(side*26,-79);ctx.lineTo(side*49,raised?-108:-57);ctx.stroke();ellipse(side*49,raised?-109:-56,7,9,skin)}
   ctx.save();ctx.translate(-61,-70);ctx.rotate(-.12);ctx.strokeStyle='#baa179';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(0,-70);ctx.lineTo(0,78);ctx.stroke();path([[0,-93],[14,-72],[0,-49],[-14,-72]],'#382449',edge);ellipse(0,-72,6,10,core);ctx.restore();
   if(e.demonCast>0){ctx.strokeStyle=core;ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,-151,42+pulse*5,13,0,0,Math.PI*2);ctx.stroke()}
  }else{
@@ -39,7 +39,7 @@ function drawDemonWarrior(e,t){
   path([[-43,-100],[-54,-78],[-32,-28],[0,-17],[33,-28],[54,-78],[41,-100]],skin,edge);
   for(const side of [-1,1]){ellipse(side*43,-84,23,22,epicGradient(side*43,-84,26,e.shadowLord?'#7b86a5':'#bd738a',skin));ellipse(side*54,-58,17,23,epicGradient(side*54,-58,25,e.shadowLord?'#6f7997':'#b0687c',skin));ellipse(side*15,-77,21,18,epicGradient(side*15,-77,24,e.shadowLord?'#8e99b8':'#ca8a9b',skin));ctx.strokeStyle='#2c2035';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(side*5,-65);ctx.lineTo(side*30,-64);ctx.moveTo(side*6,-51);ctx.lineTo(side*23,-49);ctx.stroke()}
   path([[-40,-98],[-61,-115],[-63,-88],[-80,-99],[-65,-73],[-35,-84]],'#272238',edge);path([[40,-98],[62,-115],[63,-88],[79,-99],[64,-73],[35,-84]],'#272238',edge);
-  const swing=e.demonCast>0?Math.sin(t*8)*.16:e.state==='dash'?-.5:.08+pulse*.04;ctx.save();ctx.translate(62,-45);ctx.rotate(swing);
+  const echo=shadowAttackProgress(e),swing=e.shadowLord&&echo!==null?-.48+Math.max(0,(echo-.55)/.45)*1.15:e.demonCast>0?Math.sin(t*8)*.16:e.state==='dash'?-.5:.08+pulse*.04;ctx.save();ctx.translate(62,-45);ctx.rotate(swing);
   path([[-7,22],[-14,-124],[-1,-181],[25,-154],[30,-124],[15,-108],[22,-95],[13,-85],[18,-66],[7,22]],'#161520',edge);path([[23,-146],[10,-111],[12,-87],[4,18]],'#5f526e');path([[-27,18],[27,18],[22,28],[-23,28]],'#8e6179',edge);rounded(-4,29,8,23,2,'#33273b',edge);ctx.restore();
   ellipse(0,-57,11,16,core);path([[-6,-57],[0,-67],[6,-57],[0,-43]],'#fff0c9');
  }
@@ -48,7 +48,7 @@ function drawDemonWarrior(e,t){
  path([[-8,-101],[0,-97],[8,-101]],'#160f22');ctx.restore();
 }
 function drawShadowZombie(e,t){
- ctx.save();ctx.translate(e.x,e.y);const gait=Math.sin(t*(e.kind==='bat'?9:4)+e.phase),crawl=e.kind==='slime';ctx.rotate(gait*.06);if(crawl)ctx.scale(1,.7);
+ ctx.save();ctx.translate(e.x,e.y);drawCorpseEmergence(e);const gait=Math.sin(t*(e.kind==='bat'?9:4)+e.phase),crawl=e.kind==='slime';ctx.rotate(gait*.06);if(crawl)ctx.scale(1,.7);
  ellipse(0,5,22,8,'#11111166');for(const side of [-1,1]){ctx.strokeStyle='#777';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(side*8,-22);ctx.lineTo(side*(10+gait*2),-4);ctx.lineTo(side*15,1);ctx.stroke();ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(side*11,-43);ctx.lineTo(side*28,-33+gait*3);ctx.lineTo(side*34,-39+gait*3);ctx.stroke()}
  path([[-14,-48],[-19,-20],[-8,-13],[0,-21],[10,-15],[18,-24],[12,-48]],e.elite?'#303030':'#4d4d4d','#949494');ellipse(2,-58,14,17,'#a6a6a6');path([[-11,-65],[-5,-77],[9,-72],[16,-62],[5,-66]],'#333');ellipse(-3,-59,4,3,'#171717');ellipse(8,-59,4,3,'#171717');ctx.strokeStyle='#3a3a3a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-4,-49);ctx.lineTo(8,-47);ctx.moveTo(-4,-52);ctx.lineTo(-3,-46);ctx.moveTo(3,-51);ctx.lineTo(4,-46);ctx.stroke();
  if(e.kind==='shield')path([[-30,-54],[-45,-45],[-41,-15],[-26,-6],[-17,-22],[-18,-46]],'#555','#b5b5b5');if(['archer','totem','wraith'].includes(e.kind)){ctx.strokeStyle='#999';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(31,-74);ctx.lineTo(31,3);ctx.stroke();ellipse(31,-76,8,9,'#d0d0d0')}

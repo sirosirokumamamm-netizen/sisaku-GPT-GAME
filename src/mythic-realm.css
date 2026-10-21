@@ -1,0 +1,135 @@
+/* A victory seal and parchment survive; colors identify how each reward works. */
+body .clear-result { width:min(560px,100%); background:radial-gradient(at 50% 20%,#fff6da,#dfcda6)!important; }
+body .clear-result .score-hero { padding:15px; border-radius:30px 7px; background:#21394a; color:#fff0cb; }
+body .clear-result .score-hero strong,body .clear-result .score-hero small,body .clear-result .score-hero span { color:#fff0cb!important; }
+body .clear-result .rank-badge { border-radius:50%; border:3px double #eed69c; }
+body .inherit-modal { background:radial-gradient(at 50% 0%,#fff5d5,#e6d5b2)!important; }
+body .inherit-modal .growth-heading { border-bottom:1px solid #af9059; padding-bottom:9px; }
+body .inherit-modal .uses-slot { box-shadow:0 0 0 2px #3d91bb44,0 5px 16px #14364e55; }
+body .inherit-modal .slot-free { box-shadow:0 0 0 2px #e0ae4f55,0 5px 16px #5e401b44; }
+body .inherit-modal .card-action b { border-radius:14px; padding:4px 7px; background:#274759; color:#ecfaff; }
+body .inherit-modal .slot-free .card-action b { background:#614b25; color:#fff0c3; }
+body .inherit-modal .legacy-reward { background:#233b43; border-radius:24px 6px; }
+body .world-map[data-realm-count="7"] .map-node { width:min(114px,calc(33% - 12px)); }
+body .world-map [data-stage="6"] { border:2px solid #e0e4ef; box-shadow:0 0 18px #b6c4e177; }
+body .shadow-stars { color:#e5e9f2; font-style:normal; font-size:9px; }
+/* All nine swords stay together. The selected item's purchase action stays adjacent. */
+body .emporium-modal .purchase-balance,body .emporium-modal .store-philosophy { display:none; }
+body .emporium-modal .sword-shop { flex:1; min-height:0; }
+body .emporium-modal .ownership-seal { position:absolute; top:5px; left:4px; right:4px; border-radius:12px 3px; padding:3px; font-size:9px; font-weight:800; background:#253d4eea; color:#eff6ff; border:1px solid #b7cddf; }
+body .emporium-modal [data-owned="true"] .store-card-art { opacity:.68; }
+body .emporium-modal [data-equipped="true"] { border:2px solid #9cf1cd!important; box-shadow:inset 0 0 0 2px #458a72; }
+body .emporium-modal [data-equipped="true"] .store-card-art { opacity:.9; }
+body .emporium-modal [data-equipped="true"] .ownership-seal { background:#194f41; border-color:#b7f7d3; color:#e6fff0; }
+body .emporium-modal .sword-list button { min-height:105px; }
+body .emporium-modal .sword-detail { padding:10px; }
+body .emporium-modal .product-portrait { height:110px; }
+body .emporium-modal .weapon-aura { transform-origin:80px 80px; animation:weapon-aura 3s ease-in-out infinite alternate; }
+@keyframes weapon-aura { to{opacity:.5;transform:scale(1.06)} }
+@media(max-width:600px) and (min-height:451px) {
+ body .emporium-modal .sword-shop { display:flex; gap:7px; }
+ body .emporium-modal .sword-list { gap:6px; }
+ body .emporium-modal .sword-list button { min-height:88px; }
+ body .emporium-modal .product-portrait { width:63px; height:76px; }
+ body .emporium-modal .sword-detail h3 { font-size:15px; }
+ body .emporium-modal .sword-detail p { font-size:10px; line-height:1.35; }
+ body .emporium-modal .weapon-role { font-size:10px; padding:3px 7px; }
+ body .emporium-modal .weapon-comparison { margin:5px 0; }
+ body .emporium-modal .weapon-comparison>div { padding:3px; }
+ body .emporium-modal #buySword { margin:5px 0 0; }
+ body .emporium-modal .sword-extra { margin-bottom:2px; }
+ body .world-map[data-realm-count="7"] .map-node strong { font-size:9px; }
+ body .world-map[data-realm-count="7"] .map-node small { font-size:8px; }
+}
+@media(max-height:700px) and (max-width:600px) and (min-height:451px) {
+ body .emporium-modal .sword-list button { min-height:61px; }
+ body .emporium-modal .sword-list strong,body .emporium-modal .sword-list small { font-size:9px; }
+ body .emporium-modal .sword-list small { padding-bottom:3px; }
+ body .emporium-modal .product-portrait { width:45px; height:60px; }
+ body .emporium-modal .sword-detail { padding:6px; }
+ body .emporium-modal .sword-detail p { margin:3px 0; font-size:9px; }
+ body .emporium-modal .ownership-seal { top:2px; font-size:7px; padding:2px; }
+ body .emporium-modal .weapon-comparison dd { font-size:12px; }
+ body .emporium-modal .weapon-comparison dt,body .emporium-modal .stat-delta { font-size:9px; }
+}
+@media(max-height:450px) and (min-width:480px) {
+ body .emporium-modal .sword-list { gap:5px; }
+ body .emporium-modal .sword-list button { min-height:65px; }
+ body .emporium-modal .sword-list strong,body .emporium-modal .sword-list small { font-size:9px; padding:1px 3px; }
+ body .emporium-modal .ownership-seal { font-size:7px; padding:2px; top:2px; }
+ body .emporium-modal .product-portrait { height:55px; width:45px; }
+ body .emporium-modal .sword-detail { padding:6px; }
+ body .emporium-modal .sword-detail p { font-size:9px; line-height:1.25; margin:3px 0; }
+ body .emporium-modal .weapon-comparison { margin:4px 0; }
+ body .emporium-modal .weapon-comparison>div { padding:2px; }
+ body .emporium-modal .stat-delta,body .emporium-modal .weapon-comparison dt { font-size:9px; }
+ body .emporium-modal .weapon-role { font-size:9px; padding:2px 5px; }
+ body .emporium-modal .sword-detail h3 { font-size:14px; }
+ body .emporium-modal #buySword { margin:4px 0 0; }
+ body .clear-result .score-hero { padding:7px; }
+}
+@media(max-height:350px) and (min-width:480px) {
+ body .emporium-modal .sword-list button { min-height:49px; }
+ body .emporium-modal .store-heading h2 { font-size:17px!important; }
+ body .emporium-modal .store-wallet strong { font-size:17px; }
+ body .emporium-modal .store-tabs { margin:3px 0; }
+ body .emporium-modal .store-tabs button { min-height:36px; }
+ body .emporium-modal #weaponBack { margin-top:4px; }
+ body .emporium-modal .product-portrait { height:42px; width:35px; }
+ body .emporium-modal .weapon-comparison dd { font-size:11px; margin:0; }
+ body .emporium-modal .stat-delta { margin-top:0; font-size:8px; }
+ body .emporium-modal .weapon-role { font-size:8px; }
+}
+body .emporium-modal .sword-detail p { min-height:0; }
+@media(max-width:600px) and (max-height:700px) and (min-height:451px) {
+ body .emporium-modal .weapon-detail { display:grid; grid-template-columns:44px 1fr; grid-template-areas:'art title' 'art role' 'stats stats' 'extra extra' 'buy buy'; gap:3px; padding:6px; }
+ body .emporium-modal .weapon-detail .product-portrait { grid-area:art; float:none; margin:0; width:44px; height:44px; }
+ body .emporium-modal .weapon-detail h3 { grid-area:title; margin:0; font-size:14px; line-height:1.2; }
+ body .emporium-modal .weapon-detail .weapon-role { grid-area:role; justify-self:center; align-self:center; padding:2px 6px; line-height:1.2; }
+ body .emporium-modal .weapon-detail .weapon-comparison { grid-area:stats; margin:1px 0; }
+ body .emporium-modal .weapon-detail .weapon-comparison dt,body .emporium-modal .weapon-detail .stat-delta { font-size:9px; line-height:1.15; margin:2px 0 0; }
+ body .emporium-modal .weapon-detail .weapon-comparison dd { font-size:12px; line-height:1.15; margin:2px 0 0; }
+ body .emporium-modal .weapon-detail .sword-extra { grid-area:extra; margin:1px 0; font-size:9px; line-height:1.3; }
+ body .emporium-modal .weapon-detail #buySword { grid-area:buy; margin:1px 0 0; }
+ body .emporium-modal .sword-list button { min-height:54px; }
+}
+@media(max-width:600px) and (max-height:700px) and (min-height:451px) {
+ body .emporium-modal .sword-shop { gap:4px; }
+ body .emporium-modal .sword-list button { min-height:52px; }
+}
+@media(max-height:350px) and (min-width:480px) {
+ body .emporium-modal .store-heading h2,body .emporium-modal .store-wallet strong { line-height:1.1!important; }
+ body .emporium-modal .store-tabs button { min-height:44px; }
+ body .emporium-modal .sword-list { gap:4px; }
+ body .emporium-modal .sword-list button { min-height:44px; }
+ body .emporium-modal .weapon-detail { display:grid; grid-template-columns:32px 1fr; grid-template-areas:'art title' 'art role' 'stats stats' 'extra extra' 'buy buy'; gap:2px; padding:4px; }
+ body .emporium-modal .weapon-detail .product-portrait { grid-area:art; float:none; margin:0; width:32px; height:32px; }
+ body .emporium-modal .weapon-detail h3 { grid-area:title; margin:0; font-size:13px; line-height:1.1; }
+ body .emporium-modal .weapon-detail .weapon-role { grid-area:role; margin:0; padding:1px 4px; font-size:8px; line-height:1.1; justify-self:center; }
+ body .emporium-modal .weapon-detail .weapon-comparison { grid-area:stats; margin:0; }
+ body .emporium-modal .weapon-detail .weapon-comparison>div { padding:2px; }
+ body .emporium-modal .weapon-detail .weapon-comparison dt { font-size:8px; line-height:1.1; }
+ body .emporium-modal .weapon-detail .weapon-comparison dd { font-size:11px; line-height:1.1; margin:1px 0 0; }
+ body .emporium-modal .weapon-detail .stat-delta { font-size:8px; line-height:1.1; margin:1px 0 0; }
+ body .emporium-modal .weapon-detail .sword-extra { grid-area:extra; margin:0; line-height:1.1; }
+ body .emporium-modal .weapon-detail #buySword { grid-area:buy; margin:1px 0 0; min-height:44px; }
+}
+body .clear-result .score-hero { margin:12px 0; }
+body .clear-result .result-summary { display:flex; flex-wrap:wrap; justify-content:center; gap:7px 16px; padding:10px; background:#e0cfac; border-radius:18px 5px; }
+body .clear-result .result-summary span { color:#443723; font-size:12px; }
+body .clear-result .eyebrow { margin:0; }
+body .clear-result #resultStages { margin-bottom:0; min-height:44px; }
+@media(max-height:450px) and (min-width:480px) {
+ body .modal.clear-result { width:min(640px,100%); padding:12px!important; display:grid; grid-template-columns:1.2fr 1fr; gap:7px; }
+ body .clear-result>.eyebrow,body .clear-result>h2,body .clear-result>#resultStages { grid-column:1/-1; margin:0!important; }
+ body .clear-result>h2 { font-size:20px!important; line-height:1.2; }
+ body .clear-result>.score-hero { margin:0; padding:8px; gap:10px; }
+ body .clear-result .rank-badge { width:76px; height:76px; flex-shrink:0; }
+ body .clear-result .rank-badge b { font-size:49px; line-height:1; }
+ body .clear-result .score-hero strong { font-size:27px; }
+ body .clear-result>.result-summary { display:grid; align-content:center; margin:0; padding:9px; gap:5px; }
+ body .clear-result>p { display:none; }
+}
+@media(min-height:351px) and (max-height:450px) and (min-width:480px) {
+ body .emporium-modal .sword-list button { min-height:62px; }
+}

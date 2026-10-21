@@ -40,6 +40,7 @@ function applyRoomRelic(){if(hasRelic('ward')){p.shield=Math.max(p.shield,20);p.
 function restShopHTML(){return ''}
 function buyRestPotion(){return false}
 function decorateCampaignEnemy(e,index){
+ if(game.region===6&&e.kind!=='boss'&&e.kind!=='goldSlime'){e.name=({slime:'這い寄る影屍',bat:'疾走する影屍',archer:'弓持つ影屍',shield:'屍の盾兵',totem:'影の屍術師'})[e.kind]||'彷徨う影屍';}
  if(e.kind==='boss'||e.kind==='goldSlime')return;
  if(roomRole()===ROOM_ROLES.horde){e.hp=e.maxHp=Math.round(e.hp*.72);e.speed*=1.06;}
  if(roomRole()===ROOM_ROLES.elite&&index<1){e.elite=true;e.trait=game.wave===1?'breaker':'swift';e.name=e.trait==='breaker'?'精鋭・重撃':'精鋭・疾走';e.hp=e.maxHp=Math.round(e.hp*2.1);e.atk*=1.18;if(e.trait==='swift')e.speed*=1.2;}
@@ -56,7 +57,7 @@ const REST_PLAYER_FIELDS=['hp','maxHp','mp','maxMp','xp','xpNext','lv','power','
 const REST_GAME_FIELDS=['seed','rng','region','room','kills','gold','goldEarned','goldSpent','goldFraction','totalXP','time','combatTime','hitsTaken','damageTaken','damageDealt','perfects','maxCombo','rolls','skillUses','attacks','flanks','blocks','totems','eliteKills','barrels','bossPunishes','resonances','goals','drafts'];
 function normalizeRest(raw){
  if(!raw||raw.version!==1||typeof raw.id!=='string'||raw.id.length>100||!raw.player||!raw.run)return null;
- const g=raw.run,v=raw.player;if(!Number.isInteger(g.region)||g.region<0||g.region>5||!Number.isInteger(g.room)||g.room<1||g.room>4||!STYLES.some(s=>s.id===raw.style))return null;
+ const g=raw.run,v=raw.player;if(!Number.isInteger(g.region)||g.region<0||g.region>=REGIONS.length||!Number.isInteger(g.room)||g.room<1||g.room>4||!STYLES.some(s=>s.id===raw.style))return null;
  if(!REST_PLAYER_FIELDS.every(k=>Number.isFinite(v[k])&&v[k]>=0&&v[k]<=1000000)||!REST_GAME_FIELDS.every(k=>Number.isFinite(g[k])&&g[k]>=0&&g[k]<=((k==='seed'||k==='rng')?0xffffffff:100000000)))return null;
  if(!Number.isInteger(g.seed)||!Number.isInteger(g.rng)||!Number.isInteger(v.lv))return null;
  if(v.hp<=0||v.hp>v.maxHp||v.mp>v.maxMp||v.maxMp<=0||v.maxHp<=0||v.xpNext<=0||v.lv<1||v.cooldownFactor<.1||v.autoInterval<.05)return null;

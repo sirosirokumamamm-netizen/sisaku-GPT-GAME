@@ -14,6 +14,7 @@ const SCORE_THEMES={
  demon:{bpm:144,base:110,scale:[0,1,3,5,7,8,11,12],lead:[0,1,4,3,0,2,5,4,1,0,3,4,6,5,4,1],chords:[0,-1,-5,-3]},
  god:{bpm:138,base:196,scale:[0,2,4,6,7,9,11,12],lead:[0,4,6,7,3,4,7,6,0,3,4,7,6,4,3,1],chords:[0,-2,-6,-3]},
  omen:{bpm:70,base:73.42,scale:[0,1,3,5,6,8,10,12],lead:[0,-1,1,-1,4,-1,3,-1,0,-1,2,-1,1,-1,0,-1],chords:[0,-1,-5,-2]},
+ shadow:{bpm:128,base:98,scale:[0,1,3,5,6,8,11,12],lead:[0,3,1,4,0,5,3,1,6,4,3,0,1,3,6,4],chords:[0,-1,-6,-3]},
  victory:{bpm:108,base:196,scale:[0,2,4,5,7,9,11,12],lead:[0,2,4,7,4,5,6,7,4,2,5,7,6,5,4,7],chords:[0,-5,-3,-2]}
 };
 let musicVoices=0,drumNoise=null;
@@ -21,7 +22,7 @@ function musicSceneKey(){
  if(game.bossScene)return game.bossScene.kind==='defeat'?'victory':'omen';
  if(game.mode==='weaponShop')return 'shop';if(['stageSelect','preparation','start'].includes(game.mode))return 'map';
  if(['stageResult','chest'].includes(game.mode))return 'victory';
- if(game.mode==='play'&&game.active)return isBossStage()?(game.region===5?'god':game.region===4?'demon':'boss'):['grass','water','volcano','ruins','dark','heaven'][game.region||0];return 'rest';
+ if(game.mode==='play'&&game.active)return isBossStage()?(game.region===6?'shadow':game.region===5?'god':game.region===4?'demon':'boss'):['grass','water','volcano','ruins','dark','heaven','shadow'][game.region||0];return 'rest';
 }
 function layeredScoreNote(f,d,type,volume,delay=0){
  if(!sounds||!audio||audio.state!=='running'||preferences.music<=0||musicVoices>=48||!Number.isFinite(f))return;

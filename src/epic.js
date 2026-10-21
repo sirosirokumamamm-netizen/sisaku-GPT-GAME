@@ -47,6 +47,7 @@ function drawHeavenFloor(t){
 }
 function epicGradient(x,y,r,inside,outside){const g=ctx.createRadialGradient(x-r*.25,y-r*.3,r*.08,x,y,r);g.addColorStop(0,inside);g.addColorStop(1,outside);return g}
 function drawEpicCreature(e,t){
+ if(e.form==='demon'){drawDemonWarrior(e,t);return true}
  if(!['dragon','beast','monster','god'].includes(e.form)&&!(e.form==='demon'&&e.awakened))return false;
  ctx.save();const pulse=Math.sin(t*2.5+e.phase),hit=e.flash>0;
  if(e.form==='dragon'){

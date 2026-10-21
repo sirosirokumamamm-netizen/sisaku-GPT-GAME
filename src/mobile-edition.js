@@ -116,7 +116,7 @@ function drawMythicCrown(e,t){
  ctx.restore();if(god){path([[0,-115],[18,-66],[0,-36],[-18,-66]],'#183d66','#fff2ab');ellipse(0,-66,7,12,'#a9edff')}
 }
 function bossStrikeFlare(w,owner){
- if(owner.kind!=='boss'||effects.length>220)return;const color=owner.form==='god'?'#fff0ac':'#db9bff';
+ if(owner.kind!=='boss')return;bossAttackSpectacle(w,owner);if(effects.length>effectBudget()-12)return;const color=owner.form==='god'?'#fff0ac':'#db9bff';
  effects.push({kind:'nova',x:owner.x,y:owner.y-75,r:120,color,life:.5,max:.5},{kind:'beam',x:owner.x,y:owner.y-75,ex:w.x,ey:w.y,color,life:.3,max:.3});
  const count=reduced?4:10;for(let i=0;i<count;i++){const a=i*Math.PI*2/count,r=w.kind==='ring'?w.inner+35:35;const x=w.x+Math.cos(a)*r,y=w.y+Math.sin(a)*r;effects.push({kind:'beam',x,y,ex:x+Math.cos(a)*90,ey:y+Math.sin(a)*90-80,color,life:.45,max:.45})}
  playCue(w.style==='doom'?'explosion':'impact');

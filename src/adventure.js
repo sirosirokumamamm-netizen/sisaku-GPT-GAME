@@ -1,13 +1,13 @@
 // Fifth realm, equipment and room-entry rules. No remote assets or dependencies.
 const WEAPONS=[
  {id:'traveler',name:'旅立ちの剣',price:0,icon:'⚔',color:'#a9e6ff',power:1,speed:1,reach:1,element:'無',extra:'なし',desc:'癖のない標準の剣。'},
- {id:'rapier',name:'風切りの細剣',price:1200,icon:'➶',color:'#a5f3cf',power:.95,speed:1.35,reach:.95,element:'風',extra:'なし',desc:'一撃は軽いが、通常攻撃が速い。'},
- {id:'greatsword',name:'巨人の大剣',price:1200,icon:'♜',color:'#f4d4a2',power:1.4,speed:.9,reach:1.25,element:'無',extra:'なし',desc:'大きな刃で薙ぎ払う。振りは遅い。'},
+ {id:'rapier',name:'風切りの刃',price:1200,icon:'➶',color:'#a5f3cf',power:.25,speed:3,reach:.75,element:'風',extra:'なし',desc:'一撃は軽く、刃は短い。圧倒的な手数で刻む。'},
+ {id:'greatsword',name:'巨人の大剣',price:1200,icon:'♜',color:'#f4d4a2',power:2.6,speed:.45,reach:1.65,element:'無',extra:'なし',desc:'ひと振りは極めて遅い。重い刃と長い間合いで一掃する。'},
  {id:'ember',name:'焔の牙',price:1800,icon:'♨',color:'#ffb080',power:1.18,speed:1.05,reach:1,element:'炎',extra:'3撃ごとに炎上',desc:'通常攻撃の3撃ごとに、命中した敵を燃やす。'},
  {id:'frostblade',name:'氷晶の剣',price:1800,icon:'❄',color:'#adf1ff',power:1.12,speed:1.05,reach:1.12,element:'氷',extra:'3撃ごとに減速',desc:'広めの刃。3撃ごとに敵の移動を遅くする。'},
  {id:'echo',name:'雷鳴の双剣',price:1800,icon:'ϟ',color:'#d7beff',power:1.1,speed:1.2,reach:1,element:'雷',extra:'4撃ごとに追撃',desc:'4撃ごとに、近くの別の敵へ雷が跳ぶ。'},
  {id:'abyss',name:'冥王の黒刃',price:3600,icon:'☾',color:'#d99aff',power:1.55,speed:1.05,reach:1.2,element:'闇',extra:'3撃ごとに闇の衝撃波',postDemon:true,desc:'魔王の残滓を鍛えた大剣。重い一撃と衝撃波で敵を砕く。'},
- {id:'starfall',name:'天穿つ槍剣',price:3600,icon:'✧',color:'#c1f1ff',power:1.4,speed:1.15,reach:1.5,element:'星',extra:'ボスへの与ダメージ＋20%',postDemon:true,desc:'神を穿つ長大な刃。広い間合いから強敵の核心を狙う。'},
+ {id:'starfall',name:'天穿つ大剣',price:3600,icon:'✧',color:'#c1f1ff',power:1.4,speed:1.15,reach:1.5,element:'無',hiddenElement:'light',extra:'ボスへの与ダメージ＋20%',postDemon:true,desc:'神を穿つ長大な刃。広い間合いから強敵の核心を狙う。'},
  {id:'dawn',name:'黎明の聖剣',price:3600,icon:'☀',color:'#fff0b1',power:1.3,speed:1.35,reach:1.2,element:'光',extra:'4撃ごとにMPと必殺ゲージ回復',postDemon:true,desc:'連撃で光を蓄える聖剣。剣技と覚醒をつなげる。'}
 ];
 function getWeapon(id=game.weapon||'traveler'){return WEAPONS.find(w=>w.id===id)||WEAPONS[0]}
@@ -48,13 +48,13 @@ function updateFieldItems(dt){
 function useFieldPotion(){return useCombatPotion()}
 
 function configureRealmBoss(e,index){
- if(e.kind!=='boss')return;e.form=['beast','monster','dragon','sentinel','demon','god'][game.region];e.speed=135+game.region*5;e.pattern=4;e.atk=22+game.region*5;e.cooldown=.5+index*.8;
+ if(e.kind!=='boss')return;e.form=['beast','monster','dragon','sentinel','demon','god','demon'][game.region];e.speed=135+game.region*5;e.pattern=4;e.atk=22+game.region*5;e.cooldown=.5+index*.8;
  if(game.region===3){e.name=index?'月影の守護獣':'星核の守護者';e.form=index?'beast':'sentinel';e.hp=e.maxHp=Math.round(REGIONS[3].hp*.58);e.r=36}
- e.awakened=false;e.cycle='assault';e.cycleTime=8;if(e.form==='dragon'){e.r=60;Object.assign(e,safePoint(e.x,e.y,e.r))}if(e.form==='god'){e.r=56;e.ward=7;e.godCycle=0;e.cycleTime=7;e.atk=54;Object.assign(e,safePoint(e.x,e.y,e.r))}
+ if(game.region===6){e.shadowLord=true;e.name='影の大魔王';e.atk=48}e.awakened=false;e.cycle='assault';e.cycleTime=8;if(e.form==='dragon'){e.r=60;Object.assign(e,safePoint(e.x,e.y,e.r))}if(e.form==='god'){e.r=56;e.ward=7;e.godCycle=0;e.cycleTime=7;e.atk=54;Object.assign(e,safePoint(e.x,e.y,e.r))}
 }
 function interceptBossDefeat(e){
  if(!game.singleStage||e.kind!=='boss'||e.form!=='demon'||e.awakened)return false;
- const before={...e,facing:{...e.facing}};e.awakened=true;e.hp=Math.round(e.maxHp*.75);e.r=72;Object.assign(e,safePoint(e.x,e.y,e.r));e.bossPhase=2;e.state='revive';e.timer=2.8;startEpicEvent('変貌','深淵の王、顕現','#d69aff',2.8);e.cycle='assault';e.cycleTime=8;clearHostiles();e.burn=e.bleed=e.frost=0;
+ const before={...e,facing:{...e.facing}};e.awakened=true;if(e.shadowLord)e.name='影葬王ノクスヴェイル';e.hp=Math.round(e.maxHp*.75);e.r=72;Object.assign(e,safePoint(e.x,e.y,e.r));e.bossPhase=2;e.state='revive';e.timer=2.8;startEpicEvent('変貌','深淵の王、顕現','#d69aff',2.8);e.cycle='assault';e.cycleTime=8;clearHostiles();e.burn=e.bleed=e.frost=0;
  beginBossScene('transform',e,before);grantPhasePotion(e);banner('魔王、復活！','巨大化した！ 猛攻を避け、核心露出を狙え。',2);particle(e.x,e.y,'#d597ff',44,220);return true;
 }
 function updateRealmBoss(e,dt){
@@ -65,7 +65,7 @@ function updateRealmBoss(e,dt){
  if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}demonBarrage(e,dt);e.state='chase';roamMythicBoss(e,dt,225);return true;
 }
 function realmBossWarning(e,warn,target,dir){
- const count=e.pattern++,phase=e.bossPhase===2,pace=e.form==='demon'&&e.awakened?.9:1,pattern=count%(phase?4:3);
+ if(e.form==='demon'&&!e.awakened){demonMagicWarning(e,target,dir);return}const count=e.pattern++,phase=e.bossPhase===2,pace=e.form==='demon'&&e.awakened?.9:1,pattern=count%(phase?4:3);
  if(pattern===0||pattern===3){const point=safePoint(clamp(target.x,125,635),clamp(target.y,STAGES[game.stage].y-175,STAGES[game.stage].y+305),e.r);warn('circle',point.x,point.y,e.form==='beast'?105:120,1.05*pace,{attack:'leap'});e.leapFrom={x:e.x,y:e.y};e.leapTo=point;return}
  if(pattern===1){warn('line',e.x,e.y,0,.9*pace,{length:Math.min(470,Math.max(330,distance(e,target)+140)),width:e.form==='dragon'?140:105,attack:'bossDash'});return}
  if(e.form==='dragon'){epicWarning(e,'line',e.x,e.y,0,1.45,{dir,length:620,width:115,style:'flame',atk:48,persist:3.4});banner('灼熱の竜息','進路の横へ！ 炎はしばらく残る',1.2);return}

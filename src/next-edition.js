@@ -10,7 +10,7 @@ function showAttackWarning(w){
 }
 const ELEMENTS={none:{name:'無',color:'#d3dfdf'},nature:{name:'草木',color:'#9fe8b6'},water:{name:'水',color:'#8edfff'},fire:{name:'炎',color:'#ffae73'},ice:{name:'氷',color:'#b4f5ff'},lightning:{name:'雷',color:'#ffe999'},wind:{name:'風',color:'#a4ffe0'},earth:{name:'土',color:'#e6c393'},dark:{name:'闇',color:'#d7acff'},light:{name:'光',color:'#fff2ad'}};
 function skillElement(s){return ({flame:'fire',meteor:'fire',frost:'ice',thunder:'lightning',chain:'lightning',tornado:'wind',dash:'wind',quake:'earth',nova:'dark',blink:'dark',dawn:'light',wisp:'light',rain:'light',guard:'light',parry:'light',orbit:'light'})[s?.id]||'none'}
-function weaponElement(){return ({'炎':'fire','氷':'ice','雷':'lightning','風':'wind','闇':'dark','光':'light','星':'light'})[getWeapon(game.weapon).element]||'none'}
+function weaponElement(){return ({'炎':'fire','氷':'ice','雷':'lightning','風':'wind','闇':'dark','光':'light','星':'light'})[getWeapon(game.weapon).element]||getWeapon(game.weapon).hiddenElement||'none'}
 function enemyElement(e){
  if(e.element&&ELEMENTS[e.element])return e.element;
  if(e.kind==='boss')return ({god:'light',demon:'dark',dragon:'fire',beast:'nature',monster:'earth'})[e.form]||['nature','water','fire','earth','dark','light'][game.region||0];
@@ -56,8 +56,8 @@ function renderEmbark(index){
 }
 function atlasDecor(){return `<defs><linearGradient id="atlasSea" x2="0" y2="1"><stop stop-color="#101f3a"/><stop offset="1" stop-color="#28546a"/></linearGradient><pattern id="atlasGrid" width="45" height="45" patternUnits="userSpaceOnUse"><path d="M45 0H0V45" fill="none" stroke="#b5d0bb22"/></pattern><filter id="atlasShadow"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-opacity=".4"/></filter></defs><rect width="700" height="400" fill="url(#atlasSea)"/><rect width="700" height="400" fill="url(#atlasGrid)"/><g filter="url(#atlasShadow)"><path d="M25 350Q-5 230 85 105Q180 22 270 45L348 100L430 38Q572-5 645 85Q730 160 665 270L572 350L430 365L310 318L160 385Z" fill="#638478" stroke="#d0c39b" stroke-width="4"/><path d="M45 330Q100 235 182 250T315 310L260 360L135 375Z" fill="#6d9869"/><path d="M285 80Q365 120 327 190T405 365" fill="none" stroke="#4f97ad" stroke-width="24"/><path d="M480 195L530 92L580 172L620 108L655 245Z" fill="#8d6655" stroke="#bf9a71" stroke-width="2"/><path d="M535 100L546 124L520 124Z" fill="#f7b076"/><path d="M286 171L338 96L389 171Z" fill="#a59265" stroke="#d8c493" stroke-width="3"/><path d="M80 80L122 25L165 80Z" fill="#514968"/><path d="M495 45Q560 0 628 48Q567 77 495 45Z" fill="#dfe9cf" stroke="#fff0b0" stroke-width="2"/></g><g class="atlas-cloud" fill="#eff7f01a"><ellipse cx="160" cy="100" rx="80" ry="20"/><ellipse cx="505" cy="285" rx="95" ry="24"/></g><g transform="translate(650 345)" fill="none" stroke="#e7d8ac"><path d="M0-24V24M-24 0H24M0-18L6 0L0 18L-6 0Z"/><circle r="27" opacity=".5"/></g>`}
 function addAtlasPresentation(){
- const modal=$('modal');modal.classList.add('atlas-modal');const map=modal.querySelector('.world-map'),svg=map?.querySelector('svg');if(svg)svg.innerHTML=atlasDecor()+worldRouteSvg(heavenUnlocked()?6:darkUnlocked()?5:finaleUnlocked()?4:3,[[25,82],[75,82],[75,50],[25,50],[25,18],[75,18]])+atlasDetails();
- menuNodes('[data-stage]').forEach(node=>{const i=+node.dataset.stage;node.querySelector('i').textContent=availableStage(i)?REGIONS[i].icon:'☁';node.insertAdjacentHTML('afterbegin','<span class="region-art" aria-hidden="true">'+regionArtwork(i)+'</span>');if(campaign.clears[i]){const label=document.createElement('span');label.className='cleared-ribbon';label.textContent='クリア';node.prepend(label);node.querySelector('small').textContent='もう一度挑む'}});
+ const modal=$('modal');modal.classList.add('atlas-modal');const map=modal.querySelector('.world-map'),svg=map?.querySelector('svg');if(svg)svg.innerHTML=atlasDecor()+worldRouteSvg(visibleRegionCount(),atlasPositions())+atlasDetails();
+ if(map)map.dataset.realmCount=visibleRegionCount();menuNodes('[data-stage]').forEach(node=>{const i=+node.dataset.stage;node.querySelector('i').textContent=availableStage(i)?REGIONS[i].icon:'☁';node.insertAdjacentHTML('afterbegin','<span class="region-art" aria-hidden="true">'+regionArtwork(i)+'</span>');if(campaign.clears[i]){const label=document.createElement('span');label.className='cleared-ribbon';label.textContent='クリア';node.prepend(label);node.querySelector('small').textContent='もう一度挑む'}});
  $('weaponShop').innerHTML='<b>▣ よろずや</b><span>剣を買う・技の持ち込み枠を増やす</span><small>所持金 '+campaign.wallet.toLocaleString('ja-JP')+' G　→</small>';
 }
 function emitSkillAccent(s){
@@ -85,6 +85,7 @@ function drawElementAccent(e,a){
  }
 }
 function drawRealmAmbience(t){
- if(reduced||!game.singleStage)return;const bounds=worldBounds(),colors=['#d1ffc1','#b0ecff','#ffc484','#e5d9aa','#d0a4ed','#fff3bd'],color=colors[game.region],count=Math.round((renderLoad.slow?12:22)*preferences.particles);ctx.save();
+ if(game.singleStage&&game.region===6){drawShadowMist(t);return}
+ if(reduced||!game.singleStage)return;const bounds=worldBounds(),colors=['#d1ffc1','#b0ecff','#ffc484','#e5d9aa','#d0a4ed','#fff3bd'],color=colors[game.region]||'#d0d0d0',count=Math.round((renderLoad.slow?12:22)*preferences.particles);ctx.save();
  for(let i=0;i<count;i++){const x=70+((i*113.7+t*(game.region===2?8:3))%620),y=bounds.top+((i*89.3+t*(game.region===2?-12:4))%(bounds.bottom-bounds.top)+(bounds.bottom-bounds.top))%(bounds.bottom-bounds.top);ctx.globalAlpha=.12+Math.sin(t+i)*.07;ellipse(x,y,game.region===2?2:3,game.region===2?5:2,color)}ctx.restore();
 }

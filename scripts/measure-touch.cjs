@@ -4,12 +4,12 @@ const {chromium}=require('playwright');
  const page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:2,hasTouch:true,isMobile:true}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));await page.addInitScript(()=>{Element.prototype.requestFullscreen=undefined;Element.prototype.webkitRequestFullscreen=undefined});await page.goto(process.env.BASE_URL||'http://127.0.0.1:8000');
  const cdp=await page.context().newCDPSession(page),rows=[];
- for(const scenario of [{w:390,h:844,region:0,rate:1},{w:844,h:390,region:4,rate:1},{w:390,h:844,region:5,rate:1},{w:390,h:844,region:0,rate:4}]){
+ for(const scenario of [{w:390,h:844,region:0,rate:1},{w:844,h:390,region:4,rate:1},{w:390,h:844,region:5,rate:1},{w:390,h:844,region:6,rate:1},{w:390,h:844,region:0,rate:4}]){
   await page.setViewportSize({width:scenario.w,height:scenario.h});await cdp.send('Emulation.setCPUThrottlingRate',{rate:scenario.rate});
   rows.push(await page.evaluate(async scenario=>{
    campaign=normalizeCampaign({version:1,clears:Object.fromEntries([0,1,2,3,4,5].map(i=>[i,{score:100,time:10,rank:'A'}])),unlocked:6,finaleRevealed:true,darkRevealed:true,heavenRevealed:true});saveCampaign(campaign);game.mode='stageSelect';startStageAttempt(scenario.region,9810+scenario.region);sounds=false;preferences.particles=1;preferences.flashes=true;reduced=false;renderLoad.slow=false;renderLoad.count=0;renderLoad.total=0;resize();
    game.roomRoute=['approach','horde','elite','treasure','boss'];game.room=scenario.region?5:2;buildTerrain();enemies=[];spawnWave();
-   if(scenario.region){const boss=enemies.find(e=>e.kind==='boss');if(scenario.region===4)interceptBossDefeat(boss);else transformGod(boss);endBossScene()}
+   if(scenario.region){const boss=enemies.find(e=>e.kind==='boss');if([4,6].includes(scenario.region))interceptBossDefeat(boss);else transformGod(boss);endBossScene()}
    else{enemies=enemies.slice(0,4);game.wave=2;spawnWave()}
    for(const e of enemies){e.hp=e.maxHp=9999999;e.spawnTime=0}p.hp=p.maxHp=100000;p.invuln=100000;p.mp=p.maxMp=100000;game.pendingChoices=0;
    for(const id of [...AUTO_IDS,'crescent','rain','whirl'])p.learned[id]=3;p.loadout=['crescent','rain','whirl'];
@@ -27,5 +27,5 @@ const {chromium}=require('playwright');
   },scenario));
  }
  if(errors.length||rows.some(r=>!r.finite||r.mode!=='play'||r.maxEffects>200||r.workP95Ms>100))throw Error(JSON.stringify({errors,rows}));
- console.log(JSON.stringify({environment:'Headless Chromium, DPR 2, cloud host; fourth scenario uses 4x CPU throttle, not a phone',method:'30 warmup + 180 real animation frames; horde or second-form boss; automatic skills and repeated manual effects; simulation + render CPU costs',rows},null,2));
+ console.log(JSON.stringify({environment:'Headless Chromium, DPR 2, cloud host; last scenario uses 4x CPU throttle, not a phone',method:'30 warmup + 180 real animation frames; horde or second-form boss; automatic skills and repeated manual effects; simulation + render CPU costs',rows},null,2));
  }finally{await browser.close()}})().catch(e=>{console.error(e);process.exit(1)});

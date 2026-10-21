@@ -17,10 +17,10 @@ function bindTouchAction(button,type){
  button.addEventListener('pointerdown',e=>{if(button.disabled||game.mode!=='play')return;e.preventDefault();button.setPointerCapture(e.pointerId);action(type)});
  button.addEventListener('click',e=>{if(e.detail===0)action(type)});
 }
-function effectBudget(){return reduced?70:Math.min(view.w,view.h)<600||matchMedia('(pointer: coarse)').matches?120:240}
+function effectBudget(){return reduced?70:Math.min(view.w,view.h)<600||matchMedia('(pointer: coarse)').matches?(renderLoad.slow?140:200):(renderLoad.slow?240:360)}
 function limitCosmetics(){
  const cap=effectBudget();if(effects.length>cap){let excess=effects.length-cap;effects=effects.filter(e=>!(excess>0&&['particle','afterimage','hitstar'].includes(e.kind)&&excess--));if(effects.length>cap)effects=effects.slice(-cap)}
- const maxTexts=cap<=120?22:40;if(texts.length>maxTexts)texts=texts.slice(-maxTexts);
+ const maxTexts=cap<=200?28:44;if(texts.length>maxTexts)texts=texts.slice(-maxTexts);
 }
 function godMotion(e){
  const phase=((game.time||0)+(e.phase||0)*.1)%5.2,flare=phase<2.6?.05:phase<3.4?Math.sin((phase-2.6)/.8*Math.PI):.18;

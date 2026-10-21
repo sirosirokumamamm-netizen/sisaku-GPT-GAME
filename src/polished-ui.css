@@ -1,0 +1,151 @@
+/* Final palette: dark ink on parchment, ivory on midnight. Explicit states prevent inherited low contrast. */
+body .modal { --menu-ink:#372e24; --menu-muted:#584a36; border-radius:24px 9px 24px 9px!important; }
+body .modal button { color:#382e22; background:#f3e6c8; border-color:#9c8050; transition:box-shadow .16s,filter .16s; }
+body .modal button:focus-visible,body #touchEditor button:focus-visible { outline:3px solid #258574; outline-offset:3px; }
+body .modal h2,body .modal h3 { color:#382e24!important; }
+body .modal .eyebrow,body .modal .menu-topline,body .modal p,body .modal small { color:#584a36; }
+body .modal .text-button,body .modal .map-footer button,body .modal .rest-actions button { color:#413321!important; background:#f6ebd1; border-radius:24px; }
+body .modal button:disabled { opacity:1; color:#746b5c; background:#ddd5c3; filter:none; box-shadow:none!important; }
+body .modal .cta:disabled { color:#574c3b!important; background:#d9cbae!important; border-color:#ad9d7b!important; text-shadow:none; }
+body .modal .cta { border-radius:20px 6px 20px 6px; }
+body .modal .pause-modal button,body .pause-modal button { border-radius:18px; }
+body .modal .draft-card.illustrated { border-radius:20px 6px 20px 6px; color:#fff6de; }
+body .modal .draft-card .card-metric,body .modal .draft-card .card-action { color:#ffdf9b; }
+body .modal .draft-card .card-copy { background:#15283c; }
+body .modal .draft-card .card-metric>span,body .modal .draft-card .card-action>span { color:#d7e7f1; }
+body .modal .legacy-reward { color:#fff2cc; background:#21374a; }
+body .modal .legacy-reward p { color:#e6eaf0; }
+body .embark-heading>button,body #prepSettings,body .carry-heading>button { border-radius:50%; }
+body .embark-kit { border-radius:20px 7px 20px 7px; }
+body .embark-style select { border-radius:20px; }
+body .embark-modal .style-note { display:block!important; color:#4b3b25!important; font-size:11px!important; line-height:1.5!important; }
+body .embark-modal .carry-grid button { border-radius:16px 5px 16px 5px; background:#fff2d5!important; color:#372d20!important; }
+body .embark-modal .carry-grid b { color:#382e20; }
+body .embark-modal .carry-grid span { color:#53452e; }
+body .embark-modal .carry-grid [aria-pressed="true"] { background:#d0e5d7!important; border-color:#245c4d!important; }
+body .embark-modal .carry-grid [aria-pressed="true"]:after { border-radius:10px 0 9px 0; }
+body .embark-modal .carry-skill-illustration .skill-art { width:58px; height:58px; border-radius:50%; }
+body .embark-modal .carry-detail { position:sticky; bottom:0; padding:7px; border-radius:9px; background:#f2e6cbee; }
+body #prepStore { color:#fff0c9; background:linear-gradient(120deg,#2d4855,#132a3d); border-radius:22px 6px 22px 6px; }
+body #prepStore small { color:#f1e0bc; }
+/* Illustrated destinations and engraved sea contours remain readable at six unlocked regions. */
+body .atlas-modal .world-map { border-radius:28px 8px 28px 8px; background:radial-gradient(at 70% 10%,#35586d,#12283e); }
+body .atlas-modal .map-node { position:absolute; justify-content:flex-end; overflow:visible; border-radius:19px 5px 19px 5px; background:#142437; isolation:isolate; }
+body .atlas-modal .map-node .region-art { position:absolute; inset:0; z-index:-2; padding:0; overflow:hidden; border-radius:inherit; opacity:.95; }
+body .region-art svg { display:block; width:100%; height:100%; }
+body .atlas-modal .map-node:after { content:''; position:absolute; inset:0; z-index:-1; border-radius:inherit; background:linear-gradient(#06132500,#07162788 38%,#071320f5 80%); }
+body .atlas-modal .map-node strong { color:#fff6e0; text-shadow:0 1px 3px #000; }
+body .atlas-modal .map-node small { color:#e1eee5; }
+body .atlas-modal .map-node>i { position:absolute; right:6px; top:4px; font-size:15px; text-shadow:0 1px 3px #000; }
+body .atlas-modal .map-node:disabled { opacity:1; color:#f5eddd; filter:saturate(.35); }
+body .atlas-modal .cleared-ribbon { position:absolute; top:3px; left:-12px; width:62px; padding:3px 0; transform:rotate(-34deg); transform-origin:center; border-radius:2px; background:#f0cf80; color:#302718; border:1px solid #fff0b8; font-size:9px; line-height:1.1; font-weight:900; text-align:center; box-shadow:0 2px 5px #0006; z-index:2; }
+body .atlas-modal .map-shop { background:linear-gradient(120deg,#324c56,#12283d); border-radius:26px 7px 26px 7px; color:#fff0d2; padding-left:20px; }
+body .atlas-modal .map-shop b { color:#ffe0a0; }
+body .atlas-modal .map-shop span,body .atlas-modal .map-shop small { color:#f4e8cd; }
+body .atlas-modal .world-map>svg { animation:atlas-reveal .55s ease-out both; }
+@keyframes atlas-reveal { from{opacity:.3;filter:brightness(1.3)}to{opacity:1;filter:none} }
+/* The merchant's cards use original blade silhouettes and a larger illustration. */
+body .emporium-modal .store-heading { display:flex!important; }
+body .emporium-modal .store-heading small { color:#58462d; }
+body .emporium-modal .store-wallet { border-radius:22px 6px 22px 6px; background:#1e374b!important; border:1px solid #c7a465; }
+body .emporium-modal .store-wallet small { color:#e0e9e6!important; }
+body .emporium-modal .store-wallet strong { color:#ffe4a1!important; }
+body .emporium-modal .store-tabs button { color:#473722; background:#e8d8b6; border-radius:22px; min-height:44px; }
+body .emporium-modal .store-tabs [aria-pressed="true"] { background:#244c53; color:#fff3d9; border-color:#285b57; }
+body .emporium-modal .sword-shop { grid-template-columns:1.25fr 1fr; gap:12px; align-items:start; }
+body .emporium-modal .sword-list { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+body .emporium-modal .sword-list button { position:relative; display:flex; flex-direction:column; align-items:stretch; justify-content:flex-end; min-height:124px; padding:0!important; border-radius:18px 5px 18px 5px; overflow:hidden; background:#14263a!important; border:1px solid #a2acb0!important; color:#fff5da!important; isolation:isolate; }
+body .emporium-modal .sword-list [aria-pressed="true"] { border:2px solid #ffdc8b!important; box-shadow:0 0 0 2px #a47f3744; }
+body .emporium-modal .store-card-art { display:block; position:absolute; inset:0; z-index:-2; height:100%; margin:0; }
+body .store-card-art svg { width:100%; height:100%; display:block; }
+body .emporium-modal .sword-list button:after { content:''; position:absolute; inset:28% 0 0; z-index:-1; background:linear-gradient(transparent,#061426ee 63%); }
+body .emporium-modal .sword-list strong { padding:2px 5px; color:#fff6df!important; font-size:12px; line-height:1.3; text-shadow:0 1px 3px #000; }
+body .emporium-modal .sword-list small { padding:2px 5px 7px; color:#ffe4a4!important; font-size:11px; }
+body .emporium-modal .tools-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+body .emporium-modal .sword-detail { border-radius:22px 7px 22px 7px; padding:12px; background:#f3e6c8!important; border:1px solid #b39562!important; color:#3b3022!important; }
+body .emporium-modal .product-portrait { display:block; height:125px; background:transparent; margin:0 auto 6px; }
+body .product-portrait svg { width:100%; height:100%; border-radius:40% 40% 15% 15%; }
+body .emporium-modal .sword-detail h3 { color:#3d3020!important; margin:6px 0; font-size:19px; }
+body .emporium-modal .sword-detail p { color:#4c3e2b!important; font-size:12px; line-height:1.5; }
+body .emporium-modal .weapon-role { display:inline-block; padding:4px 9px; border-radius:18px; background:#d6dfcd; color:#2c503f; font-weight:750; font-size:11px; }
+body .emporium-modal .weapon-comparison { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:3px; margin:10px 0; padding:0; }
+body .weapon-comparison>div { padding:5px 2px; background:#fff5de; border-radius:8px; text-align:center; }
+body .weapon-comparison dt { color:#5d4d32; font-size:10px; }
+body .weapon-comparison dd { margin:3px 0 0; color:#392d20; font-size:14px; font-weight:800; }
+body .weapon-comparison .stat-delta { display:block; font-size:10px; margin-top:3px; font-weight:750; }
+body .weapon-comparison .gain { color:#205b41; }
+body .weapon-comparison .loss { color:#963b2b; }
+body .weapon-comparison .equal { color:#625238; }
+body .emporium-modal .store-philosophy { display:block; font-size:10px; line-height:1.5; margin-top:8px; color:#5b4830; }
+body .emporium-modal #buySword { width:100%; min-height:44px!important; }
+body .emporium-modal .purchase-balance { color:#4b432b!important; font-size:11px; }
+body .emporium-modal .store-upgrade-effect { color:#285942!important; }
+/* High contrast live controls with immediate visual response. No position-changing transforms. */
+body .scene .skill b,body .scene .roll b,body .scene #ultimate,body .scene #combatPotion { color:#fff4dc!important; text-shadow:0 1px 3px #000; }
+body .scene .skill .icon,body .scene .roll .icon { color:#f5e4bb!important; }
+body .scene #ultimate:disabled { opacity:.85; color:#e7e1d4!important; background:#14283de6; }
+body .scene #ultimate:disabled small { color:#d7e0e7; }
+body .scene #combatPotion:disabled { color:#e2dfd4!important; border-color:#a8b2aa; background:#293d3b; }
+body .scene .touch-pressed { box-shadow:0 0 0 3px #ffe2a1b3,inset 0 0 18px #fff4bb4a!important; filter:brightness(1.3); }
+body .scene .skill-group>.skill { border-radius:22px 8px 22px 8px!important; }
+body .scene #ultimate { border-radius:24px 7px 24px 7px; }
+body .scene #combatPotion { border-radius:18px; }
+body .touch-editor-hint { margin:5px 0; color:#e2e8de; font-size:11px; }
+body .touch-picks { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; }
+body #touchEditor .touch-picks button { border-radius:22px; min-height:36px; }
+body #touchEditor .touch-picks [aria-pressed="true"] { background:#e9d199; color:#263531; border-color:#fff0bd; }
+body .touch-editor-options { grid-template-columns:1fr 1fr 1fr; }
+body .touch-editor-options select[hidden] { display:none; }
+body #touchEditor { border-radius:22px 7px 22px 7px; }
+body .touch-editor-actions { grid-template-columns:1fr 1fr 1fr; }
+@media(max-width:600px) and (min-height:451px) {
+ body .embark-modal .carry-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+ body .embark-modal .carry-grid button { min-height:99px; }
+ body .embark-modal .carry-skill-illustration .skill-art { width:50px; height:50px; }
+ body .embark-modal .carry-grid span { font-size:9px; }
+ body .embark-modal .style-note { grid-column:1/-1; margin:3px 0!important; }
+ body .emporium-modal .sword-shop { display:flex; flex-direction:column; gap:10px; }
+ body .emporium-modal .sword-list { width:100%; grid-template-columns:repeat(3,minmax(0,1fr)); order:2; }
+ body .emporium-modal .sword-list button { min-height:121px; }
+ body .emporium-modal .sword-detail { width:100%; order:1; padding:9px; }
+ body .emporium-modal .product-portrait { float:left; width:75px; height:96px; margin:0 8px 4px 0; }
+ body .emporium-modal .sword-detail h3 { font-size:17px; margin-top:0; }
+ body .emporium-modal .sword-detail>p { font-size:11px; margin:4px 0; }
+ body .emporium-modal .weapon-comparison { clear:both; margin:7px 0; }
+ body .emporium-modal .sword-detail .sword-extra { margin:5px 0; }
+ body .emporium-modal .store-philosophy { margin-top:5px; font-size:10px; }
+ body .emporium-modal .tools-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-height:450px) and (min-width:480px) {
+ body .embark-modal .style-note { font-size:10px!important; }
+ body .emporium-modal .sword-shop { grid-template-columns:1.1fr 1fr; gap:8px; }
+ body .emporium-modal .sword-list button { min-height:105px; }
+ body .emporium-modal .sword-list strong { font-size:10px; }
+ body .emporium-modal .sword-list small { font-size:10px; }
+ body .emporium-modal .product-portrait { float:left; width:48px; height:64px; margin:0 5px 3px 0; }
+ body .emporium-modal .sword-detail { padding:8px; }
+ body .emporium-modal .sword-detail h3 { font-size:15px; margin:0 0 4px; }
+ body .emporium-modal .sword-detail p { font-size:10px; margin:4px 0; }
+ body .emporium-modal .weapon-comparison { clear:both; margin:5px 0; }
+ body .emporium-modal .weapon-comparison dd { font-size:12px; }
+ body .emporium-modal .store-philosophy { font-size:9px; }
+ body .emporium-modal .store-tabs button { min-height:44px; }
+ body #touchEditor { width:min(590px,calc(100% - 20px)); }
+ body .touch-editor-hint { float:right; font-size:10px; margin:4px; }
+ body .touch-picks { width:55%; gap:4px; margin-top:4px; }
+ body #touchEditor .touch-picks button { min-height:30px; }
+ body .touch-editor-options { grid-template-columns:1fr 1fr 1fr; margin-top:4px; }
+ body #touchLayoutStatus { margin:3px 0; }
+}
+body .modal .text-button,body .modal #weaponBack { background:#f4e7c9!important; color:#40301f!important; border:1px solid #a18555!important; }
+body #prepSettings { font-family:system-ui; color:#403725; }
+body #touchEditor .touch-adjustments { margin-top:5px; }
+body #touchEditor .touch-adjustments summary { color:#e7dcc2; font-size:11px; min-height:24px; cursor:pointer; }
+body #touchEditor .touch-picks button { min-height:44px; }
+@media(max-height:450px) and (min-width:480px) {
+ body #touchEditor .touch-editor-hint { display:none; }
+ body #touchEditor .touch-picks { width:100%; }
+ body #touchEditor .touch-picks button { min-height:36px; }
+ body #touchEditor .touch-adjustments summary { min-height:22px; }
+ body #touchEditor .touch-editor-actions button { min-height:36px; }
+}

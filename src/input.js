@@ -35,7 +35,7 @@ window.addEventListener('keydown',e=>{
  if(!e.repeat){if(k==='j')action('slash');if(k==='k')action('magic');if(k==='l')action('thunder');if(k==='Shift')action('roll');if(k==='q')action('ultimate');if(k==='e')action('heal')}
 });
 window.addEventListener('keyup',e=>keys.delete(boundKey(normalizeKey(e.key))));window.addEventListener('blur',()=>{resetInput();if(game.mode==='play')pause()});document.addEventListener('visibilitychange',()=>{if(document.hidden){resetInput();if(game.mode==='play')pause()}});
-document.querySelector('.skill-group').prepend($('combatPotion'));$('combatPotion').onclick=useCombatPotion;
+document.querySelector('.skill-group').prepend($('combatPotion'));$('combatPotion').onclick=e=>{if(e.detail===0)useCombatPotion()};$('combatPotion').addEventListener('pointerdown',e=>{if(game.mode==='play'&&!$('combatPotion').disabled){e.preventDefault();useCombatPotion()}});
 $('roomExit').onclick=()=>{if(game.phase==='exitWalk')game.phase='roomRest';if(game.phase==='roomRest')roomEquipment()};
 $('growthButton').onclick=()=>{if(game.mode==='play'&&game.pendingChoices>0){game.draftDeferred=0;openDraft()}};
 bindTouchAction($('ultimate'),'ultimate');
@@ -47,4 +47,4 @@ let dragOrigin=null;cv.addEventListener('pointerdown',e=>{if(game.mode!=='play'|
 if(window.ResizeObserver)new ResizeObserver(resize).observe(cv);else window.addEventListener('resize',resize);
 window.addEventListener('resize',resetInput);
 window.visualViewport?.addEventListener('resize',resize);
-reset();resize();openStageSelect();initTouchLayout();initFullscreen();requestAnimationFrame(frame);
+reset();resize();openStageSelect();initTouchLayout();initTouchHitAreas();initFullscreen();requestAnimationFrame(frame);

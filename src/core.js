@@ -63,9 +63,16 @@ function writeStore(key,value){try{localStorage.setItem(key,JSON.stringify(value
 const initialSettings=readStore('azure-settings');
 const preferences={effects:Number.isFinite(initialSettings.effects)?Math.max(0,Math.min(1,initialSettings.effects)):.75,music:Number.isFinite(initialSettings.music)?Math.max(0,Math.min(1,initialSettings.music)):.2,motion:initialSettings.motion==='reduced'?'reduced':'system'};
 const meta=readStore('azure-records');for(const key of ['runs','wins','perfects','combo','score','bestTime'])if(!Number.isFinite(meta[key])||meta[key]<0)meta[key]=0;
-const STYLES=[{id:'azure',name:'蒼月の型',desc:'扱いやすい基本形。HP90・MP24。',color:'#8cdeff'},{id:'storm',name:'雷光の型',desc:'HP80・MP30。MPが少し速く回復。',color:'#dfbeff'},{id:'ward',name:'堅守の型',desc:'HP108・MP20。被ダメージを1軽減。',color:'#b8efc5'}];
+const STYLES=[{id:'azure',name:'蒼月の型',start:['crescent','reach'],desc:'剣の間合い＋12%・剣技威力＋10%。初期：蒼月斬＋長剣の心得。HP90 / MP24。',color:'#8cdeff'},{id:'storm',name:'雷光の型',start:['crescent','thunder'],desc:'天雷の剣を初期装備。属性技威力＋15%・MP回復は約2倍。HP80 / MP30。',color:'#dfbeff'},{id:'ward',name:'堅守の型',start:['crescent','guard'],desc:'自動バリアで守りながら戦う。防御＋2・HP108 / MP20。初期：蒼月斬＋蒼鋼の護り。',color:'#b8efc5'}];
 let selectedStyle='azure',settingsReturn='start',musicClock=0,musicBeat=0;
-function applyStyle(){if(game.styleApplied)return;game.styleApplied=true;game.style=selectedStyle;if(selectedStyle==='storm'){p.hp=p.maxHp=80;p.mp=p.maxMp=30;p.manaRegen=.55}else if(selectedStyle==='ward'){p.hp=p.maxHp=108;p.mp=p.maxMp=20;p.armor=1}updateUI()}
+function styleStartingSkills(id=game.style||selectedStyle){return (STYLES.find(s=>s.id===id)||STYLES[0]).start}
+function applyStyle(){
+ if(game.styleApplied)return;game.styleApplied=true;game.style=selectedStyle;
+ if(selectedStyle==='storm'){p.hp=p.maxHp=80;p.mp=p.maxMp=30;p.manaRegen=.75;p.magicPower*=1.15}
+ else if(selectedStyle==='ward'){p.hp=p.maxHp=108;p.mp=p.maxMp=20;p.armor=2}
+ else p.power*=1.1;
+ for(const id of styleStartingSkills()){if(p.learned[id])continue;const s=getSkill(id);p.learned[id]=1;if(s.category==='passive')s.apply();else if(isManualSkill(s))p.loadout[p.loadout.indexOf(null)]=id;else p.autoSkillTimers[id]=0}updateUI();
+}
 function styleButtons(){return '<div class="style-options" role="group" aria-label="剣士の流派">'+STYLES.map(s=>'<button class="style-option" data-style="'+s.id+'" aria-pressed="'+(s.id===selectedStyle)+'" style="--path-color:'+s.color+'"><b>'+s.name+'</b><small>'+s.desc+'</small></button>').join('')+'</div>'}
 function bindStyleButtons(){document.querySelectorAll('[data-style]').forEach(b=>b.onclick=()=>{selectedStyle=b.dataset.style;document.querySelectorAll('[data-style]').forEach(a=>a.setAttribute('aria-pressed',String(a.dataset.style===selectedStyle)))})}
 function updateTutorial(){

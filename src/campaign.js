@@ -55,7 +55,7 @@ function startStageAttempt(index,seed){
  refreshCampaign();if(!availableStage(index)||campaign.pending||!['preparation','stageResult','stageSelect'].includes(game.mode))return false;
  const n=cloneCampaign(),carries=n.carries.slice(),prepared={...n.prepared};n.selected=index;n.suspended=null;for(const id of ['hp','mp'])if(prepared[id]&&n.stock[id]>0){n.stock[id]--;n.prepared[id]=false}else prepared[id]=false;for(const id of ['hp','mp'])n.prepared[id]=false;saveCampaign(n);
  selectedStyle=n.style;reset(seed);game.singleStage=true;game.roomRoute=makeRoomRoute();game.relic=null;game.relicOffers=[];game.weapon=campaign.weapon;game.ultimateArt=campaign.ultimate;game.fieldPotions=0;game.roomPotionCollected=false;game.restPotionUsed=false;game.region=index;game.stage=REGIONS[index].stage;game.room=1;game.waves=2;game.attemptId=Date.now().toString(36)+'-'+game.seed.toString(36)+'-'+Math.random().toString(36).slice(2,8);game.settled=false;game.damageSources={};game.chosenSkills=[];game.roomEntryKills=0;game.bossDamage=0;game.nextAttackAt=0;game.draftDeferred=0;game.targetId=null;game.restHealing=0;
- applyStyle();p.x=380;p.y=STAGES[game.stage].y+145;p.maxHp+=index*6+(prepared.hp?24:0);p.maxMp+=Math.floor(index/2)+(prepared.mp?10:0);p.hp=p.maxHp;p.mp=p.maxMp;p.power=1+index*.08;p.magicPower=p.power;p.xpNext=18;p.potions=0;p.ultimate=20;applyWeapon();
+ applyStyle();p.x=380;p.y=STAGES[game.stage].y+145;p.maxHp+=index*6+(prepared.hp?24:0);p.maxMp+=Math.floor(index/2)+(prepared.mp?10:0);p.hp=p.maxHp;p.mp=p.maxMp;p.power*=1+index*.08;p.magicPower*=1+index*.08;p.xpNext=18;p.potions=0;p.ultimate=20;applyWeapon();
  applyCarrySkills(carries);
  game.mode='play';closeModal();buildTerrain();
  cam={x:p.x,y:p.y-view.h/(view.scale*CAMERA.depth)*((view.w<600?CAMERA.mobileAnchor:CAMERA.desktopAnchor)-.5)};game.furthest=p.y;encounter();updateUI();return true;
@@ -70,10 +70,15 @@ function lossAdvice(){const worst=Object.entries(game.damageSources||{}).sort((a
 function attackLabel(attack){return ({bossDash:'突進',dash:'突進',leap:'着地',hop:'着地',mine:'残る炎',volley:'弾',fan:'弾'})[attack]||'範囲攻撃'}
 function collectStageGold(){for(const d of drops)if(d.type==='coin'&&!d.collected)gainGold(d.value);drops=drops.filter(d=>['fieldPotion','bomb'].includes(d.type)&&!d.collected)}
 function chestOffers(first){
- const selected=[...new Set(game.chosenSkills||[])].filter(id=>!!getSkill(id));
+ // Pending old rewards stay intact; exclusions apply only when generating a new chest.
+ const excluded=new Set([...campaign.rares,...styleStartingSkills(),...(game.region===4?['nova','dawn']:[])]);
+ const selected=[...new Set(game.chosenSkills||[])].filter(id=>!!getSkill(id)&&!excluded.has(id));
  const picks=shuffle(selected).slice(0,4);
- for(const id of shuffle(RARE_IDS.filter(id=>!picks.includes(id)))){if(picks.length>=4)break;picks.push(id)}
- return shuffle(picks).map(id=>({kind:'rare',id,fromRun:selected.includes(id)}));
+ for(const id of shuffle(RARE_IDS.filter(id=>!excluded.has(id)&&!picks.includes(id)))){if(picks.length>=4)break;picks.push(id)}
+ const offers=picks.map(id=>({kind:'rare',id,fromRun:selected.includes(id)}));
+ // A fully collected library cannot provide new skills. Keep the four-choice save format honestly.
+ while(offers.length<4)offers.push({kind:'gold',id:'collection-gold-'+offers.length,amount:160+(offers.length%2)*20});
+ return shuffle(offers);
 }
 function completeStageAttempt(){
  if(game.singleStage&&game.room<5){finishRoom();return true}

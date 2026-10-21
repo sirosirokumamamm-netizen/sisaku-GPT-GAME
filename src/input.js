@@ -2,7 +2,8 @@ window.addEventListener('keydown',e=>{
  if(game.bossScene&&e.key==='Enter'&&!e.repeat){e.preventDefault();endBossScene();return}
  if(e.ctrlKey||e.metaKey||e.altKey)return;
  if(game.mode!=='play'&&e.repeat&&[' ','Enter'].includes(e.key)){e.preventDefault();return;}
- if(e.key==='Escape'&&game.mode==='missions'){e.preventDefault();openStageSelect();return}
+ if(e.key==='Escape'&&game.mode==='missionReceipt'){e.preventDefault();closeMissionReceipt();return}
+ if(e.key==='Escape'&&game.mode==='missions'){e.preventDefault();closeMissions();return}
  if(e.key==='Escape'&&game.mode==='collection'){e.preventDefault();openStageSelect();return}
  if(game.mode==='roomEquipment'&&game.relicOffers?.length&&['1','2','3','4'].includes(e.key)&&!e.repeat&&!e.target.matches('select,input')){e.preventDefault();chooseRelic(Number(e.key)-1);return}
  if(e.key==='Enter'&&game.mode==='play'&&game.phase==='roomRest'){e.preventDefault();roomEquipment();return}

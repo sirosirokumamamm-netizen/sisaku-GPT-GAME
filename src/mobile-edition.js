@@ -30,7 +30,7 @@ function acquisitionToast(message,color='#baffdf'){
  const text=String(message).slice(0,48);lootNotices.push({text,color,life:3.2});lootNotices=lootNotices.slice(-3);lootClock=3.2;
  let toast=$('lootToast');if(!toast){toast=document.createElement('div');toast.id='lootToast';toast.setAttribute('role','status');toast.setAttribute('aria-live','polite');document.body.append(toast)}toast.textContent=text;toast.hidden=false;toast.style.borderColor=color;announce(text);
 }
-function tickMobile(dt){
+function tickMobile(dt){tickGoldAnimations(dt);
  lootClock=Math.max(0,lootClock-dt);for(const n of lootNotices)n.life-=dt;lootNotices=lootNotices.filter(n=>n.life>0);if($('lootToast'))$('lootToast').hidden=lootClock<=0||game.mode==='play';game.dashFlash=Math.max(0,(game.dashFlash||0)-dt);
 }
 function drawAcquisitionLog(){if(game.mode!=='play'||game.bossScene)return;ctx.save();ctx.textAlign='left';ctx.font='bold 13px system-ui';let y=view.h*.32;for(const n of lootNotices){ctx.globalAlpha=Math.min(1,n.life*2);ctx.lineWidth=4;ctx.strokeStyle='#193c50';ctx.strokeText('＋ '+n.text,18,y);ctx.fillStyle=n.color;ctx.fillText('＋ '+n.text,18,y);y+=23}ctx.restore()}

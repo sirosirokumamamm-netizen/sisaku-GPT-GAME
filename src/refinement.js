@@ -34,7 +34,7 @@ function drawNewEnemy(e,t){
 }
 function demonBarrage(e,dt){if(e.shadowLord)shadowSovereignAttack(e);else demonSwordAssault(e,dt)}
 
-function resolveBarrage(w){const boss=enemies.find(e=>e.id===w.owner);if(boss)bossAttackSpectacle(w,boss);hitExplosives(q=>warningContains(w,q,16),w.atk);
+function resolveBarrage(w){const boss=enemies.find(e=>e.id===w.owner);empowerBossThreat(w,boss);if(boss)bossAttackSpectacle(w,boss);hitExplosives(q=>warningContains(w,q,16),w.atk);
  effects.push({kind:'beam',x:w.sourceX??w.x,y:w.sourceY??w.y,ex:w.x,ey:w.y,color:'#d49aff',life:.28,max:.28});if(warningContains(w)&&!w.perfectUsed){game.hitSource=w.barrage==='meteor'?'着地':'範囲攻撃';takeHit(w.atk,w.x,w.y)}effects.push({...w,shape:w.kind,kind:'telegraphHit',life:w.barrage==='breath'?.6:.4,max:w.barrage==='breath'?.6:.4});
  if(w.barrage==='breath'){effects.push({...w,kind:'demonFlame',life:.85,max:.85});hazards.push({...w,life:2.2,tick:.65,protected:false,atk:24})}if(w.barrage==='meteor'){effects.push({kind:'nova',x:w.x,y:w.y,r:w.r,color:'#e8adff',life:.65,max:.65});particle(w.x,w.y,'#dfb3ff',22,240);if(!reduced&&preferences.shake)shake=Math.max(shake,4)}
 }

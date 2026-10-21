@@ -1,0 +1,86 @@
+body [data-gold-counter] { font-variant-numeric:tabular-nums; }
+body .modal.mission-modal .mission-row { position:relative; margin:0 0 7px; }
+body .modal.mission-modal .mission-row .mission-item { margin:0; }
+body .modal.mission-modal .mission-item.can-claim { padding-right:91px; }
+body .modal.mission-modal .mission-receive { position:absolute; right:9px; top:50%; transform:translateY(-50%); min-width:72px; min-height:48px; margin:0; padding:7px 9px; background:linear-gradient(#f9e5af,#d7b76e); color:#283b37; border:1px solid #fff0b9; border-radius:14px 4px; box-shadow:0 2px 6px #0005; }
+body .modal.mission-modal .mission-receive b { display:block; color:#283b37; font-size:13px; }
+body .modal.mission-modal .mission-receive small { display:block; color:#42513c; font-size:9px; margin-top:2px; }
+body .modal.mission-receipt-modal { width:min(580px,100%); max-height:calc(100dvh - 24px); display:flex; flex-direction:column; gap:9px; padding:20px!important; overflow:hidden; }
+body .mission-receipt-modal>h2 { margin:0!important; font-size:24px!important; flex-shrink:0; }
+body .mission-receipt-modal>.eyebrow { font-size:10px; flex-shrink:0; }
+body .mission-receipt-modal>p { margin:0!important; font-size:12px; flex-shrink:0; }
+body .receipt-seal { margin:0 auto; width:45px; height:45px; display:grid; place-items:center; flex-shrink:0; border:1px solid #be9d5d; border-radius:50%; background:#243b51; color:#ffe09a; font-size:28px; }
+body .receipt-gold { padding:12px; background:#1e3248; border:1px solid #b6975e; border-radius:20px 5px; flex-shrink:0; }
+body .modal .receipt-gold small { display:block; color:#e5d9bb; font-size:11px; }
+body .receipt-gold strong { display:block; color:#ffe4a4; font-size:35px; margin-top:2px; font-variant-numeric:tabular-nums; }
+body .receipt-gold strong span { font-size:17px; }
+body .receipt-stats { display:flex; justify-content:center; gap:10px; flex-shrink:0; }
+body .receipt-stats b { background:#d2e3cb; color:#294c3a; border:1px solid #8baf81; padding:6px 12px; border-radius:12px 3px; font-size:13px; }
+body .receipt-unlocks { list-style:none; margin:0; padding:0 5px 0 0; min-height:44px; overflow:auto; overscroll-behavior:contain; text-align:left; }
+body .receipt-unlocks li { display:flex; align-items:center; gap:12px; padding:8px 10px; margin:0 0 6px; background:#e0d1b1; border:1px solid #b4a17c; border-radius:15px 4px; }
+body .receipt-unlocks i { font-style:normal; font-size:24px; color:#7c5c2a; }
+body .receipt-unlocks span { font-size:10px; color:#5c503d; }
+body .receipt-unlocks b { display:block; color:#2c3945; font-size:14px; margin-top:3px; }
+body .receipt-wallet { flex-shrink:0; font-size:12px; color:#534d3e; }
+body .modal.mission-receipt-modal #missionReceiptOK { flex-shrink:0; margin:0; min-height:46px; }
+/* The three preparation actions share one rail; departure keeps the larger target. */
+body .embark-footer.with-missions { grid-template-columns:1fr 1fr 1.25fr; }
+body .embark-footer.with-missions #prepStore,body .embark-footer .prep-missions { display:flex; align-items:center; justify-content:center; min-width:0; gap:7px; min-height:52px; padding:8px; border:1px solid #af8c52; border-radius:18px 5px; background:#263c50; color:#ffe3a8; }
+body .embark-footer.with-missions #prepStore i,body .embark-footer .prep-missions i { font-style:normal; font-size:22px; color:#efd49d; }
+body .embark-footer.with-missions #prepStore b,body .embark-footer .prep-missions b { color:#ffebbf; font-size:14px; }
+body .embark-footer.with-missions #prepStore small,body .embark-footer .prep-missions small { display:block; color:#e7e1d0; font-size:9px; margin-top:4px; }
+body .embark-footer.with-missions #prepStore em { display:none; }
+body .emporium-modal .sword-list .sale-price { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:3px; }
+body .emporium-modal .sword-list .sale-price b { color:#ffa7a7; font-size:11px; }
+body .emporium-modal .sword-list .sale-price em { color:#ffe1e1; background:#8f2637; font-style:normal; font-size:8px; padding:1px 3px; border-radius:4px; }
+@media(max-width:600px) {
+ body .embark-footer.with-missions { grid-template-columns:1fr 1fr 1.2fr; gap:5px; }
+ body .embark-footer.with-missions #prepStore,body .embark-footer .prep-missions { padding:6px 3px; gap:2px; }
+ body .embark-footer.with-missions #prepStore i,body .embark-footer .prep-missions i { display:none; }
+ body .embark-footer.with-missions #prepStore b,body .embark-footer .prep-missions b { font-size:12px; white-space:nowrap; }
+ body .embark-footer.with-missions #prepStore small { font-size:8px; }
+ body .embark-footer.with-missions #startStageButton { font-size:13px; padding:6px!important; }
+ body .embark-footer.with-missions #startStageButton span { display:none; }
+ body .modal.mission-receipt-modal { padding:14px!important; gap:8px; }
+ body .mission-receipt-modal>h2 { font-size:20px!important; }
+ body .receipt-gold { padding:9px; }
+ body .receipt-gold strong { font-size:30px; }
+}
+@media(max-height:480px) and (min-width:480px) {
+ body .modal.mission-receipt-modal { width:min(760px,100%); display:grid; grid-template-columns:1fr 1.15fr; grid-template-rows:auto minmax(60px,1fr) auto auto; gap:8px 15px; height:min(340px,calc(100dvh - 24px)); padding:12px!important; }
+ body .mission-receipt-modal>.eyebrow,body .mission-receipt-modal>.receipt-seal,body .mission-receipt-modal>p { display:none; }
+ body .mission-receipt-modal>h2 { grid-column:1; grid-row:1; font-size:19px!important; }
+ body .receipt-gold { grid-column:1; grid-row:2; align-self:center; padding:8px; }
+ body .receipt-gold strong { font-size:28px; }
+ body .receipt-stats { grid-column:1; grid-row:3; }
+ body .receipt-stats b { padding:4px 8px; font-size:11px; }
+ body .receipt-unlocks { grid-column:2; grid-row:1/4; height:100%; }
+ body .receipt-wallet { grid-column:1; grid-row:4; align-self:center; }
+ body #missionReceiptOK { grid-column:2; grid-row:4; }
+}
+
+body .store-wallet strong [data-gold-counter] { font:inherit; color:inherit; }
+body .emporium-modal #buySword.is-sale { background:linear-gradient(#fff0cd,#e2c48b)!important; color:#293c48!important; padding:5px!important; text-shadow:none; }
+body .emporium-modal .sale-checkout { display:grid; grid-template-columns:auto auto; justify-content:center; align-items:center; column-gap:8px; line-height:1.2; }
+body .emporium-modal .sale-checkout>b { color:#a41f30; font-size:16px; }
+body .emporium-modal .sale-checkout>span { color:#293c48; font-size:11px; }
+body .emporium-modal .sale-checkout>em { grid-column:1/-1; color:#96263b; font-size:9px; font-style:normal; margin-top:2px; }
+@media(max-width:600px) and (max-height:700px) and (min-height:451px) {
+ body .emporium-modal .weapon-detail { gap:1px; padding:5px; }
+}
+@media(max-height:350px) and (min-width:480px) {
+ body .modal.emporium-modal { padding-bottom:6px!important; }
+}
+@media(max-height:450px) and (min-width:480px) {
+ body .emporium-modal .sword-list { gap:4px; }
+ body .emporium-modal .sword-list button { min-height:clamp(44px,calc((100dvh - 215px)/3),65px); }
+}
+@media(min-height:351px) and (max-height:450px) and (min-width:480px) {
+ body .emporium-modal .weapon-detail { display:grid; grid-template-columns:40px 1fr; grid-template-areas:'art title' 'art role' 'stats stats' 'extra extra' 'buy buy'; gap:2px; padding:5px; }
+ body .emporium-modal .weapon-detail .product-portrait { grid-area:art; width:40px; height:40px; margin:0; float:none; }
+ body .emporium-modal .weapon-detail h3 { grid-area:title; margin:0; line-height:1.15; }
+ body .emporium-modal .weapon-detail .weapon-role { grid-area:role; justify-self:center; margin:0; }
+ body .emporium-modal .weapon-detail .weapon-comparison { grid-area:stats; margin:2px 0; }
+ body .emporium-modal .weapon-detail .sword-extra { grid-area:extra; margin:2px 0; }
+ body .emporium-modal .weapon-detail #buySword { grid-area:buy; margin:2px 0 0; }
+}

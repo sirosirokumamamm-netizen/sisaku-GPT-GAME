@@ -1,0 +1,23 @@
+{
+  "environment": "Headless Chromium, DPR 2, cloud host; Shadow boss at normal CPU speed, not a phone",
+  "method": "30 warmup + 180 real animation frames; grass/shadow horde or second-form boss; automatic skills and repeated manual effects (signature=true: charged Dark Crash, Dawn, Meteor); simulation + render CPU costs",
+  "rows": [
+    {
+      "w": 390,
+      "h": 844,
+      "region": "影の世界",
+      "rate": 1,
+      "enemies": 1,
+      "samples": 180,
+      "workMedianMs": 3.5,
+      "workP95Ms": 6.6,
+      "frameP95Ms": 50,
+      "maxEffects": 200,
+      "adaptiveSlow": false,
+      "budget": 200,
+      "canvasPixelRatio": 2,
+      "finite": true,
+      "mode": "play"
+    }
+  ]
+}

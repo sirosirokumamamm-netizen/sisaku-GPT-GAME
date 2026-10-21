@@ -14,7 +14,7 @@ function epicBossProtected(e){
 }
 function epicWarning(e,kind,x,y,r,seconds,extra={}){warnings.push({owner:e.id,kind,x,y,r,life:seconds,max:seconds,atk:e.atk,dir:{x:0,y:1},sourceX:e.x,sourceY:e.y-90,perfectUsed:false,attack:'epic',...extra});e.demonCast=seconds;if(e.state==='windup')e.timer=seconds;}
 function updateEpicWarnings(dt){for(const w of warnings)if(w.follow&&w.life>w.lockTime){const follow=Math.min(1,dt*6);w.x+=(p.x-w.x)*follow;w.y+=(p.y-w.y)*follow;if(w.life-dt<=w.lockTime){particle(w.x,w.y,'#ffda9b',8,75);tone(460,.07,'triangle',.015)}}}
-function resolveEpicStrike(w,owner){
+function resolveEpicStrike(w,owner){empowerBossThreat(w,owner);
  if(warningContains(w)&&!w.perfectUsed&&p.rollTime>0&&p.dodgeAge<.2)perfectDodge(w);
  if(warningContains(w)&&!w.perfectUsed){game.hitSource=w.style==='lightning'?'雷撃':w.style==='doom'?'終末の一撃':'追撃';takeHit(w.atk,w.x,w.y)}hitExplosives(q=>warningContains(w,q,16),w.atk);
  bossStrikeFlare(w,owner);effects.push({...w,shape:w.kind,kind:'telegraphHit',life:.4,max:.4});if(w.style==='lightning'){for(let i=0;i<5;i++)effects.push({kind:'beam',x:w.x+(i%2?22:-22),y:w.y-270+i*54,ex:w.x+(i%2?-22:22),ey:w.y-216+i*54,color:'#fff1ae',life:.35,max:.35})}else effects.push({kind:'nova',x:w.x,y:w.y,r:w.r||140,color:w.style==='doom'?'#d78dff':'#ffb382',life:.7,max:.7});

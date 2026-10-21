@@ -1,7 +1,7 @@
 // Normalized centers keep independent portrait/landscape layouts portable across screen sizes.
 const TOUCH_TARGETS={pad:{id:'movePad',label:'移動スティック'},skills:{selector:'.skill-group',label:'技・回避ボタン'},ultimate:{id:'ultimate',label:'必殺技'},potion:{id:'combatPotion',label:'ポーション'}};
 let touchEdit=null,touchDrag=null,touchClickGuard=null;
-function touchOrientation(){return innerWidth>innerHeight?'landscape':'portrait'}
+function touchOrientation(){const {w,h}=touchViewport();return w>h?'landscape':'portrait'}
 function touchNode(key){const t=TOUCH_TARGETS[key];return t.id?$(t.id):document.querySelector(t.selector)}
 function normalizeTouchSettings(raw){
  const clean={};for(const orientation of ['portrait','landscape']){
@@ -16,6 +16,7 @@ function defaultTouchLayout(){
  const point=(x,y)=>({x:x/w,y:y/h,scale:1,opacity:.9});
  return {pad:point(edge+padSize/2,h-bottom-padSize/2),skills:point(w-edge-skillsW/2,h-bottom-skillsH/2),ultimate:point(w-edge-64,h-bottom-skillsH-36),potion:point(wide?174:tiny?140:156,wide?h-bottom-27:h-bottom-skillsH-30)};
 }
+function touchClientPoint(x,y){const r=document.querySelector('.scene').getBoundingClientRect();return {x:(x-r.left)/(r.width||1),y:(y-r.top)/(r.height||1)}}
 function currentTouchLayout(){const orientation=touchOrientation();return {...defaultTouchLayout(),...(touchEdit?touchEdit.layouts:preferences.touchLayout)[orientation]}}
 let touchLayoutFrame=0;
 function scheduleTouchLayout(){if(touchLayoutFrame)return;touchLayoutFrame=requestAnimationFrame(()=>{touchLayoutFrame=0;applyTouchLayout()})}
@@ -24,10 +25,12 @@ function applyTouchLayout(){
  const safe={left:parseFloat(style.getPropertyValue('--touch-safe-left'))||0,right:parseFloat(style.getPropertyValue('--touch-safe-right'))||0,top:parseFloat(style.getPropertyValue('--touch-safe-top'))||0,bottom:parseFloat(style.getPropertyValue('--touch-safe-bottom'))||0};
  for(const key of Object.keys(TOUCH_TARGETS)){
   const node=touchNode(key),item=layout[key];if(!node||!node.offsetWidth||!node.offsetHeight)continue;
+  // Convert scene coordinates to the node's actual containing block; wrappers may have an inset.
+  const parent=node.offsetParent||scene,pr=parent.getBoundingClientRect(),sr=scene.getBoundingClientRect(),originX=(pr.left-sr.left)*w/(sr.width||w),originY=(pr.top-sr.top)*h/(sr.height||h);
   // Never position hidden controls using stale sizes from another orientation.
   const width=node.offsetWidth,height=node.offsetHeight;
   const halfW=width*item.scale/2,halfH=height*item.scale/2,x=clamp(item.x*w,halfW+Math.max(10,safe.left),w-halfW-Math.max(10,safe.right)),y=clamp(item.y*h,halfH+Math.max(10,safe.top),h-halfH-Math.max(10,safe.bottom));
-  for(const [property,value]of Object.entries({left:x+'px',top:y+'px',right:'auto',bottom:'auto',transform:`translate(-50%,-50%) scale(${item.scale})`,opacity:String(item.opacity)}))if(node.style.getPropertyValue(property)!==value)node.style.setProperty(property,value,'important');
+  for(const [property,value]of Object.entries({left:(x-originX)+'px',top:(y-originY)+'px',right:'auto',bottom:'auto',transform:`translate(-50%,-50%) scale(${item.scale})`,opacity:String(item.opacity)}))if(node.style.getPropertyValue(property)!==value)node.style.setProperty(property,value,'important');
   node.classList.toggle('touch-selected',!!touchEdit&&touchEdit.selected===key);
  }
  if(touchEdit)validateTouchLayout();
@@ -78,11 +81,11 @@ function initTouchLayout(){
  Object.keys(TOUCH_TARGETS).forEach(key=>{const node=touchNode(key);node.dataset.touchTarget=key;node.addEventListener('pointerdown',e=>{
   if(!touchEdit)return;e.preventDefault();e.stopImmediatePropagation();touchEdit.selected=key;const r=node.getBoundingClientRect();touchDrag={id:e.pointerId,key,dx:e.clientX-r.x-r.width/2,dy:e.clientY-r.y-r.height/2};node.setPointerCapture(e.pointerId);touchEditorControls();applyTouchLayout();
  },true)});
- document.addEventListener('pointermove',e=>{if(!touchEdit||!touchDrag||e.pointerId!==touchDrag.id)return;e.preventDefault();const layout=currentTouchLayout();touchEdit.layouts[touchOrientation()]={...layout,[touchDrag.key]:{...layout[touchDrag.key],x:(e.clientX-touchDrag.dx)/touchViewport().w,y:(e.clientY-touchDrag.dy)/touchViewport().h}};applyTouchLayout()},{passive:false});
+ document.addEventListener('pointermove',e=>{if(!touchEdit||!touchDrag||e.pointerId!==touchDrag.id)return;e.preventDefault();const layout=currentTouchLayout();touchEdit.layouts[touchOrientation()]={...layout,[touchDrag.key]:{...layout[touchDrag.key],...touchClientPoint(e.clientX-touchDrag.dx,e.clientY-touchDrag.dy)}};applyTouchLayout()},{passive:false});
  for(const type of ['pointerup','pointercancel','lostpointercapture'])document.addEventListener(type,e=>{if(touchDrag?.id===e.pointerId)touchDrag=null},true);
  window.addEventListener('resize',()=>{touchDrag=null;if(touchEdit)touchEditorControls();scheduleTouchLayout()});
  if(window.ResizeObserver){const observer=new ResizeObserver(scheduleTouchLayout);observer.observe(scene);Object.keys(TOUCH_TARGETS).forEach(key=>observer.observe(touchNode(key)))}
- window.visualViewport?.addEventListener('resize',scheduleTouchLayout);document.addEventListener('fullscreenchange',()=>{resetInput();scheduleTouchLayout()});
+ window.visualViewport?.addEventListener('resize',()=>{resetInput();touchDrag=null;scheduleTouchLayout()});window.visualViewport?.addEventListener('scroll',scheduleTouchLayout);document.addEventListener('fullscreenchange',()=>{resetInput();scheduleTouchLayout()});
  window.addEventListener('keydown',e=>{if(game.mode==='touchLayout'&&e.key==='Escape'){e.preventDefault();closeTouchLayout()}});
  applyTouchLayout();
 }

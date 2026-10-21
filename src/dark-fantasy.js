@@ -9,8 +9,7 @@ function castDawnBlade(boost,manual=false){
  const rank=p.learned.dawn||1,r=dawnRadius(rank),color=campaign.dawnUpgrade?'#fff2bd':'#f2cb83';
  // Unsealed dawn reaches all living enemies, including beyond the camera. Cosmetic radius is bounded.
  for(const e of enemies)if(e.hp>0&&distance(p,e)<=r+e.r)hurtEnemy(e,dawnDamage(rank)*boost,true,color,false,false,manual,'light');
- const visual=Math.min(Number.isFinite(r)?r:620,620);effects.push({kind:'nova',x:p.x,y:p.y,r:visual,color,life:.65,max:.65},{kind:'sigil',x:p.x,y:p.y,r:visual*.75,color,life:.55,max:.55});
- for(let i=0;i<(reduced?3:6);i++){const a=i*Math.PI/3;effects.push({kind:'beam',x:p.x,y:p.y,ex:p.x+Math.cos(a)*visual,ey:p.y+Math.sin(a)*visual,color,life:.32,max:.32})}
+ const visual=Math.min(Number.isFinite(r)?r:620,620);signatureRelease('dawn',p.x,p.y,{r:visual});
  if(rank>=3)trueSkillEffect(getSkill('dawn'));playCue('impact');
 }
 function bindTouchAction(button,type){
@@ -19,12 +18,12 @@ function bindTouchAction(button,type){
 }
 function effectBudget(){return reduced?70:Math.min(view.w,view.h)<600||matchMedia('(pointer: coarse)').matches?(renderLoad.slow?140:200):(renderLoad.slow?240:360)}
 function limitCosmetics(){
- const cap=effectBudget();if(effects.length>cap){let excess=effects.length-cap;effects=effects.filter(e=>!(excess>0&&['particle','afterimage','hitstar'].includes(e.kind)&&excess--));if(effects.length>cap)effects=effects.slice(-cap)}
+ const cap=effectBudget();if(effects.length>cap){let excess=effects.length-cap;effects=effects.filter(e=>!(excess>0&&['particle','afterimage','hitstar'].includes(e.kind)&&excess--));if(effects.length>cap){const essential=effects.filter(e=>['signatureRelease','astralSlash'].includes(e.kind)),cosmetic=effects.filter(e=>!['signatureRelease','astralSlash'].includes(e.kind));effects=[...(cap>essential.length?cosmetic.slice(-(cap-essential.length)):[]),...essential]}}
  const maxTexts=cap<=200?28:44;if(texts.length>maxTexts)texts=texts.slice(-maxTexts);
 }
 function godMotion(e){
  const phase=((game.time||0)+(e.phase||0)*.1)%5.2,flare=phase<2.6?.05:phase<3.4?Math.sin((phase-2.6)/.8*Math.PI):.18;
- return{phase:phase<2.6?'still':phase<3.4?'surge':'settle',speed:phase<2.6?18:phase<3.4?295:95,lift:phase<2.6?0:Math.sin((phase-2.6)/2.6*Math.PI)*17,flare};
+ return{phase:phase<2.6?'still':phase<3.4?'surge':'settle',speed:phase<2.6?32:phase<3.4?385:150,lift:phase<2.6?0:Math.sin((phase-2.6)/2.6*Math.PI)*17,flare};
 }
 // One original illustration for every skill; the unsealed dawn blade has its own art.
 const SKILL_ART_SHEETS={

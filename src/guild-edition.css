@@ -1,0 +1,128 @@
+/* Guild journal: one screen, an independently scrolling list, a fixed action rail. */
+body .modal.mission-modal { width:min(940px,100%); height:min(650px,calc(100dvh - 24px)); max-height:calc(100dvh - 24px); padding:18px!important; display:flex; flex-direction:column; gap:12px; overflow:hidden; background:radial-gradient(at 90% 0,#fff4d8,#e7d7b7 70%); color:#243348; border-radius:30px 8px 30px 8px; }
+body .modal.mission-modal .mission-heading { display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+body .modal.mission-modal .mission-heading h2 { margin:2px 0 0!important; color:#202c3b; font:900 28px Georgia,serif; }
+body .modal.mission-modal .mission-heading .eyebrow { color:#74562c; font-size:10px; }
+body .modal.mission-modal .mission-heading>b { background:#182b40; border:1px solid #b38f56; border-radius:20px 5px; padding:10px 14px; color:#ffe4a1; font-size:20px; }
+body .modal.mission-modal .mission-heading>b small { color:#e4cf9d; }
+body .modal.mission-modal .mission-tabs { display:flex; gap:7px; flex-shrink:0; }
+body .modal.mission-modal .mission-tabs button { flex:1; min-height:42px; margin:0; padding:7px; background:#d6c5a4; color:#384252; border:1px solid #b3a083; border-radius:16px 5px; font-size:12px; }
+body .modal.mission-modal .mission-tabs button[aria-pressed=true] { color:#fff4ce; background:#263b50; border-color:#ad8547; box-shadow:inset 0 -2px #ddb66a; }
+body .mission-body { flex:1; min-height:0; display:grid; grid-template-columns:1.1fr 1fr; gap:14px; }
+body .mission-list { overflow-y:auto; overscroll-behavior:contain; min-height:0; scrollbar-width:thin; padding:2px 6px 2px 2px; }
+body .modal.mission-modal .mission-item { display:flex; width:100%; align-items:center; gap:10px; padding:12px 10px; margin:0 0 7px; min-height:70px; color:#f4ecdb; background:linear-gradient(120deg,#233a4e,#14273c); border:1px solid #64748b; border-radius:19px 5px; text-align:left; }
+body .modal.mission-modal .mission-item[aria-pressed=true] { border-color:#f0c778; box-shadow:inset 3px 0 #f4cc7c,0 2px 6px #1a233135; background:linear-gradient(120deg,#3a5264,#192d42); }
+body .modal.mission-modal .mission-item>i { font-style:normal; color:#f5d69b; font-size:24px; width:30px; flex-shrink:0; text-align:center; }
+body .modal.mission-modal .mission-item>span { flex:1; min-width:0; }
+body .modal.mission-modal .mission-item b { display:block; color:#fff6e4; font-size:13px; line-height:1.5; }
+body .modal.mission-modal .mission-item small { display:block; color:#d6dedf; font-size:10px; margin-top:3px; line-height:1.4; }
+body .modal.mission-modal .mission-item em { font-style:normal; font-weight:800; color:#bcebd2; font-size:10px; white-space:nowrap; }
+body .modal.mission-modal .mission-item.claimed { background:#52606a; border-color:#9aa399; }
+body .modal.mission-modal .mission-item.claimed b { color:#edf1e8; }
+body .modal.mission-modal .mission-item.claimed em { color:#e0e9d9; }
+body .modal.mission-modal .mission-detail { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; min-height:0; overflow-y:auto; padding:18px; border:1px solid #ac946d; border-radius:26px 6px; background:linear-gradient(150deg,#fdf4dd,#d9c7a2); box-shadow:inset 0 0 0 4px #fff4db55; }
+body .mission-seal { display:grid; place-items:center; width:66px; min-height:66px; margin:0 0 16px; font-size:34px; color:#ffe2a1; background:radial-gradient(#385069,#172b40); border:2px solid #b48b45; border-radius:50%; box-shadow:0 0 0 5px #9e784420; }
+body .modal.mission-modal .mission-detail>small { font-size:9px; font-weight:800; letter-spacing:2px; color:#79582e; }
+body .modal.mission-modal .mission-detail h3 { font-size:22px; color:#24354b; margin:10px 0; line-height:1.4; }
+body .modal.mission-modal .mission-detail p { font-size:13px; color:#39495b; line-height:1.7; margin:7px 0; }
+body .modal.mission-modal .mission-reward { width:100%; margin-top:18px; padding-top:15px; border-top:1px solid #b9a17a; }
+body .modal.mission-modal .mission-reward>b { color:#5a3a17; font-size:14px; }
+body .modal.mission-modal .mission-reward p { font-size:12px; }
+body .mission-meter { width:100%; height:7px; background:#c8b894; overflow:hidden; border-radius:6px; margin:13px 0 7px; }
+body .mission-meter i { display:block; height:100%; background:linear-gradient(90deg,#537c77,#a2b67d); }
+body .modal.mission-modal .mission-detail>b { color:#33483f; font-size:11px; }
+body .modal.mission-modal .mission-empty { height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; text-align:center; padding:15px; }
+body .modal.mission-modal .mission-empty>b { font-size:48px; color:#8b6a3b; }
+body .modal.mission-modal .mission-empty strong { color:#304252; font-size:14px; }
+body .modal.mission-modal .mission-empty p { font-size:12px; color:#59616b; }
+body .modal.mission-modal .mission-footer { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+body .modal.mission-modal .mission-footer button { margin:0; min-height:46px; padding:9px 15px; color:#fff1d0; background:#263b50; border:1px solid #b69355; border-radius:16px 5px; font-size:13px; }
+body .modal.mission-modal .mission-footer small { flex:1; text-align:center; font-size:10px; color:#54604f; }
+body .modal.mission-modal .mission-footer .cta { background:linear-gradient(#f0d297,#d0a761)!important; color:#282d35!important; font-weight:900; }
+body .modal.mission-modal .mission-footer .cta:disabled { background:#bfc0b2; color:#454d50; border-color:#9b9d93; opacity:1; }
+/* Two destinations in the hub, visibly different from the stage cards. */
+body .atlas-modal .map-hub { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin:9px 0 0; }
+body .atlas-modal .map-hub .map-shop { margin:0; min-height:70px; padding:10px 14px; gap:3px; }
+body .atlas-modal .map-hub .map-shop b { font-size:17px; }
+body .atlas-modal .map-hub .map-shop span { font-size:10px; }
+body .atlas-modal .map-hub .map-shop small { font-size:11px; }
+body .atlas-modal .map-hub .map-missions { display:flex; align-items:center; gap:10px; margin:0; min-height:70px; padding:10px 14px; border-radius:7px 25px 7px 25px; color:#fff4d7; background:linear-gradient(130deg,#3a435c,#222b43); border:2px solid #c5a76d; box-shadow:0 3px 9px #19223833; text-align:left; }
+body .atlas-modal .map-hub .map-missions>i { color:#f2d290; font-size:30px; font-style:normal; }
+body .atlas-modal .map-hub .map-missions span { flex:1; min-width:0; }
+body .atlas-modal .map-hub .map-missions b { display:block; font-size:17px; color:#ffdfa1; }
+body .atlas-modal .map-hub .map-missions small { display:block; font-size:11px; margin-top:6px; color:#eee7d8; }
+body .atlas-modal .map-hub .map-missions em { font-style:normal; min-width:26px; padding:4px; text-align:center; color:#15273b; background:#f3d598; border-radius:50%; font-size:13px; font-weight:900; }
+body .atlas-living .atlas-wind { stroke-dasharray:5 12; animation:atlas-wind 14s linear infinite; }
+body .atlas-living .atlas-beacon { transform-box:fill-box; transform-origin:center; animation:atlas-beacon 4s ease-in-out infinite; }
+body .atlas-living .atlas-ship { animation:atlas-sail 8s ease-in-out infinite alternate; }
+body .atlas-living .map-node { animation:atlas-card-enter .6s ease-out both; }
+body .atlas-living .map-node:nth-of-type(2n) { animation-delay:.08s; }
+body .atlas-living .map-node:nth-of-type(3n) { animation-delay:.16s; }
+body .atlas-living .map-node.available .region-art svg { animation:atlas-breathe 5s ease-in-out infinite alternate; }
+@keyframes atlas-wind { to { stroke-dashoffset:-170; } }
+@keyframes atlas-beacon { 50% { opacity:.35; transform:scale(.83); } }
+@keyframes atlas-sail { to { transform:translate(24px,-8px) rotate(3deg); } }
+@keyframes atlas-card-enter { from { opacity:0; translate:0 8px; } to { opacity:1; translate:0 0; } }
+@keyframes atlas-breathe { to { transform:scale(1.06) translateY(-2px); } }
+/* Every positioned touch group uses the field as its containing coordinate space. */
+body .scene .controls { box-sizing:border-box; border:0; padding:0!important; transform:none; }
+body .scene .controls>div:last-child { position:static!important; transform:none!important; contain:none; }
+@media(max-width:600px) {
+ body .modal.mission-modal { height:calc(100dvh - 20px); padding:12px!important; gap:9px; border-radius:22px 6px; }
+ body .modal.mission-modal .mission-heading h2 { font-size:24px; }
+ body .modal.mission-modal .mission-heading>b { padding:8px 10px; font-size:17px; }
+ body .mission-body { grid-template-columns:1fr; grid-template-rows:minmax(125px,1fr) minmax(140px,.8fr); gap:9px; }
+ body .modal.mission-modal .mission-detail { padding:10px 14px; display:block; }
+ body .modal.mission-modal .mission-detail .mission-seal { float:left; width:38px; min-height:38px; margin:6px 12px 4px 0; font-size:23px; border-width:1px; }
+ body .modal.mission-modal .mission-detail h3 { margin:5px 0; font-size:18px; }
+ body .modal.mission-modal .mission-detail p { font-size:12px; margin:3px 0; }
+ body .modal.mission-modal .mission-reward { margin-top:9px; padding-top:9px; }
+ body .modal.mission-modal .mission-footer { gap:6px; flex-wrap:wrap; }
+ body .modal.mission-modal .mission-footer small { width:100%; order:3; flex-basis:100%; }
+ body .modal.mission-modal .mission-footer .cta { flex:1; }
+ body .atlas-modal .map-hub { gap:7px; grid-auto-rows:84px; }
+ body .atlas-modal .map-hub .map-missions { position:relative; display:block; }
+ body .atlas-modal .map-hub .map-missions b { white-space:nowrap; font-size:14px; }
+ body .atlas-modal .map-hub .map-missions small { padding-right:25px; line-height:1.4; }
+ body .atlas-modal .map-hub .map-missions em { position:absolute; right:8px; bottom:9px; }
+ body .atlas-modal .map-hub .map-shop,body .atlas-modal .map-hub .map-missions { padding:9px; min-height:68px; }
+ body .atlas-modal .map-hub .map-shop b,body .atlas-modal .map-hub .map-missions b { font-size:15px; }
+ body .atlas-modal .map-hub .map-shop span { display:none; }
+ body .atlas-modal .map-hub .map-missions>i { display:none; }
+ body .atlas-modal .map-hub .map-missions small { font-size:10px; }
+}
+@media(max-height:480px) and (min-width:480px) {
+ body .modal.mission-modal { height:calc(100dvh - 16px); padding:10px 14px!important; gap:7px; }
+ body .modal.mission-modal .mission-heading h2 { font-size:20px; }
+ body .modal.mission-modal .mission-heading .eyebrow { font-size:8px; }
+ body .modal.mission-modal .mission-heading>b { font-size:17px; padding:6px 12px; }
+ body .modal.mission-modal .mission-body { grid-template-columns:1.1fr 1fr; grid-template-rows:minmax(0,1fr); }
+ body .modal.mission-modal .mission-detail { padding:8px; }
+ body .modal.mission-modal .mission-detail .mission-seal { display:none; }
+ body .modal.mission-modal .mission-detail h3 { font-size:17px; margin:6px 0; }
+ body .modal.mission-modal .mission-detail p { font-size:11px; margin:3px 0; }
+ body .modal.mission-modal .mission-reward { margin-top:8px; padding-top:7px; }
+ body .modal.mission-modal .mission-footer { flex-wrap:nowrap; }
+ body .modal.mission-modal .mission-footer small { width:auto; order:initial; flex:1; flex-basis:auto; }
+ body .modal.mission-modal .mission-detail>small { display:none; }
+ body .modal.mission-modal .mission-footer button { min-height:42px; padding:7px 14px; }
+ body .atlas-modal .map-hub { margin-top:5px; grid-template-columns:1fr; align-content:start; }
+ body .atlas-modal .map-hub .map-shop,body .atlas-modal .map-hub .map-missions { min-height:62px; padding:7px 12px; }
+ body .atlas-modal .map-hub .map-shop span,body .atlas-modal .map-hub .map-missions small { display:none; }
+}
+@media(prefers-reduced-motion:reduce) { body .atlas-living * { animation:none!important; } }
+body[data-reduced-motion=true] .atlas-living * { animation:none!important; }
+
+body .scene .skill.charging { box-shadow:0 0 0 2px #ffe2a6,0 0 20px var(--skill-color)!important; }
+body .scene .skill.charging .icon { animation:atlas-beacon .5s ease-in-out infinite; }
+
+@media(max-height:350px) and (min-width:480px) {
+ body .modal.atlas-modal { max-height:calc(100dvh - 16px); overflow:hidden; padding:10px!important; }
+ body .atlas-modal .world-map { height:calc(100dvh - 85px); min-height:0; }
+ body .atlas-modal .map-hub { gap:7px; margin:0; grid-auto-rows:60px; }
+ body .atlas-modal .map-hub .map-shop,body .atlas-modal .map-hub .map-missions { min-height:0; padding:7px 10px; }
+ body .atlas-modal .map-hub .map-shop b,body .atlas-modal .map-hub .map-missions b { font-size:15px; }
+ body .atlas-modal .map-hub .map-missions>i { display:none; }
+ body .atlas-modal .map-hub .map-missions em { position:static; }
+ body .atlas-modal .map-hub .map-missions { display:flex; }
+}

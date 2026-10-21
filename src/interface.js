@@ -32,7 +32,7 @@ function paginateCollection(){
 function compactSettings(){const bindings=$('modal').querySelector('.comfort-settings details');if(bindings){bindings.open=true;bindings.querySelector('summary').hidden=true}menuTabs([['操作',menuNodes('.help-steps,.settings-note')],['音・演出',menuNodes('.setting-row,.motion-option')],['細かい設定',[...menuNodes('.comfort-grid'),resetSettingsButton()]],['キー割当',[bindings]]]);$('modal').querySelector('.comfort-settings')?.remove()}
 // On very short displays, paginate the visible blocks instead of clipping or scrolling.
 function fitMenuPages(){
- const modal=$('modal');if($('overlay').hidden)return;if(modal.matches('.growth-modal,.inherit-modal,.embark-modal,.emporium-modal,.pause-modal,.settings-modal,.clear-result'))return;modal.querySelector('.overflow-pager')?.remove();for(const n of modal.children)n.classList.remove('overflow-page');
+ const modal=$('modal');if($('overlay').hidden)return;if(modal.matches('.growth-modal,.inherit-modal,.embark-modal,.emporium-modal,.pause-modal,.settings-modal,.clear-result,.mission-modal,.atlas-modal'))return;modal.querySelector('.overflow-pager')?.remove();for(const n of modal.children)n.classList.remove('overflow-page');
  const limit=innerHeight-28,style=getComputedStyle(modal),padding=parseFloat(style.paddingTop)+parseFloat(style.paddingBottom)+4;
  if(modal.scrollHeight<=limit)return;
  const nodes=[...modal.children].filter(n=>getComputedStyle(n).display!=='none'),pages=[[]];let used=0;const budget=limit-padding-62;

@@ -69,13 +69,13 @@ function demonRoyalSignature(e,dt){
 }
 function demonSwordAssault(e,dt){
  if(demonRoyalSignature(e,dt))return;e.barrageClock=(e.barrageClock||0)-dt;if(e.barrageClock>0||warnings.some(w=>w.owner===e.id&&w.attack==='persona'&&w.life>.6))return;
- e.barrageClock=2.25;const n=norm(p.x-e.x,p.y-e.y),pattern=(e.barrageIndex||0)%3;e.barrageIndex=(e.barrageIndex||0)+1;
+ e.barrageClock=1.95;const n=norm(p.x-e.x,p.y-e.y),pattern=(e.barrageIndex||0)%3;e.barrageIndex=(e.barrageIndex||0)+1;
  if(pattern===0){const length=Math.min(450,distance(e,p)+95);personaWarning(e,'line',e.x,e.y,1.2,{dir:n,width:110,length,atk:45,move:'royalLunge',landing:safePoint(e.x+n.x*(length-45),e.y+n.y*(length-45),e.r)});banner('冥王の踏み込み','大剣の正面から横へ',.9)}
  else if(pattern===1){for(const [i,a]of [-.28,.28].entries()){const angle=Math.atan2(n.y,n.x)+a;personaWarning(e,'fan',e.x,e.y,1.2+i*.48,{dir:{x:Math.cos(angle),y:Math.sin(angle)},length:260,spread:.95,atk:40,move:'royalReap'})}}
  else{personaWarning(e,'line',e.x,e.y,1.35,{dir:n,width:115,length:620,atk:48,persist:1.35,move:'hellbrand'});banner('黒炎断ち','斬り跡に炎が残る',1)}
 }
 function glideJudgingGod(e,dt){
- const center=STAGES[game.stage].y,n=norm(380+Math.sin(game.time*.25)*160-e.x,center-80+Math.cos(game.time*.25)*55-e.y);moveActor(e,n.x*82*dt,n.y*82*dt);
+ const center=STAGES[game.stage].y,n=norm(380+Math.sin(game.time*.25)*160-e.x,center-80+Math.cos(game.time*.25)*55-e.y);moveActor(e,n.x*245*dt,n.y*245*dt);
 }
 function godEdict(e,pattern){
  const y=STAGES[game.stage].y;
@@ -90,8 +90,8 @@ function updateShadowSovereign(e,dt){
  if(e.awakened){e.cycleTime-=dt;if(e.cycleTime<=0){clearHostiles();e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?8:4;e.state=e.cycle==='exposed'?'recover':'chase';e.exposed=e.cycle==='exposed'?4:0;e.shadowBeat=.5;banner(e.cycle==='exposed'?'影がほどけた！':'影葬王、残影を展開',e.cycle==='exposed'?'本体へ反撃！':'過去の足跡から離れよう',1.2)}if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}}
  if(!e.awakened&&e.state==='recover'){e.timer-=dt;e.exposed=e.timer;if(e.timer>0)return true;e.state='chase'}
  // Deliberate stalking and discrete shadow steps replace the demon's continuous rush.
- const n=norm(p.x-e.x,p.y-e.y);if(!warnings.some(w=>w.owner===e.id)&&distance(e,p)>230)moveActor(e,n.x*(e.awakened?105:70)*dt,n.y*(e.awakened?105:70)*dt);
- e.shadowBeat=(e.shadowBeat??1.3)-dt;if(e.shadowBeat<=0&&!warnings.some(w=>w.owner===e.id&&w.life>.6)){e.shadowBeat=e.awakened?2.35:2.8;shadowSovereignAttack(e)}return true;
+ const toward=norm(p.x-e.x,p.y-e.y),n=distance(e,p)>230?toward:{x:-toward.y,y:toward.x};if(!warnings.some(w=>w.owner===e.id))moveActor(e,n.x*(e.awakened?235:175)*dt,n.y*(e.awakened?235:175)*dt);
+ e.shadowBeat=(e.shadowBeat??1.3)-dt;if(e.shadowBeat<=0&&!warnings.some(w=>w.owner===e.id&&w.life>.6)){e.shadowBeat=e.awakened?2.05:2.45;shadowSovereignAttack(e)}return true;
 }
 function shadowSovereignAttack(e){
  const pattern=(e.shadowPattern||0)%4;e.shadowPattern=(e.shadowPattern||0)+1;const y=STAGES[game.stage].y;

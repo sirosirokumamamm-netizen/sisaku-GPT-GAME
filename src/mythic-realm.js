@@ -4,7 +4,7 @@ function visibleRegionCount(){return shadowUnlocked()?7:heavenUnlocked()?6:darkU
 function atlasPositions(){return shadowUnlocked()?[[17,82],[83,82],[83,50],[17,50],[17,18],[83,18],[50,50]]:[[25,82],[75,82],[75,50],[25,50],[25,18],[75,18]]}
 function renderVictoryResult(){
  const q=campaign.pending;if(!q)return;const result=q.result;game.mode='stageResult';game.active=false;game.result=result;
- const gold=(result.bankGold??result.gold)+(q.first?150:40)+(q.first&&result.stage===4?650:0);
+ const gold=(result.bankGold??result.gold)+(q.first?150:40)+(q.legacyBonus||0);
  openModal(`<div class="eyebrow">STAGE CLEAR · ${q.first?'初踏破':'再踏破'}</div><h2>${REGIONS[result.stage].name}</h2><div class="score-hero"><div class="rank-badge rank-${result.rank}"><small>RANK</small><b>${result.rank}</b></div><div><small>総合スコア</small><strong>${result.score.toLocaleString('ja-JP')}</strong><span>${formatTime(result.time)} · ${result.kills}体撃破</span></div></div><div class="result-summary"><span>獲得 <b>${gold.toLocaleString('ja-JP')} G</b></span><span>被弾 <b>${result.hits}回</b></span><span>ジャスト回避 <b>${result.perfects}回</b></span></div><p>この戦いで得た力を、次の旅へ。</p><button id="resultStages" class="cta">継承する力を選ぶ →</button>`);
  $('modal').classList.add('result-modal','clear-result');$('resultStages').onclick=()=>{refreshCampaign();if(!campaign.pending)return;const n=cloneCampaign();n.pending.summarySeen=true;saveCampaign(n);renderInheritance()};
 }

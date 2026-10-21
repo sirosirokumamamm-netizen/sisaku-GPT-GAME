@@ -1,9 +1,9 @@
 // Mythic expansion: readable threats, distinct silhouettes and bounded cinematic effects.
 function heavenUnlocked(c=campaign){return !!c.clears[4]||!!c.clears[5]}
 function openHeavenReveal(){
- game.mode='heavenReveal';game.active=false;resetInput();openModal('<div class="celestial-seal">☀</div><div class="eyebrow">魔王を越えた者へ</div><h2>天界への扉が開いた</h2><p>雲海の向こうで、神が剣士を待っている。<br>よろずやに、神へ挑むための新たな三振りが届いた。</p><button id="heavenContinue" class="cta">新しい世界を地図に刻む</button>');$('modal').classList.add('heaven-reveal');$('heavenContinue').onclick=()=>{const n=cloneCampaign();n.heavenRevealed=true;saveCampaign(n);openStageSelect()};tone(520,.6,'sine',.04);
+ game.mode='heavenReveal';game.active=false;resetInput();openModal('<div class="celestial-seal">☀</div><div class="eyebrow">魔王を越えた者へ</div><h2>天界への扉が開いた</h2><p>雲海の向こうで、神が剣士を待っている。<br>ミッションで報酬を受け取り、神へ挑む力を手にしよう。</p><button id="heavenContinue" class="cta">新しい世界を地図に刻む</button>');$('modal').classList.add('heaven-reveal');$('heavenContinue').onclick=()=>{const n=cloneCampaign();n.heavenRevealed=true;saveCampaign(n);openStageSelect()};tone(520,.6,'sine',.04);
 }
-function availableWeapons(){return WEAPONS.filter(w=>!w.postDemon||heavenUnlocked())}
+function availableWeapons(){return WEAPONS.filter(w=>!w.postDemon||campaign.weapons.includes(w.id)||campaign.shopUnlocks.includes(w.id))}
 function startEpicEvent(label,title,color,life=2){game.epicEvent={label,title,color,life:preferences.shortCinematics?Math.min(life,1):life,max:preferences.shortCinematics?Math.min(life,1):life};announce(label+' '+title)}
 function drawEpicEvent(){
  const e=game.epicEvent;if(game.bossScene||!e||e.life<=0||!['play','roomEquipment','chest','stageResult'].includes(game.mode))return;const progress=1-e.life/e.max,fade=Math.min(1,progress*7,(1-progress)*6),h=view.h,w=view.w;ctx.save();ctx.globalAlpha=fade;
@@ -33,7 +33,7 @@ function updateGod(e,dt){
  if(e.cycleTime<=0){clearHostiles();e.godCycle++;e.ward=e.ward>0?0:1;e.cycleTime=e.ward>0?(e.bossPhase===2?8:7):(e.bossPhase===2?4:5);e.state=e.ward>0?'chase':'recover';e.exposed=e.ward>0?0:e.cycleTime;e.godAttack=.25;banner(e.ward>0?'神の障壁、再生':'神の障壁が砕けた！',e.ward>0?'雷を避けて、次の好機を待て':'核心へ全力で攻撃！',1.3);particle(e.x,e.y-60,'#fff4be',35,190)}
  if(!e.ward){e.state='recover';e.exposed=e.cycleTime;return true}
  const y=STAGES[game.stage].y,angle=game.time*.65,target=safePoint(380+Math.sin(angle)*205,y+60+Math.cos(angle)*130,e.r),n=norm(target.x-e.x,target.y-e.y);if(e.bossPhase===2)glideJudgingGod(e,dt);else{const pulse=godMotion(e);e.motionPhase=pulse.phase;moveActor(e,n.x*pulse.speed*dt,n.y*pulse.speed*dt);}
- if(e.godAttack<=0){const pattern=(e.godPattern||0)%4;e.godPattern=(e.godPattern||0)+1;e.godAttack=e.bossPhase===2?2:2.4;godEdict(e,pattern)}
+ if(e.godAttack<=0){const pattern=(e.godPattern||0)%4;e.godPattern=(e.godPattern||0)+1;e.godAttack=e.bossPhase===2?1.85:2.15;godEdict(e,pattern)}
  return true;
 }
 function drawHeavenFloor(t){

@@ -1,7 +1,7 @@
 // Shared campaign affordances: the displayed action always matches the allowed action.
 function combatActionsAvailable(){return !game.bossScene&&game.mode==='play'&&game.active&&['combat','waveBreak'].includes(game.phase)}
 function difficultyStars(index){return index===6?'<em class="shadow-stars">★★★★★★★</em>':index===5?'<em class="heaven-stars">★★★★★★</em>':index===4?'★★★★<em class="dark-star" aria-label="赤い星">★</em>':'★'.repeat(index+1)+'☆'.repeat(3-index)}
-function recommendedSword(){const next=REGIONS.findIndex((_,i)=>availableStage(i)&&!campaign.clears[i]);return getWeapon(heavenUnlocked()?'starfall':next===-1||next>=3?'echo':next===2?'frostblade':'greatsword')}
+function recommendedSword(){const next=REGIONS.findIndex((_,i)=>availableStage(i)&&!campaign.clears[i]);const id=heavenUnlocked()?'starfall':next===-1||next>=3?'echo':next===2?'frostblade':'greatsword';return availableWeapons().find(w=>w.id===id)||getWeapon('echo')}
 function recoveryFeedback(hp,mp){
  effects.push({kind:'nova',x:p.x,y:p.y,r:100,color:'#aaffd6',life:.8,max:.8},{kind:'sigil',x:p.x,y:p.y,r:65,color:'#aaffd6',life:1.2,max:1.2});particle(p.x,p.y,'#aaffd6',28,150);floating(p.x,p.y-110,'HP +'+hp+' · MP +'+mp,'#c5ffe1',true);game.healGlow=1;tone(880,.22,'sine',.04);
 }

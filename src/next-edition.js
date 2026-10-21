@@ -6,7 +6,7 @@ function weightedSkillPick(candidates){
 }
 function showAttackWarning(w){
  const owner=enemies.find(e=>e.id===w.owner);
- return owner?.kind==='boss'&&(w.style==='doom'||w.attack==='barrage'||['bossDash','leap'].includes(w.attack)||w.atk>=35||w.r>=115||w.length>=300&&w.width>=80);
+ return owner?.kind==='boss'&&(w.attack==='persona'||w.style==='doom'||w.attack==='barrage'||['bossDash','leap'].includes(w.attack)||w.atk>=35||w.r>=115||w.length>=300&&w.width>=80);
 }
 const ELEMENTS={none:{name:'無',color:'#d3dfdf'},nature:{name:'草木',color:'#9fe8b6'},water:{name:'水',color:'#8edfff'},fire:{name:'炎',color:'#ffae73'},ice:{name:'氷',color:'#b4f5ff'},lightning:{name:'雷',color:'#ffe999'},wind:{name:'風',color:'#a4ffe0'},earth:{name:'土',color:'#e6c393'},dark:{name:'闇',color:'#d7acff'},light:{name:'光',color:'#fff2ad'}};
 function skillElement(s){return ({flame:'fire',meteor:'fire',frost:'ice',thunder:'lightning',chain:'lightning',tornado:'wind',dash:'wind',quake:'earth',nova:'dark',blink:'dark',dawn:'light',wisp:'light',rain:'light',guard:'light',parry:'light',orbit:'light'})[s?.id]||'none'}

@@ -25,13 +25,12 @@ function drawEnemy(e,t){
  drawEnemyBody(e,t);ctx.restore();
 }
 function drawBladeScar(e,a){
- const q=1-a,length=e.r*(reduced?1:.55+Math.min(1,q*5)*.7);ctx.save();ctx.translate(e.x,e.y);ctx.rotate(e.angle);ctx.lineCap='round';
- ctx.strokeStyle='#091320';ctx.lineWidth=e.guarded?5:8;ctx.beginPath();ctx.moveTo(-length,0);ctx.lineTo(length,0);ctx.stroke();
- ctx.strokeStyle=e.color;ctx.lineWidth=e.finishing?5:3;ctx.stroke();ctx.strokeStyle='#fff8e5';ctx.lineWidth=1.5;ctx.stroke();
- if(!reduced){for(const side of [-1,1]){const x=side*(7+q*e.r*1.4);ctx.strokeStyle=e.color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,side*5);ctx.lineTo(x+side*8,side*(8+q*10));ctx.stroke()}
-  if(e.finishing){ctx.globalAlpha=a*.7;ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-length*.65,-8);ctx.lineTo(length*1.55,-8);ctx.stroke()}}
+ const q=1-a,length=e.r*(reduced?1:.65+Math.min(1,q*5)*.8);ctx.save();ctx.translate(e.x,e.y);ctx.rotate(e.angle);ctx.lineCap='round';
+ drawTaperedCut(0,0,length,e.guarded?.4:.65,e.color,e.finishing?7:4);
+ for(let i=0;i<(reduced?1:e.finishing?5:3);i++){const yy=(i-1)*5;ctx.globalAlpha=a*(.7-i*.1);ctx.strokeStyle=i===0?'#fff8e5':e.color;ctx.lineWidth=i===0?1.8:1;ctx.beginPath();ctx.moveTo(-length*.85,yy-length*.15);ctx.bezierCurveTo(-length*.3,yy+length*.12,length*.4,yy+length*.18,length*(e.finishing?1.4:1),yy-length*.14);ctx.stroke()}
  ctx.restore();
 }
+
 let bladeNoise=null,bladeVoices=0;
 function playBladeContact(e,hit){
  if(!hit.contact||!sounds||preferences.effects<=0||!audio||audio.state!=='running'||bladeVoices>=6)return;
@@ -65,7 +64,7 @@ function drawCorpseEmergence(e){
  // This uses the original 1.05 s spawn protection; no new enemy or collision object.
  rounded(-14,-27,28,32,4,'#393939','#9a9a9a');ctx.strokeStyle='#ccc';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,-22);ctx.lineTo(0,-7);ctx.moveTo(-5,-17);ctx.lineTo(5,-17);ctx.stroke();
  ctx.strokeStyle='#222';ctx.lineWidth=2;for(const side of [-1,1]){ctx.beginPath();ctx.moveTo(side*9,4);ctx.lineTo(side*(17+q*11),8);ctx.lineTo(side*(21+q*16),4);ctx.stroke()}
- ctx.beginPath();ctx.rect(-65,-112,130,122);ctx.clip();if(!reduced){ctx.translate(0,(1-q)*80);ctx.rotate((1-q)*-.3)}ctx.globalAlpha=.35+q*.65;
+ ctx.beginPath();ctx.rect(-65,-112,130,122);ctx.clip();if(!reduced){ctx.translate(0,(1-q)*80);ctx.rotate((1-q)*-.3)}ctx.globalAlpha*=.35+q*.65;
 }
 function drawShadowAttackEchoes(t){
  if(!game.singleStage||game.region!==6||game.bossScene)return;
@@ -86,14 +85,14 @@ function drawCombatPriorities(t,sx=0,sy=0){
  ctx.save();ctx.translate(view.w/2+sx,view.h/2+sy);const zoom=reduced?1:combat.zoom;ctx.scale(view.scale*zoom,view.scale*zoom*CAMERA.depth);ctx.translate(-cam.x,-cam.y);
  const strong=warnings.filter(w=>w.life>0&&showAttackWarning(w));
  for(const w of strong){
-  ctx.save();warningShape(w);ctx.strokeStyle='#10141c';ctx.lineWidth=6/view.scale;ctx.stroke();ctx.strokeStyle=w.life<=p.justWindow?'#fff3b3':game.region===6?'#f3f3f3':'#ffbd89';ctx.lineWidth=2.3/view.scale;ctx.stroke();
+  ctx.save();warningShape(w);ctx.strokeStyle='#10141c';ctx.lineWidth=6/view.scale;ctx.stroke();ctx.strokeStyle=w.life<=p.justWindow?'#fff3b3':'#ffbd89';ctx.lineWidth=2.3/view.scale;ctx.stroke();
   // Inner rings are informational only; overlap with another attack stays visibly unsafe.
-  if(w.kind==='ring'&&w.inner>0){const blocked=refugeObstructed(w),r=Math.max(1,w.inner-p.r*.5-3);ctx.beginPath();ctx.arc(w.x,w.y,r,0,Math.PI*2);ctx.fillStyle=game.region===6?'#ffffff0d':'#baffdc15';ctx.fill();ctx.strokeStyle='#091b22';ctx.lineWidth=7/view.scale;ctx.stroke();ctx.strokeStyle=game.region===6?'#fff':'#baffdf';ctx.lineWidth=3/view.scale;ctx.setLineDash([9,5]);ctx.stroke();ctx.setLineDash([]);
+  if(w.kind==='ring'&&w.inner>0){const blocked=refugeObstructed(w),r=Math.max(1,w.inner-p.r*.5-3);ctx.beginPath();ctx.arc(w.x,w.y,r,0,Math.PI*2);ctx.fillStyle='#baffdc15';ctx.fill();ctx.strokeStyle='#091b22';ctx.lineWidth=7/view.scale;ctx.stroke();ctx.strokeStyle='#baffdf';ctx.lineWidth=3/view.scale;ctx.setLineDash([9,5]);ctx.stroke();ctx.setLineDash([]);
    ctx.save();ctx.translate(w.x,w.y);ctx.scale(1,1/CAMERA.depth);ctx.font='800 13px system-ui';ctx.textAlign='center';ctx.lineWidth=4;ctx.strokeStyle='#10232b';ctx.strokeText(blocked?'重なる攻撃に注意':'安全地帯',0,5);ctx.fillStyle=blocked?'#ffe4b5':'#f0fff7';ctx.fillText(blocked?'重なる攻撃に注意':'安全地帯',0,5);ctx.restore();}
   ctx.restore();
  }
  // Active ring hazards keep their refuge visible for the entire damaging lifetime.
- for(const z of hazards)if(z.life>0&&z.kind==='ring'&&z.inner>0&&showAttackWarning(z)){ctx.save();ctx.beginPath();ctx.arc(z.x,z.y,Math.max(1,z.inner-p.r*.5-3),0,Math.PI*2);ctx.strokeStyle='#10141c';ctx.lineWidth=7/view.scale;ctx.stroke();ctx.strokeStyle=game.region===6?'#fff':'#c8ffe0';ctx.lineWidth=3/view.scale;ctx.setLineDash([9,5]);ctx.stroke();ctx.restore()}
+ for(const z of hazards)if(z.life>0&&z.kind==='ring'&&z.inner>0&&showAttackWarning(z)){ctx.save();ctx.beginPath();ctx.arc(z.x,z.y,Math.max(1,z.inner-p.r*.5-3),0,Math.PI*2);ctx.strokeStyle='#10141c';ctx.lineWidth=7/view.scale;ctx.stroke();ctx.strokeStyle='#c8ffe0';ctx.lineWidth=3/view.scale;ctx.setLineDash([9,5]);ctx.stroke();ctx.restore()}
  // A compact contour and foot mark remain visible without repainting the actor over scenery.
  aboveView(()=>{ctx.save();ctx.translate(p.x,p.y);const busy=effects.length>30||strong.length>0;ctx.globalAlpha=busy?1:.6;ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(-13,4);ctx.lineTo(-22,3);ctx.lineTo(-19,-23);ctx.lineTo(-21,-39);ctx.lineTo(-13,-43);ctx.lineTo(-16,-57);ctx.lineTo(-10,-65);ctx.lineTo(-2,-66);ctx.lineTo(4,-71);ctx.lineTo(18,-62);ctx.lineTo(13,-46);ctx.lineTo(21,-39);ctx.lineTo(20,-19);ctx.lineTo(21,4);ctx.lineTo(8,5);
   ctx.strokeStyle='#071322';ctx.lineWidth=4/view.scale;ctx.stroke();ctx.strokeStyle=p.hurtRecovery>0?'#ffe5d5':'#d6f8ff';ctx.lineWidth=1.3/view.scale;ctx.stroke();ctx.restore()},p.x,p.y);

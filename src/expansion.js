@@ -41,7 +41,7 @@ function restShopHTML(){return ''}
 function buyRestPotion(){return false}
 function decorateCampaignEnemy(e,index){
  if(game.region===6&&e.kind!=='boss'&&e.kind!=='goldSlime'){e.name=({slime:'這い寄る影屍',bat:'疾走する影屍',archer:'弓持つ影屍',shield:'屍の盾兵',totem:'影の屍術師'})[e.kind]||'彷徨う影屍';}
- if(e.kind==='boss'||e.kind==='goldSlime')return;
+ if(e.kind==='boss'||e.kind==='goldSlime')return;if(game.region===6){e.hp=e.maxHp=Math.round(e.hp*1.3);e.atk*=1.12;e.speed*=1.05;}
  if(roomRole()===ROOM_ROLES.horde){e.hp=e.maxHp=Math.round(e.hp*.72);e.speed*=1.06;}
  if(roomRole()===ROOM_ROLES.elite&&index<1){e.elite=true;e.trait=game.wave===1?'breaker':'swift';e.name=e.trait==='breaker'?'精鋭・重撃':'精鋭・疾走';e.hp=e.maxHp=Math.round(e.hp*2.1);e.atk*=1.18;if(e.trait==='swift')e.speed*=1.2;}
 }
@@ -75,7 +75,7 @@ function suspendExpedition(){
 }
 function resumeExpedition(){
  refreshCampaign();const record=normalizeRest(campaign.suspended);if(!record||campaign.pending||!availableStage(record.run.region))return false;
- const n=cloneCampaign();n.suspended=null;saveCampaign(n);selectedStyle=record.style;reset(record.run.seed);applyStyle();Object.assign(p,record.player);p.learned={...record.player.learned};p.loadout=record.player.loadout.slice();p.build=SKILLS.filter(s=>s.category==='passive'&&p.learned[s.id]).map(s=>s.name);Object.assign(game,record.run,{chosenSkills:record.chosenSkills,singleStage:true,weapon:record.weapon,ultimateArt:record.ultimateArt,lastStandUsed:record.lastStandUsed,bankedGold:record.bankedGold,fieldPotions:record.fieldPotions,roomPotionCollected:record.roomPotionCollected,style:record.style,stage:REGIONS[record.run.region].stage,roomRoute:record.route,relic:record.relic,restPotionUsed:record.restPotionUsed,relicOffers:[],attemptId:record.id,damageSources:record.damageSources,settled:false,mode:'play',phase:'roomRest',active:false,campReady:true,waves:2});
+ const n=cloneCampaign();n.suspended=null;saveCampaign(n);selectedStyle=record.style;reset(record.run.seed);applyStyle();Object.assign(p,record.player);p.learned={...record.player.learned};p.loadout=record.player.loadout.slice();p.build=SKILLS.filter(s=>s.category==='passive'&&p.learned[s.id]).map(s=>s.name);Object.assign(game,record.run,{chosenSkills:record.chosenSkills,singleStage:true,weapon:record.weapon,ultimateArt:record.ultimateArt,lastStandUsed:record.lastStandUsed,bankedGold:record.bankedGold,fieldPotions:record.fieldPotions,roomPotionCollected:record.roomPotionCollected,style:record.style,stage:REGIONS[record.run.region].stage,roomRoute:record.route,relic:record.relic,restPotionUsed:record.restPotionUsed,relicOffers:[],attemptId:record.id,damageSources:record.damageSources,settled:false,mode:'play',phase:'roomRest',active:false,campReady:true,waves:roomWaveCount(record.run.region,record.run.room)});
  p.x=380;p.y=STAGES[game.stage].y+145;game.roomEntryKills=game.kills;buildTerrain();makeDecor();cam={x:p.x,y:p.y-220};roomEquipment();updateUI();return true;
 }
 function openCollection(filter='all'){

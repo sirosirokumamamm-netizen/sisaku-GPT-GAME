@@ -4,12 +4,13 @@ const {chromium}=require('playwright');
  const page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:2,hasTouch:true,isMobile:true}),errors=[];
  page.on('pageerror',e=>errors.push(e.message));await page.addInitScript(()=>{Element.prototype.requestFullscreen=undefined;Element.prototype.webkitRequestFullscreen=undefined});await page.goto(process.env.BASE_URL||'http://127.0.0.1:8000');
  const cdp=await page.context().newCDPSession(page),rows=[];
- for(const scenario of [{w:390,h:844,region:0,rate:1},{w:844,h:390,region:4,rate:1},{w:390,h:844,region:5,rate:1},{w:390,h:844,region:6,rate:1},{w:390,h:844,region:0,rate:4}]){
+ const scenarios=[{w:390,h:844,region:0,rate:1},{w:844,h:390,region:4,rate:1},{w:390,h:844,region:5,rate:1},{w:390,h:844,region:6,rate:1},{w:390,h:844,region:6,room:2,rate:1},{w:390,h:844,region:0,rate:4}];
+ for(const scenario of process.argv.includes('--shadow-horde')?scenarios.filter(s=>s.region===6&&s.room===2):scenarios){
   await page.setViewportSize({width:scenario.w,height:scenario.h});await cdp.send('Emulation.setCPUThrottlingRate',{rate:scenario.rate});
   rows.push(await page.evaluate(async scenario=>{
    campaign=normalizeCampaign({version:1,clears:Object.fromEntries([0,1,2,3,4,5].map(i=>[i,{score:100,time:10,rank:'A'}])),unlocked:6,finaleRevealed:true,darkRevealed:true,heavenRevealed:true});saveCampaign(campaign);game.mode='stageSelect';startStageAttempt(scenario.region,9810+scenario.region);sounds=false;preferences.particles=1;preferences.flashes=true;reduced=false;renderLoad.slow=false;renderLoad.count=0;renderLoad.total=0;resize();
-   game.roomRoute=['approach','horde','elite','treasure','boss'];game.room=scenario.region?5:2;buildTerrain();enemies=[];spawnWave();
-   if(scenario.region){const boss=enemies.find(e=>e.kind==='boss');if([4,6].includes(scenario.region))interceptBossDefeat(boss);else transformGod(boss);endBossScene()}
+   const bossScenario=scenario.region&&scenario.room!==2;game.roomRoute=['approach','horde','elite','treasure','boss'];game.room=bossScenario?5:2;buildTerrain();enemies=[];spawnWave();
+   if(bossScenario){const boss=enemies.find(e=>e.kind==='boss');if([4,6].includes(scenario.region))interceptBossDefeat(boss);else transformGod(boss);endBossScene()}
    else{enemies=enemies.slice(0,4);game.wave=2;spawnWave()}
    for(const e of enemies){e.hp=e.maxHp=9999999;e.spawnTime=0}p.hp=p.maxHp=100000;p.invuln=100000;p.mp=p.maxMp=100000;game.pendingChoices=0;
    for(const id of [...AUTO_IDS,'crescent','rain','whirl'])p.learned[id]=3;p.loadout=['crescent','rain','whirl'];
@@ -26,6 +27,6 @@ const {chromium}=require('playwright');
    return {...scenario,region:REGIONS[scenario.region].name,enemies:enemies.length,samples:costs.length,workMedianMs:+costs[90].toFixed(2),workP95Ms:+costs[171].toFixed(2),frameP95Ms:+intervals[171].toFixed(2),maxEffects,adaptiveSlow:renderLoad.slow,budget:effectBudget(),canvasPixelRatio:+(cv.width/view.w).toFixed(2),finite:Number.isFinite(p.hp)&&Number.isFinite(p.x),mode:game.mode};
   },scenario));
  }
- if(errors.length||rows.some(r=>!r.finite||r.mode!=='play'||r.maxEffects>200||r.workP95Ms>100))throw Error(JSON.stringify({errors,rows}));
- console.log(JSON.stringify({environment:'Headless Chromium, DPR 2, cloud host; last scenario uses 4x CPU throttle, not a phone',method:'30 warmup + 180 real animation frames; horde or second-form boss; automatic skills and repeated manual effects; simulation + render CPU costs',rows},null,2));
+ if(errors.length||rows.some(r=>!r.finite||r.mode!=='play'||r.maxEffects>200||r.workP95Ms>100||r.rate===1&&r.region==='影の世界'&&r.room===2&&r.frameP95Ms>100))throw Error(JSON.stringify({errors,rows}));
+ console.log(JSON.stringify({environment:'Headless Chromium, DPR 2, cloud host; last scenario uses 4x CPU throttle, not a phone',method:'30 warmup + 180 real animation frames; grass/shadow horde or second-form boss; automatic skills and repeated manual effects; simulation + render CPU costs',rows},null,2));
  }finally{await browser.close()}})().catch(e=>{console.error(e);process.exit(1)});

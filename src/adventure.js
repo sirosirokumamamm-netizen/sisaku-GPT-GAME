@@ -58,11 +58,11 @@ function interceptBossDefeat(e){
  beginBossScene('transform',e,before);grantPhasePotion(e);banner('魔王、復活！','巨大化した！ 猛攻を避け、核心露出を狙え。',2);particle(e.x,e.y,'#d597ff',44,220);return true;
 }
 function updateRealmBoss(e,dt){
- e.demonCast=Math.max(0,(e.demonCast||0)-dt);if(e.form==='god')return updateGod(e,dt);
+ e.demonCast=Math.max(0,(e.demonCast||0)-dt);if(e.shadowLord)return updateShadowSovereign(e,dt);if(e.form==='god')return updateGod(e,dt);
  if(e.form!=='demon'||!e.awakened)return repositionBoss(e,dt);
  if(e.state==='revive'){e.timer-=dt;if(e.timer<=0){e.state='chase';e.cooldown=.1}return true}
  e.cycleTime-=dt;if(e.cycleTime<=0){clearHostiles();e.barrageClock=.5;e.leapFrom=e.leapTo=null;e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?8:5;e.state=e.cycle==='exposed'?'recover':'chase';e.timer=e.cycleTime;e.exposed=e.cycle==='exposed'?e.cycleTime:0;e.cooldown=.15;banner(e.cycle==='exposed'?'核心露出！ 今が攻撃のチャンス':'魔王の猛攻！ 回避に集中', '',1)}
- if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}demonBarrage(e,dt);e.state='chase';roamMythicBoss(e,dt,225);return true;
+ if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}demonBarrage(e,dt);e.state='chase';if(!warnings.some(w=>w.owner===e.id&&w.attack==='persona'&&w.life>.15))roamMythicBoss(e,dt,225);return true;
 }
 function realmBossWarning(e,warn,target,dir){
  if(e.form==='demon'&&!e.awakened){demonMagicWarning(e,target,dir);return}const count=e.pattern++,phase=e.bossPhase===2,pace=e.form==='demon'&&e.awakened?.9:1,pattern=count%(phase?4:3);

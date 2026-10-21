@@ -32,14 +32,8 @@ function drawNewEnemy(e,t){
  if(e.kind==='wraith'){const bob=Math.sin(t*5+e.phase)*5;path([[-22,0],[-18,-47+bob],[0,-67+bob],[18,-47+bob],[22,0],[10,-8],[0,4],[-10,-8]],'#667998',glow);ellipse(0,-40+bob,13,16,'#1a2946');ellipse(-5,-42+bob,3,3,'#9cffe9');ellipse(5,-42+bob,3,3,'#9cffe9');for(const s of [-1,1])path([[s*14,-36+bob],[s*33,-18],[s*29,-3],[s*22,-22]],'#94b6bb')}
  if(e.kind==='goldSlime'){const g=ctx.createRadialGradient(-7,-25,1,0,-12,29);g.addColorStop(0,'#fff8cd');g.addColorStop(.5,'#f4cf54');g.addColorStop(1,'#a67524');ellipse(0,-15,24,24,g);path([[-14,-34],[-18,-48],[-5,-42],[0,-54],[5,-42],[18,-48],[14,-34]],'#ffe7a2','#fff7dc');ellipse(-8,-17,3,4,'#674b25');ellipse(8,-17,3,4,'#674b25');ctx.font='bold 10px system-ui';ctx.textAlign='center';ctx.fillStyle='#ffed9a';ctx.fillText('超レア · 経験値大量',0,-66)}ctx.restore();
 }
-function demonBarrage(e,dt){
- if(demonSignature(e,dt))return;
- e.barrageClock=(e.barrageClock||0)-dt;if(e.barrageClock>0)return;e.barrageClock=1.85;e.demonCast=1.6;const center=STAGES[game.stage].y,pattern=(e.barrageIndex||0)%3;e.barrageIndex=(e.barrageIndex||0)+1;
- const warn=(kind,x,y,r,time,extra)=>warnings.push({owner:e.id,sourceX:e.x,sourceY:e.y-100,kind,x,y,r,dir:{x:0,y:1},life:time,max:time,atk:44,perfectUsed:false,attack:'barrage',...extra});
- if(pattern===0){const safeLane=clamp(Math.round((p.x-140)/120),0,4);for(let lane=0;lane<5;lane++)if(lane!==safeLane)warn('line',140+lane*120,center-210,0,1.25,{length:570,width:82,barrage:'breath'});banner('冥炎の剣雨','縦の斬撃！ 光のない通路へ',1.1)}
- else if(pattern===1){warn('circle',p.x,p.y,112,1.4,{barrage:'meteor',atk:64});for(const s of [-1,1])warn('circle',clamp(p.x+s*195,120,640),clampPlayerY(p.y-120),72,1.7,{barrage:'meteor',atk:42});banner('巨星落下','大きな影から離れよう',1)}
- else{for(let i=0;i<3;i++)warn('line',i%2?670:90,center-90+i*140,0,1+i*.3,{dir:{x:i%2?-1:1,y:0},length:580,width:58,barrage:'sweep',atk:38});banner('冥王の大剣連斬','横切る斬撃のすき間へ',1)}
-}
+function demonBarrage(e,dt){if(e.shadowLord)shadowSovereignAttack(e);else demonSwordAssault(e,dt)}
+
 function resolveBarrage(w){const boss=enemies.find(e=>e.id===w.owner);if(boss)bossAttackSpectacle(w,boss);hitExplosives(q=>warningContains(w,q,16),w.atk);
  effects.push({kind:'beam',x:w.sourceX??w.x,y:w.sourceY??w.y,ex:w.x,ey:w.y,color:'#d49aff',life:.28,max:.28});if(warningContains(w)&&!w.perfectUsed){game.hitSource=w.barrage==='meteor'?'着地':'範囲攻撃';takeHit(w.atk,w.x,w.y)}effects.push({...w,shape:w.kind,kind:'telegraphHit',life:w.barrage==='breath'?.6:.4,max:w.barrage==='breath'?.6:.4});
  if(w.barrage==='breath'){effects.push({...w,kind:'demonFlame',life:.85,max:.85});hazards.push({...w,life:2.2,tick:.65,protected:false,atk:24})}if(w.barrage==='meteor'){effects.push({kind:'nova',x:w.x,y:w.y,r:w.r,color:'#e8adff',life:.65,max:.65});particle(w.x,w.y,'#dfb3ff',22,240);if(!reduced&&preferences.shake)shake=Math.max(shake,4)}

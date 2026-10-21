@@ -133,3 +133,10 @@ body .clear-result #resultStages { margin-bottom:0; min-height:44px; }
 @media(min-height:351px) and (max-height:450px) and (min-width:480px) {
  body .emporium-modal .sword-list button { min-height:62px; }
 }
+/* Outline HUD text on both the bright divine floor and the dark royal domains. */
+body .hud .meter-row > label,
+body .hud .meter-row > span,
+body .hud .stage-chip > b {
+  color:#f4f7ff;
+  text-shadow:-1px 0 #081626,1px 0 #081626,0 -1px #081626,0 1px #081626,0 2px 4px #081626;
+}

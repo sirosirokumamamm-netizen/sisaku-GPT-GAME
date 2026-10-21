@@ -26,20 +26,14 @@ function epicEnemyWarning(e){
  if(e.kind==='wraith'&&game.room>=2){game.nextAttackAt=game.time+.65;e.state='windup';e.timer=1.65;epicWarning(e,'circle',p.x,p.y,58,1.65,{follow:true,lockTime:.65,atk:Math.round(e.atk*1.6),persist:2.2,style:'curse'});return true}
  if(e.trait==='breaker'){game.nextAttackAt=game.time+.8;e.state='windup';e.timer=1.15;epicWarning(e,'circle',p.x,p.y,100,1.15,{atk:Math.round(e.atk*2.1),persist:2.5,style:'smash'});return true}return false;
 }
-function demonSignature(e,dt){
- e.doomClock=(e.doomClock??7)-dt;if(e.doomClock>0)return false;e.doomClock=17;e.barrageClock=3.4;e.cycleTime=Math.max(e.cycleTime,4.2);const refuge=randomRefuge();
- epicWarning(e,'ring',refuge.x,refuge.y,850,3.1,{inner:100,atk:96,persist:1.3,style:'doom'});startEpicEvent('魔王の必殺技','終末の黒い太陽','#df91ff',1.6);banner('終末の黒い太陽','光の輪へ！ 外側は崩壊する',3.1);tone(70,.8,'sawtooth',.025);return true;
-}
+function demonSignature(e,dt){return demonRoyalSignature(e,dt)}
+
 function updateGod(e,dt){
  e.cycleTime-=dt;e.godAttack=(e.godAttack||0)-dt;
  if(e.cycleTime<=0){clearHostiles();e.godCycle++;e.ward=e.ward>0?0:1;e.cycleTime=e.ward>0?(e.bossPhase===2?8:7):(e.bossPhase===2?4:5);e.state=e.ward>0?'chase':'recover';e.exposed=e.ward>0?0:e.cycleTime;e.godAttack=.25;banner(e.ward>0?'神の障壁、再生':'神の障壁が砕けた！',e.ward>0?'雷を避けて、次の好機を待て':'核心へ全力で攻撃！',1.3);particle(e.x,e.y-60,'#fff4be',35,190)}
  if(!e.ward){e.state='recover';e.exposed=e.cycleTime;return true}
- const y=STAGES[game.stage].y,angle=game.time*.65,target=safePoint(380+Math.sin(angle)*205,y+60+Math.cos(angle)*130,e.r),n=norm(target.x-e.x,target.y-e.y);if(e.bossPhase===2)roamMythicBoss(e,dt,240);else{const pulse=godMotion(e);e.motionPhase=pulse.phase;moveActor(e,n.x*pulse.speed*dt,n.y*pulse.speed*dt);}
- if(e.godAttack<=0){const pattern=(e.godPattern||0)%4;e.godPattern=(e.godPattern||0)+1;e.godAttack=e.bossPhase===2?1.65:2.1;
- if(pattern===0){for(const offset of [-130,0,130])epicWarning(e,'circle',clamp(p.x+offset,100,660),p.y+(offset?60:0),offset?64:78,1.4,{style:'lightning',atk:54,persist:1.8,follow:offset===0,lockTime:.65})}
- else if(pattern===1){const safeLane=clamp(Math.round((p.x-140)/120),0,4);for(let lane=0;lane<5;lane++)if(lane!==safeLane)epicWarning(e,'line',140+lane*120,y-175,0,1.45,{length:520,width:70,style:'lightning',atk:58,persist:2})}
- else if(pattern===2){const refuge=randomRefuge();epicWarning(e,'ring',refuge.x,refuge.y,900,2.8,{inner:105,atk:100,persist:1,style:'doom'});e.godAttack=3;startEpicEvent('神罰','創世の審判','#fff0a6',1.3);banner('創世の審判','光る聖域へ！',2.2)}
- else{for(const side of [-1,1])epicWarning(e,'circle',clamp(p.x+side*90,110,650),p.y,75,1.75,{follow:true,lockTime:.7,atk:60,persist:2.5,style:'lightning'})}}
+ const y=STAGES[game.stage].y,angle=game.time*.65,target=safePoint(380+Math.sin(angle)*205,y+60+Math.cos(angle)*130,e.r),n=norm(target.x-e.x,target.y-e.y);if(e.bossPhase===2)glideJudgingGod(e,dt);else{const pulse=godMotion(e);e.motionPhase=pulse.phase;moveActor(e,n.x*pulse.speed*dt,n.y*pulse.speed*dt);}
+ if(e.godAttack<=0){const pattern=(e.godPattern||0)%4;e.godPattern=(e.godPattern||0)+1;e.godAttack=e.bossPhase===2?2:2.4;godEdict(e,pattern)}
  return true;
 }
 function drawHeavenFloor(t){

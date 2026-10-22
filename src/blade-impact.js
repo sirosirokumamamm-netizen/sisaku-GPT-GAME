@@ -83,7 +83,7 @@ function refugeObstructed(w){
 function drawCombatPriorities(t,sx=0,sy=0){
  if(game.mode!=='play'||game.bossScene||game.phase==='bossIntro'||p.cutin>0)return;
  ctx.save();ctx.translate(view.w/2+sx,view.h/2+sy);const zoom=reduced?1:combat.zoom;ctx.scale(view.scale*zoom,view.scale*zoom*CAMERA.depth);ctx.translate(-cam.x,-cam.y);
- drawPlayerArtPriority();const strong=warnings.filter(w=>w.life>0&&showAttackWarning(w));
+ drawPlayerArtPriority();drawSurvivalActor(t);const strong=warnings.filter(w=>w.life>0&&showAttackWarning(w));
  for(const w of strong){
   ctx.save();warningShape(w);ctx.strokeStyle='#10141c';ctx.lineWidth=6/view.scale;ctx.stroke();ctx.strokeStyle=w.life<=p.justWindow?'#fff3b3':'#ffbd89';ctx.lineWidth=2.3/view.scale;ctx.stroke();
   // Inner rings are informational only; overlap with another attack stays visibly unsafe.

@@ -35,12 +35,14 @@ function sampleRenderLoad(now){
  if(renderLoad.last&&game.mode==='play'&&!document.hidden&&!game.bossScene){const interval=now-renderLoad.last;if(interval>0){renderLoad.total+=Math.min(interval,100);renderLoad.count++}if(renderLoad.count>=90){const average=renderLoad.total/renderLoad.count,wasSlow=renderLoad.slow;renderLoad.slow=renderLoad.slow?average>22:average>28;if(wasSlow!==renderLoad.slow)resize();renderLoad.total=0;renderLoad.count=0}}
  else{renderLoad.total=0;renderLoad.count=0}renderLoad.last=now;
 }
-// Accept a near miss up to 8 CSS px outside a visible control. The closest edge wins
-// in gaps; direct button presses always win. Native pointer capture preserves multitouch.
+// Accept near misses up to 8 CSS px, or 10 px for dodge and potion.
+// Ambiguous gaps stay neutral; direct presses win. Pointer capture preserves multitouch.
 function nearestTouchControl(x,y){
- const candidates=[$('movePad'),$('slash'),$('magic'),$('thunder'),$('roll'),$('ultimate'),$('combatPotion')];let best=null,score=Infinity;
- for(const node of candidates){if(node.disabled||node.classList.contains('empty')||!node.getClientRects().length||getComputedStyle(node).visibility==='hidden')continue;const r=node.getBoundingClientRect();if(!r.width||!r.height)continue;const dx=Math.max(r.left-x,0,x-r.right),dy=Math.max(r.top-y,0,y-r.bottom),distance=Math.hypot(dx,dy);if(distance<=8&&distance<score){score=distance;best=node}}
- return best;
+ const candidates=[$('movePad'),$('slash'),$('magic'),$('thunder'),$('roll'),$('ultimate'),$('combatPotion')],near=[];
+ for(const node of candidates){if(!node.getClientRects().length||getComputedStyle(node).visibility==='hidden')continue;const r=node.getBoundingClientRect();if(!r.width||!r.height)continue;const dx=Math.max(r.left-x,0,x-r.right),dy=Math.max(r.top-y,0,y-r.bottom),distance=Math.hypot(dx,dy),margin=['roll','combatPotion'].includes(node.id)?10:8;if(distance<=margin)near.push({node,distance})}
+ near.sort((a,b)=>a.distance-b.distance);const best=near[0];if(!best||best.node.disabled||best.node.classList.contains('empty'))return null;
+ // A disabled or empty control still owns its nearby space; do not redirect to another action.
+ if(best.distance>0&&near[1]&&near[1].distance-best.distance<1.5)return null;return best.node;
 }
 function initTouchHitAreas(){
  document.addEventListener('pointerdown',e=>{

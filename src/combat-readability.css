@@ -1,0 +1,31 @@
+/* Clear availability, restrained fantasy colors, and distinct survival controls. */
+body .scene .skill.control-ready:not(:disabled) { border-color:#d9d2a6!important; box-shadow:inset 0 0 0 1px #d7d5b724,0 2px 8px #0004!important; }
+body .scene .skill::before { content:''; position:absolute; inset:0; border-radius:inherit; padding:3px; background:conic-gradient(#f2db9d var(--cooldown-angle,0deg),#829ab32b 0); -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; z-index:4; opacity:0; }
+body .scene .skill.on-cooldown::before { opacity:1; }
+body .scene .skill::after { background:conic-gradient(#07101dcc var(--cooldown-angle,0deg),transparent 0); }
+body .scene .skill.roll::after { display:block; }
+body .scene .skill .cooldown { inset:5px 0 auto; transform:none; height:25px; font-size:20px; line-height:25px; color:#fff9e8; text-shadow:0 1px 4px #000,0 0 3px #000; gap:1px; }
+body .scene .skill .cooldown::after { content:'秒'; font-size:9px; padding-top:3px; }
+body .scene .skill .skill-state { position:absolute; top:4px; left:0; right:0; z-index:3; font-size:10px; font-weight:800; color:#c7edff; text-shadow:0 1px 3px #000; }
+body .scene .skill.mana-low:not(.on-cooldown) { border-color:#84b8d5!important; background:#172c43e6!important; }
+body .scene .skill.mana-low:not(.on-cooldown) .icon { opacity:.22; }
+body .scene .skill-stack #roll { width:76px!important; min-width:76px!important; height:60px!important; min-height:60px!important; border-width:2px!important; border-color:#b3cec9!important; background:#183b40db!important; }
+body .scene #combatPotion { position:relative; width:58px!important; min-width:58px!important; height:60px!important; min-height:60px!important; gap:3px; padding:5px!important; }
+body .scene #combatPotion .potion-count { font-size:19px; }
+body .scene #combatPotion .potion-status { display:block; font-size:10px; font-weight:800; color:#e3e9e5; }
+body .scene #combatPotion.potion-ready:not(:disabled) { color:#f2fff5!important; background:#174a3de8; border-color:#b2e7c3!important; box-shadow:0 0 0 2px #a3e7b91c,0 0 12px #6cb98f30; }
+body .scene #combatPotion.potion-ready .potion-status { color:#c7ffda; }
+body .scene #combatPotion::after { content:''; position:absolute; inset:0; padding:2px; border-radius:inherit; background:conic-gradient(#a9e6ca var(--potion-cooldown-angle,0deg),transparent 0); -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; }
+body #touchEditor .touch-presets { display:flex; align-items:center; gap:6px; margin-top:6px; }
+body #touchEditor .touch-presets span { font-size:11px; color:#e9debd; }
+body #touchEditor .touch-presets button { flex:1; min-height:38px; border-radius:16px; color:#fff4d7; }
+@media (max-height:450px) and (min-width:480px) {
+ body #touchEditor .touch-presets { margin-top:3px; }
+ body #touchEditor .touch-presets button { min-height:32px; }
+}
+
+body #touchEditor { max-height:calc(100vh - 16px); max-height:calc(100dvh - 16px); overflow-y:auto; scrollbar-width:thin; }
+
+body #touchEditor [data-touch-preset][aria-pressed="true"] { background:#dfc894; color:#20333c; border-color:#f9e3af; font-weight:800; }
+
+body .scene #battleHint.survival-busy { visibility:hidden; }

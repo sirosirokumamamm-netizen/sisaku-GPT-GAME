@@ -4,7 +4,7 @@ function beginSkillCharge(s,free){
  const duration=SIGNATURE_CHARGES[s.id];if(!duration)return false;
  const target=nearest(skillReach(s.range||s.r||500));if(target)p.face=norm(target.x-p.x,target.y-p.y);
  if(!free)p.mp-=s.mp;p.skillCharge={id:s.id,remaining:duration,duration,face:{...p.face},paid:free?0:s.mp,free};p.castLock=duration+.01;inputBuffer=null;
- tone(s.id==='nova'?85:s.id==='dawn'?440:180,duration,'triangle',.025);updateUI();return true;
+ combatSound(s.id==='nova'?'charge-dark':s.id==='dawn'?'charge-light':'charge-element');updateUI();return true;
 }
 function cancelSkillCharge(penalize=false){
  const q=p?.skillCharge;if(!q)return;p.mp=Math.min(p.maxMp,p.mp+q.paid);p.skillCharge=null;p.castLock=0;inputBuffer=null;
@@ -87,7 +87,7 @@ function bossBattleMotion(e,dt){
  if(e.state!=='chase'||warnings.some(w=>w.owner===e.id)||e.exposed>0)return;
  e.strideClock=(e.strideClock??.5)-dt;
  if(e.strideClock<=0){const n=norm(p.x-e.x,p.y-e.y),side=(e.pattern||0)%2?1:-1;e.strideDir=e.form==='demon'?norm(380-e.x,STAGES[game.stage].y+40-e.y):norm(n.x*.35-n.y*side,n.y*.35+n.x*side);e.strideTime=.32;e.strideClock=e.form==='dragon'?1.6:1.25;e.strideEcho=0}
- if(!(e.strideTime>0))return;e.strideTime-=dt;const n=e.strideDir;moveActor(e,n.x*(e.bossPhase===2?455:330)*dt,n.y*(e.bossPhase===2?455:330)*dt);e.strideEcho-=dt;
+ if(!(e.strideTime>0))return;e.strideTime-=dt;const n=e.strideDir;moveActor(e,n.x*(e.form==='sentinel'?180:e.form==='monster'?260:e.bossPhase===2?455:330)*dt,n.y*(e.form==='sentinel'?180:e.form==='monster'?260:e.bossPhase===2?455:330)*dt);e.strideEcho-=dt;
  if(e.strideEcho<=0){e.strideEcho=.09;effects.push({kind:'bossStride',x:e.x,y:e.y,color:({beast:'#90db9d',monster:'#89dcf3',dragon:'#ffb26d',sentinel:'#baaaff',demon:'#bd81e9'})[e.form]||'#d9e6dd',r:e.r,life:.28,max:.28})}
 }
 function drawBossStride(e,a){ctx.save();ctx.globalAlpha=a*.65;ctx.strokeStyle=e.color;ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(e.x,e.y,e.r*(1.7-a*.6),e.r*.5,0,0,Math.PI*2);ctx.stroke();for(let i=0;i<5;i++){ctx.beginPath();ctx.moveTo(e.x-e.r+i*e.r*.5,e.y);ctx.lineTo(e.x-e.r+i*e.r*.5,e.y-55*a);ctx.stroke()}ctx.restore()}

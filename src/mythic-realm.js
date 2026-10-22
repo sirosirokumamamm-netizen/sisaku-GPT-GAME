@@ -28,7 +28,7 @@ function weaponArtwork(w){
 // Magic in the first form, a huge sword and muscular silhouette in the second.
 function drawDemonWarrior(e,t){
  if(e.shadowLord){drawShadeRegent(e,t);return}
- ctx.save();const large=e.awakened,pulse=Math.sin(t*2+e.phase),skin=e.shadowLord?'#49526d':'#85465c',edge=e.shadowLord?'#b7c6ef':'#da9fc2',core=e.cycle==='exposed'?'#baffdf':e.shadowLord?'#88aaff':'#ed9acd';
+ ctx.save();drawDemonPresence(e,t);const large=e.awakened,pulse=Math.sin(t*2+e.phase),skin=e.shadowLord?'#49526d':'#85465c',edge=e.shadowLord?'#b7c6ef':'#da9fc2',core=e.cycle==='exposed'?'#baffdf':e.shadowLord?'#88aaff':'#ed9acd';
  ctx.translate(0,large?-15:Math.sin(t*1.8)*3);if(large)ctx.scale(1.45,1.45);
  if(!large){
   const sway=Math.sin(t*1.6)*7;path([[-32,-87],[-52+sway,-3],[-25,6],[-7,-3],[10,6],[46+sway,0],[30,-88]],'#252033',edge);path([[-17,-81],[0,-45],[19,-82],[27,0],[-28,0]],'#50305c');
@@ -40,7 +40,7 @@ function drawDemonWarrior(e,t){
   path([[-43,-100],[-54,-78],[-32,-28],[0,-17],[33,-28],[54,-78],[41,-100]],skin,edge);
   for(const side of [-1,1]){ellipse(side*43,-84,23,22,epicGradient(side*43,-84,26,e.shadowLord?'#7b86a5':'#bd738a',skin));ellipse(side*54,-58,17,23,epicGradient(side*54,-58,25,e.shadowLord?'#6f7997':'#b0687c',skin));ellipse(side*15,-77,21,18,epicGradient(side*15,-77,24,e.shadowLord?'#8e99b8':'#ca8a9b',skin));ctx.strokeStyle='#2c2035';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(side*5,-65);ctx.lineTo(side*30,-64);ctx.moveTo(side*6,-51);ctx.lineTo(side*23,-49);ctx.stroke()}
   path([[-40,-98],[-61,-115],[-63,-88],[-80,-99],[-65,-73],[-35,-84]],'#272238',edge);path([[40,-98],[62,-115],[63,-88],[79,-99],[64,-73],[35,-84]],'#272238',edge);
-  const echo=shadowAttackProgress(e),swing=e.shadowLord&&echo!==null?-.48+Math.max(0,(echo-.55)/.45)*1.15:e.demonCast>0?Math.sin(t*8)*.16:e.state==='dash'?-.5:.08+pulse*.04;ctx.save();ctx.translate(62,-45);ctx.rotate(swing);
+  const echo=shadowAttackProgress(e),swing=e.shadowLord&&echo!==null?-.48+Math.max(0,(echo-.55)/.45)*1.15:e.demonCast>0?Math.sin(t*8)*.16:e.demonRush?(e.demonRush.dir.x>=0?1.2:-1.2):e.state==='dash'?-.5:.08+pulse*.04;ctx.save();ctx.translate(62,-45);ctx.rotate(swing);
   path([[-7,22],[-14,-124],[-1,-181],[25,-154],[30,-124],[15,-108],[22,-95],[13,-85],[18,-66],[7,22]],'#161520',edge);path([[23,-146],[10,-111],[12,-87],[4,18]],'#5f526e');path([[-27,18],[27,18],[22,28],[-23,28]],'#8e6179',edge);rounded(-4,29,8,23,2,'#33273b',edge);ctx.restore();
   ellipse(0,-57,11,16,core);path([[-6,-57],[0,-67],[6,-57],[0,-43]],'#fff0c9');
  }
@@ -56,13 +56,10 @@ function drawShadowZombie(e,t){
  if(e.elite||e.kind==='goldSlime')path([[-12,-78],[-16,-89],[-5,-85],[0,-96],[5,-85],[16,-89],[12,-78]],'#d8d8d8','#fff');ctx.restore();
 }
 function demonMagicWarning(e,target,dir){
- const pattern=(e.pattern++)%3;e.demonCast=1.6;e.state='windup';e.timer=1.6;
- if(pattern===0)epicWarning(e,'circle',target.x,target.y,120,1.6,{style:'curse',follow:true,lockTime:.7,atk:e.atk,persist:1.5});
- else if(pattern===1)epicWarning(e,'line',e.x,e.y,0,1.6,{dir,length:620,width:110,style:'flame',atk:e.atk,persist:2});
- else warnings.push({owner:e.id,kind:'fan',x:e.x,y:e.y,r:0,dir,length:620,spread:.75,rays:7,life:1.6,max:1.6,atk:e.atk,perfectUsed:false,attack:'fan'});
+ castDemonSorcery(e,target,dir);
 }
 function bossAttackSpectacle(w,owner){
- if(!owner||owner.kind!=='boss')return;if(w.persona||w.attack==='persona'){emitSovereignImpact(w,owner);return}const flavor=owner.form==='demon'&&owner.awakened?'blade':owner.form,color=({beast:'#b8f4aa',monster:'#9fefff',dragon:'#ffc06a',sentinel:'#c5bbff',blade:'#e9afff',demon:'#df9aff',god:'#fff2b4'})[flavor]||'#d6c8ff';
+ if(!owner||owner.kind!=='boss')return;if(!w.persona&&w.attack!=='persona')combatSound(({beast:'beast-roar',monster:'tide-crash',dragon:'dragon-breath',sentinel:'stone-break',demon:'demon-blade',god:'god-verdict'})[owner.form]||'stone-break',owner.x);if(w.persona||w.attack==='persona'){emitSovereignImpact(w,owner);return}const flavor=owner.form==='demon'&&owner.awakened?'blade':owner.form,color=({beast:'#b8f4aa',monster:'#9fefff',dragon:'#ffc06a',sentinel:'#c5bbff',blade:'#e9afff',demon:'#df9aff',god:'#fff2b4'})[flavor]||'#d6c8ff';
  const cap=reduced?2:renderLoad.slow?5:8;if(effects.filter(e=>e.kind==='bossRupture').length>=cap)return;
  effects.push({...w,kind:'bossRupture',shape:w.kind,flavor,color,life:reduced?.45:1.35,max:reduced?.45:1.35,r:w.r||100,seed:Math.round(owner.id*1000)%17});particle(w.x,w.y,color,reduced?4:20,240);
  if(!reduced&&preferences.shake)shake=Math.max(shake,w.style==='doom'?8:4);

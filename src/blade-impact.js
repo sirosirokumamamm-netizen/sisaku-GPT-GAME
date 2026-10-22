@@ -1,6 +1,6 @@
 // Contact feedback and readability share the existing simulation and cosmetic budgets.
 // Timers are transient: old campaign/rest saves need no schema migration.
-function recordBladeImpact(e,hit){
+function recordBladeImpact(e,hit){combatImpactAccent(e,hit);
  const direct=!hit.proc&&(hit.bladeContact||hit.manual&&!hit.automatic);
  if(!direct)return;
  const heavy=hit.heavy||hit.bladeContact&&game.singleStage&&getWeapon().speed<.6;
@@ -20,7 +20,7 @@ function tickImpactReaction(e,dt){
  for(const k of ['hitStagger','staggerGuard','impactPose','scarClock'])e[k]=Math.max(0,(e[k]||0)-dt);
 }
 function drawEnemy(e,t){
- ctx.save();if(e.royalTransit){const q=e.royalTransit.time/e.royalTransit.duration;ctx.globalAlpha*=Math.max(.12,1-q);ctx.translate(e.x,e.y);ctx.scale(1-q*.45,1+q*.25);ctx.translate(-e.x,-e.y);}
+ ctx.save();if(e.demonRush&&!reduced){ctx.translate(e.x,e.y);ctx.rotate(e.demonRush.dir.x*.13);ctx.scale(1.1,.9);ctx.translate(-e.x,-e.y);}if(e.royalTransit){const q=e.royalTransit.time/e.royalTransit.duration;ctx.globalAlpha*=Math.max(.12,1-q);ctx.translate(e.x,e.y);ctx.scale(1-q*.45,1+q*.25);ctx.translate(-e.x,-e.y);}
  if(!reduced&&e.impactPose>0){const q=Math.sin(e.impactPose/.16*Math.PI)*(e.impactWeight||.5),boss=e.kind==='boss';ctx.translate(e.x,e.y);ctx.rotate(q*(boss?.018:.075)*(e.knock.x<0?-1:1));ctx.scale(1+q*(boss?.006:.065),1-q*(boss?.008:.07));ctx.translate(-e.x,-e.y)}
  drawEnemyBody(e,t);ctx.restore();
 }
@@ -83,7 +83,7 @@ function refugeObstructed(w){
 function drawCombatPriorities(t,sx=0,sy=0){
  if(game.mode!=='play'||game.bossScene||game.phase==='bossIntro'||p.cutin>0)return;
  ctx.save();ctx.translate(view.w/2+sx,view.h/2+sy);const zoom=reduced?1:combat.zoom;ctx.scale(view.scale*zoom,view.scale*zoom*CAMERA.depth);ctx.translate(-cam.x,-cam.y);
- const strong=warnings.filter(w=>w.life>0&&showAttackWarning(w));
+ drawPlayerArtPriority();const strong=warnings.filter(w=>w.life>0&&showAttackWarning(w));
  for(const w of strong){
   ctx.save();warningShape(w);ctx.strokeStyle='#10141c';ctx.lineWidth=6/view.scale;ctx.stroke();ctx.strokeStyle=w.life<=p.justWindow?'#fff3b3':'#ffbd89';ctx.lineWidth=2.3/view.scale;ctx.stroke();
   // Inner rings are informational only; overlap with another attack stays visibly unsafe.

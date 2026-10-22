@@ -63,16 +63,10 @@ function personaWarning(e,kind,x,y,seconds,extra={}){
  warnings.push(w);e.demonCast=Math.max(e.demonCast||0,seconds);return w;
 }
 function demonRoyalSignature(e,dt){
- if(e.shadowLord)return false;e.doomClock=(e.doomClock??7)-dt;if(e.doomClock>0)return false;e.doomClock=17;e.barrageClock=3;e.cycleTime=Math.max(e.cycleTime,3.1);
- const origin={x:e.x,y:e.y},n=norm(p.x-e.x,p.y-e.y);for(const [i,dir]of [n,{x:-n.y,y:n.x}].entries())personaWarning(e,'line',origin.x-dir.x*240,origin.y-dir.y*240,1.55+i*.35,{dir,width:100,length:560,atk:60,move:'royalCross'});
- startEpicEvent('冥王の剣域','王断・煉獄十字','#ffad82',1.05);banner('煉獄十字','交差する大剣の外へ！',1.6);return true;
+ if(e.shadowLord)return false;e.doomClock=(e.doomClock??6)-dt;if(e.doomClock>0)return false;castDemonCataclysm(e);return true;
 }
 function demonSwordAssault(e,dt){
- if(demonRoyalSignature(e,dt))return;e.barrageClock=(e.barrageClock||0)-dt;if(e.barrageClock>0||warnings.some(w=>w.owner===e.id&&w.attack==='persona'&&w.life>.6))return;
- e.barrageClock=1.95;const n=norm(p.x-e.x,p.y-e.y),pattern=(e.barrageIndex||0)%3;e.barrageIndex=(e.barrageIndex||0)+1;
- if(pattern===0){const length=Math.min(450,distance(e,p)+95);personaWarning(e,'line',e.x,e.y,1.2,{dir:n,width:110,length,atk:45,move:'royalLunge',landing:safePoint(e.x+n.x*(length-45),e.y+n.y*(length-45),e.r)});banner('冥王の踏み込み','大剣の正面から横へ',.9)}
- else if(pattern===1){for(const [i,a]of [-.28,.28].entries()){const angle=Math.atan2(n.y,n.x)+a;personaWarning(e,'fan',e.x,e.y,1.2+i*.48,{dir:{x:Math.cos(angle),y:Math.sin(angle)},length:260,spread:.95,atk:40,move:'royalReap'})}}
- else{personaWarning(e,'line',e.x,e.y,1.35,{dir:n,width:115,length:620,atk:48,persist:1.35,move:'hellbrand'});banner('黒炎断ち','斬り跡に炎が残る',1)}
+ if(e.shadowLord)return;e.barrageClock=(e.barrageClock||0)-dt;if(e.barrageClock<=0)castDemonSword(e);
 }
 function glideJudgingGod(e,dt){
  const center=STAGES[game.stage].y,n=norm(arenaX(380+Math.sin(game.time*.25)*160)-e.x,arenaY(center-80+Math.cos(game.time*.25)*55)-e.y);moveActor(e,n.x*245*dt,n.y*245*dt);
@@ -81,7 +75,7 @@ function godEdict(e,pattern){
  const y=STAGES[game.stage].y;
  if(pattern===0){for(const [i,x]of [170,310,450,590].entries())personaWarning(e,'circle',arenaX(x),arenaY(y-40+(i%2)*150),1.4+i*.18,{r:72,atk:48,move:'holyPillar'});banner('四柱の宣告','光の柱が順番に降りる',1)}
  else if(pattern===1){const center={x:clamp(p.x,battleBounds().left+100,battleBounds().right-100),y:clamp(p.y,battleBounds().top+100,battleBounds().bottom-100)};for(const [i,dir]of [{x:.707,y:.707},{x:-.707,y:.707}].entries())personaWarning(e,'line',center.x-dir.x*370,center.y-dir.y*370,1.65+i*.4,{dir,length:740,width:88,atk:52,move:'heavenScales'});banner('天秤の光剣','交差する光を見切れ',1.2)}
- else if(pattern===2){const refuge=randomRefuge();epicWarning(e,'ring',refuge.x,refuge.y,900,2.8,{inner:105,atk:100,persist:1,style:'doom',persona:'god'});e.godAttack=3.2;startEpicEvent('創世神の審判','唯一の聖域へ','#fff0a6',1.15);banner('創世の審判','光る聖域へ！',2.2)}
+ else if(pattern===2){const refuge=randomRefuge();epicWarning(e,'ring',refuge.x,refuge.y,arenaCoverRadius(refuge),2.8,{inner:105,atk:100,persist:1,style:'doom',persona:'god'});e.godAttack=3.2;startEpicEvent('創世神の審判','唯一の聖域へ','#fff0a6',1.15);banner('創世の審判','光る聖域へ！',2.2)}
  else{const q={x:clamp(p.x,battleBounds().left+100,battleBounds().right-100),y:clamp(p.y,battleBounds().top+100,battleBounds().bottom-100)};for(const side of [-1,1])personaWarning(e,'line',q.x+side*100,q.y-210,1.55,{dir:{x:0,y:1},length:430,width:65,atk:50,move:'constellation'});personaWarning(e,'line',q.x-205,q.y-105,1.95,{dir:{x:1,y:0},length:410,width:65,atk:50,move:'constellation'});banner('星座の檻','幾何学の光のすき間へ',1.2)}
 }
 function updateShadowSovereign(e,dt){if(e.shadowMirage){e.shadowMirage.life=Math.max(0,e.shadowMirage.life-dt);if(!e.shadowMirage.life)e.shadowMirage=null;}
@@ -100,11 +94,11 @@ function shadowSovereignAttack(e){
  else if(pattern===2){const q={x:p.x,y:p.y};for(const [i,dir]of [{x:.8,y:.6},{x:-.8,y:.6}].entries())personaWarning(e,'line',q.x-dir.x*235,q.y-dir.y*235,1.45+i*.5,{dir,length:470,width:75,atk:42,move:'shadowScissor'});banner('黒月の鋏','二つの影刃が遅れて交差',1.1)}
  else{const side=p.x>arenaX(380)?1:-1,dir={x:-side,y:0};for(let i=0;i<(e.awakened?3:2);i++)personaWarning(e,'line',arenaX(380+side*290),arenaY(y-100+i*155),1.5+i*.4,{dir,length:1000,width:78,atk:40,move:'graveMarch'});startEpicEvent('影葬王の残像','亡き王たちの葬列','#aaa4ff',.85)}
 }
-function resolvePersonaStrike(w,owner){empowerBossThreat(w,owner);
+function resolvePersonaStrike(w,owner){empowerBossThreat(w,owner);if(w.rush){startDemonRush(owner,w);return}
  if(warningContains(w)&&!w.perfectUsed&&p.rollTime>0&&p.dodgeAge<.2)perfectDodge(w);
  if(warningContains(w)&&!w.perfectUsed){game.hitSource=w.persona==='god'?'雷撃':w.move==='royalLunge'?'突進':'範囲攻撃';takeHit(w.atk,w.x,w.y)}hitExplosives(q=>warningContains(w,q,16),w.atk);
  if(w.landing){const before={x:owner.x,y:owner.y};Object.assign(owner,safePoint(w.landing.x,w.landing.y,owner.r));if(effects.length<effectBudget()-2)effects.push({kind:'sovereignImpact',persona:w.persona,move:'departure',x:before.x,y:before.y,shape:'circle',r:60,color:w.color,life:.45,max:.45})}
- bossAttackSpectacle(w,owner);
+ bossAttackSpectacle(w,owner);if(w.dominion){effects.push({kind:'cataclysm',x:w.x,y:w.y,inner:w.inner,bounds:{...battleBounds()},life:1.65,max:1.65});combatSound('demon-cataclysm',owner.x);if(!reduced&&preferences.shake)shake=Math.max(shake,11);owner.state=owner.awakened?'chase':'recover';owner.timer=1.2;owner.exposed=owner.awakened?0:1.2;}else combatSound(w.persona==='demon'?'demon-blade':w.persona==='god'?'god-verdict':'shadow-rift',owner.x);
  if(w.persist&&hazards.length<9)hazards.push({...w,life:w.persist,tick:.7,atk:Math.round(w.atk*.45),protected:!!w.perfectUsed});
  if(!owner.awakened&&owner.form!=='god'&&!warnings.some(other=>other!==w&&other.owner===owner.id&&other.life>0)){owner.state='recover';owner.timer=.85;owner.exposed=.85}
 }

@@ -50,7 +50,7 @@ function useFieldPotion(){return useCombatPotion()}
 function configureRealmBoss(e,index){
  if(e.kind!=='boss')return;e.form=['beast','monster','dragon','sentinel','demon','god','demon'][game.region];e.speed=165+game.region*5;e.pattern=4;e.atk=22+game.region*5;e.cooldown=.5+index*.8;
  if(game.region===3){e.name=index?'月影の守護獣':'星核の守護者';e.form=index?'beast':'sentinel';e.hp=e.maxHp=Math.round(REGIONS[3].hp*.58);e.r=36}
- if(game.region===6){e.shadowLord=true;e.name='影の大魔王';e.atk=48}e.awakened=false;e.cycle='assault';e.cycleTime=8;if(e.form==='dragon'){e.r=60;Object.assign(e,safePoint(e.x,e.y,e.r))}if(e.form==='god'){e.r=56;e.ward=7;e.godCycle=0;e.cycleTime=7;e.atk=54;Object.assign(e,safePoint(e.x,e.y,e.r))}
+ if(game.region===4)e.atk=50;if(game.region===6){e.shadowLord=true;e.name='影の大魔王';e.atk=48}e.awakened=false;e.cycle='assault';e.cycleTime=8;if(e.form==='dragon'){e.r=60;Object.assign(e,safePoint(e.x,e.y,e.r))}if(e.form==='god'){e.r=56;e.ward=7;e.godCycle=0;e.cycleTime=7;e.atk=54;Object.assign(e,safePoint(e.x,e.y,e.r))}
 }
 function interceptBossDefeat(e){
  if(!game.singleStage||e.kind!=='boss'||e.form!=='demon'||e.awakened)return false;
@@ -58,13 +58,13 @@ function interceptBossDefeat(e){
  beginBossScene('transform',e,before);grantPhasePotion(e);banner('魔王、復活！','巨大化した！ 猛攻を避け、核心露出を狙え。',2);particle(e.x,e.y,'#d597ff',44,220);return true;
 }
 function updateRealmBoss(e,dt){
- e.demonCast=Math.max(0,(e.demonCast||0)-dt);if(e.shadowLord)return updateShadowSovereign(e,dt);if(updateRoyalTransit(e,dt))return true;if(e.form==='god')return updateGod(e,dt);
+ e.demonCast=Math.max(0,(e.demonCast||0)-dt);if(e.shadowLord)return updateShadowSovereign(e,dt);if(e.form==='demon')return demonDuel(e,dt);if(updateRoyalTransit(e,dt))return true;if(e.form==='god')return updateGod(e,dt);
  if(e.form!=='demon'||!e.awakened){if(repositionBoss(e,dt))return true;bossBattleMotion(e,dt);return false}
  if(e.state==='revive'){e.timer-=dt;if(e.timer<=0){e.state='chase';e.cooldown=.1}return true}
  e.cycleTime-=dt;if(e.cycleTime<=0){clearHostiles();e.barrageClock=.5;e.leapFrom=e.leapTo=null;e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?8:5;e.state=e.cycle==='exposed'?'recover':'chase';e.timer=e.cycleTime;e.exposed=e.cycle==='exposed'?e.cycleTime:0;e.cooldown=.15;banner(e.cycle==='exposed'?'核心露出！ 今が攻撃のチャンス':'魔王の猛攻！ 回避に集中', '',1)}
  if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}demonBarrage(e,dt);e.state='chase';if(!warnings.some(w=>w.owner===e.id&&w.attack==='persona'&&w.life>.15))roamMythicBoss(e,dt,310);return true;
 }
-function realmBossWarning(e,warn,target,dir){
+function realmBossWarning(e,warn,target,dir){if(creatureSignature(e,warn,target,dir))return;
  if(e.form==='demon'&&!e.awakened){demonMagicWarning(e,target,dir);return}const count=e.pattern++,phase=e.bossPhase===2,pace=e.form==='demon'&&e.awakened?.9:1,pattern=count%(phase?4:3);
  if(pattern===0||pattern===3){const point=safePoint(target.x,clamp(target.y,battleBounds().top+e.r,battleBounds().bottom-e.r),e.r);warn('circle',point.x,point.y,e.form==='beast'?105:120,1.05*pace,{attack:'leap'});e.leapFrom={x:e.x,y:e.y};e.leapTo=point;return}
  if(pattern===1){warn('line',e.x,e.y,0,.9*pace,{length:Math.min(470,Math.max(330,distance(e,target)+140)),width:e.form==='dragon'?140:105,attack:'bossDash'});return}
@@ -109,6 +109,6 @@ function hitExplosives(contains,damage=1){
 function segmentHits(a,b,q,r){const dx=b.x-a.x,dy=b.y-a.y,l=dx*dx+dy*dy,u=l?clamp(((q.x-a.x)*dx+(q.y-a.y)*dy)/l,0,1):0;return Math.hypot(q.x-a.x-dx*u,q.y-a.y-dy*u)<r}
 function repositionBoss(e,dt){
  if(e.state==='recover'&&e.timer<=.16){const y=STAGES[game.stage].y,points=[[185,-70],[565,60],[215,255],[535,250],[380,-95]].map(([x,dy])=>safePoint(arenaX(x),arenaY(y+dy),e.r));e.roamIndex=((e.roamIndex||0)+2)%points.length;e.roamTarget=points[e.roamIndex];if(distance(e,e.roamTarget)<200)e.roamTarget=points[(e.roamIndex+2)%points.length];e.state='reposition';e.roamTime=1.8;e.exposed=0;}
- if(e.state!=='reposition')return false;e.roamTime-=dt;const n=routeClear(e,e.roamTarget,e.r)?norm(e.roamTarget.x-e.x,e.roamTarget.y-e.y):routeDirection(e,e.roamTarget);moveActor(e,n.x*365*dt,n.y*365*dt);e.facing=n;
+ if(e.state!=='reposition')return false;e.roamTime-=dt;const n=routeClear(e,e.roamTarget,e.r)?norm(e.roamTarget.x-e.x,e.roamTarget.y-e.y):routeDirection(e,e.roamTarget);const stride=({monster:260,sentinel:190,dragon:420,beast:365})[e.form]||365;moveActor(e,n.x*stride*dt,n.y*stride*dt);e.facing=n;
  if(distance(e,e.roamTarget)<25||e.roamTime<=0){e.state='chase';e.cooldown=.12}return true;
 }

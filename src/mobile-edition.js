@@ -37,7 +37,7 @@ function drawAcquisitionLog(){if(game.mode!=='play'||game.bossScene)return;ctx.s
 function drawThreatHUD(){
  if(game.mode!=='play'||game.bossScene||p.cutin>0)return;
  const warning=warnings.some(w=>showAttackWarning(w)&&!w.perfectUsed&&warningContains(w)),burning=hazards.some(z=>showAttackWarning(z)&&(z.kind?warningContains(z):distance(z,p)<z.r+p.r*.4)),pending=!!game.pendingHit&&showAttackWarning(game.pendingHit.warning);
- ctx.save();ctx.textAlign='center';if(warning||burning||pending){const y=view.h*.36,x=view.w/2,scale=view.w<450?.8:1;ctx.translate(x,y);ctx.scale(scale,scale);path([[-112,-20],[-132,16],[-92,16]],'#fff3c1','#843c20');ctx.font='900 27px system-ui';ctx.fillStyle='#903519';ctx.fillText('!',-112,11);ctx.font='900 30px system-ui';ctx.lineWidth=6;ctx.strokeStyle='#5b2f31';ctx.strokeText('注意！！',20,12);ctx.fillStyle='#fff0ba';ctx.fillText('注意！！',20,12);ctx.font='bold 13px system-ui';ctx.fillStyle='#fff';ctx.lineWidth=3;const hint=burning?'攻撃中！ 外へ':warnings.some(w=>w.follow&&w.life>w.lockTime&&warningContains(w))?'追尾中！ 動き続けよう':'範囲の外へ回避！';ctx.strokeText(hint,0,38);ctx.fillText(hint,0,38);}
+ ctx.save();ctx.textAlign='center';if((warning||burning||pending)&&!game.royalPressure?.life){const y=view.h*.36,x=view.w/2,scale=view.w<450?.8:1;ctx.translate(x,y);ctx.scale(scale,scale);path([[-112,-20],[-132,16],[-92,16]],'#fff3c1','#843c20');ctx.font='900 27px system-ui';ctx.fillStyle='#903519';ctx.fillText('!',-112,11);ctx.font='900 30px system-ui';ctx.lineWidth=6;ctx.strokeStyle='#5b2f31';ctx.strokeText('注意！！',20,12);ctx.fillStyle='#fff0ba';ctx.fillText('注意！！',20,12);ctx.font='bold 13px system-ui';ctx.fillStyle='#fff';ctx.lineWidth=3;const hint=warnings.some(w=>w.kind==='ring'&&warningContains(w))?'全域攻撃 · 蒼緑の避難域へ！':burning?'攻撃中！ 外へ':warnings.some(w=>w.follow&&w.life>w.lockTime&&warningContains(w))?'追尾中！ 動き続けよう':'範囲の外へ回避！';ctx.strokeText(hint,0,38);ctx.fillText(hint,0,38);}
  ctx.restore();if(game.lastHit?.life>0){ctx.save();ctx.textAlign='center';ctx.font='bold 14px system-ui';ctx.strokeStyle='#442c37';ctx.lineWidth=4;const text=game.lastHit.source+' −'+game.lastHit.amount+' HP';ctx.strokeText(text,view.w/2,view.h*.48);ctx.fillStyle='#fff0df';ctx.fillText(text,view.w/2,view.h*.48);ctx.restore()}
 }
 function queueCoyoteHit(amount,x,y){
@@ -99,7 +99,7 @@ function transformGod(e){
  const before={...e,facing:{...e.facing}};clearHostiles();e.bossPhase=2;e.hp=Math.round(e.maxHp*.75);e.r=70;Object.assign(e,safePoint(e.x,e.y,e.r));e.ward=1;e.cycleTime=8;e.godAttack=1.2;e.state='chase';e.leapFrom=e.leapTo=null;e.burn=e.bleed=e.frost=0;e.roamClock=0;
  beginBossScene('transform',e,before);grantPhasePotion(e);
 }
-function randomRefuge(){
+function randomRefuge(){if(bossArenaActive())return arenaRefuge();
  const y=STAGES[game.stage].y,candidates=[];
  for(let i=0;i<48;i++){const q={x:170+runRandom()*420,y:y-90+runRandom()*320};if(distance(p,q)>370||!canStand(q.x,q.y,p.r)||!routeClear(p,q,p.r))continue;let clear=true;for(let j=0;j<8;j++){const a=j*Math.PI/4;if(!canStand(q.x+Math.cos(a)*75,q.y+Math.sin(a)*75,p.r)){clear=false;break}}if(clear)candidates.push(q)}
  // The player's current walkable tile is always reachable when terrain is tight.

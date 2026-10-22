@@ -1,0 +1,43 @@
+{
+  "environment": "Headless Chromium, DPR 2, cloud host; signature scenarios at normal CPU speed, not a phone",
+  "method": "30 warmup + 180 real animation frames; grass/shadow horde or second-form boss; automatic skills and repeated manual effects (signature=true: charged Dark Crash, Dawn, Meteor); simulation + render CPU costs",
+  "rows": [
+    {
+      "w": 390,
+      "h": 844,
+      "region": "陽だまりの草原",
+      "rate": 1,
+      "signature": true,
+      "enemies": 24,
+      "samples": 180,
+      "workMedianMs": 4.6,
+      "workP95Ms": 7.7,
+      "frameP95Ms": 33.4,
+      "maxEffects": 200,
+      "adaptiveSlow": false,
+      "budget": 200,
+      "canvasPixelRatio": 2,
+      "finite": true,
+      "mode": "play"
+    },
+    {
+      "w": 390,
+      "h": 844,
+      "region": "影の世界",
+      "room": 2,
+      "rate": 1,
+      "signature": true,
+      "enemies": 30,
+      "samples": 180,
+      "workMedianMs": 4.4,
+      "workP95Ms": 6.8,
+      "frameP95Ms": 33.4,
+      "maxEffects": 200,
+      "adaptiveSlow": true,
+      "budget": 140,
+      "canvasPixelRatio": 1.5,
+      "finite": true,
+      "mode": "play"
+    }
+  ]
+}

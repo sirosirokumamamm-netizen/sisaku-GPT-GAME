@@ -32,7 +32,7 @@ function drawOpenBossArena(t){
 // Teleport locations are a movement cue, never an attack hitbox. A counter window
 // and an already-committed attack always finish before another jump can start.
 function updateRoyalTransit(e,dt){
- if(!bossArenaActive()||game.region<4||e.shadowLord)return false;
+ if(!bossArenaActive()||game.region<4||e.shadowLord||e.form==='demon')return false;
  if(e.royalTransit){const s=e.royalTransit;s.time+=dt;if(s.time>=s.duration){Object.assign(e,s.to);e.royalTransit=null;e.royalChain=Math.max(0,(e.royalChain||0)-1);e.royalMoveClock=e.royalChain?.24:e.bossPhase===2?1.9:3;e.cooldown=Math.max(e.cooldown,.35);}return true}
  if(e.state==='revive'||e.exposed>0||e.state==='recover'||e.cycle==='exposed'||e.form==='god'&&!e.ward)return false;
  e.royalMoveClock=(e.royalMoveClock??1.4)-dt;

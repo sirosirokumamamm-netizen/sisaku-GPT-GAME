@@ -1,8 +1,8 @@
 // Shared visual language and explicit combat/reward rules. Save skill IDs stay stable.
 const DAWN_OFFER_WEIGHT=.8;
 function weightedSkillPick(candidates){
- let roll=runRandom()*candidates.reduce((n,s)=>n+(s.id==='dawn'?DAWN_OFFER_WEIGHT:1),0);
- for(const s of candidates){roll-=s.id==='dawn'?DAWN_OFFER_WEIGHT:1;if(roll<0)return s}return candidates.at(-1);
+ let roll=runRandom()*candidates.reduce((n,s)=>n+(s.id==='dawn'?dawnOfferWeight():1),0);
+ for(const s of candidates){roll-=s.id==='dawn'?dawnOfferWeight():1;if(roll<0)return s}return candidates.at(-1);
 }
 function showAttackWarning(w){
  const owner=enemies.find(e=>e.id===w.owner);
@@ -87,5 +87,5 @@ function drawElementAccent(e,a){
 function drawRealmAmbience(t){
  if(game.singleStage&&game.region===6){drawShadowMist(t);return}
  if(reduced||!game.singleStage)return;const bounds=worldBounds(),colors=['#d1ffc1','#b0ecff','#ffc484','#e5d9aa','#d0a4ed','#fff3bd'],color=colors[game.region]||'#d0d0d0',count=Math.round((renderLoad.slow?12:22)*preferences.particles);ctx.save();
- for(let i=0;i<count;i++){const x=70+((i*113.7+t*(game.region===2?8:3))%620),y=bounds.top+((i*89.3+t*(game.region===2?-12:4))%(bounds.bottom-bounds.top)+(bounds.bottom-bounds.top))%(bounds.bottom-bounds.top);ctx.globalAlpha=.12+Math.sin(t+i)*.07;ellipse(x,y,game.region===2?2:3,game.region===2?5:2,color)}ctx.restore();
+ for(let i=0;i<count;i++){const x=70+((i*113.7+t*(game.region===2?8:3))%(bossArenaActive()?1220:620)),y=bounds.top+((i*89.3+t*(game.region===2?-12:4))%(bounds.bottom-bounds.top)+(bounds.bottom-bounds.top))%(bounds.bottom-bounds.top);ctx.globalAlpha=.12+Math.sin(t+i)*.07;ellipse(x,y,game.region===2?2:3,game.region===2?5:2,color)}ctx.restore();
 }

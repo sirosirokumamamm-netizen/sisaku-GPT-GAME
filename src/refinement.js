@@ -18,15 +18,15 @@ function resetGameData(){
 function chooseNewEnemy(){
  if(game.room===1)return runRandom()<.8?'slime':'bat';
  if(!game.goldSlimePlanned&&runRandom()<rareEncounterChance()){game.goldSlimePlanned=true;return 'goldSlime'}
- if(runRandom()<.18)return ['harpy','beetle','wraith'][Math.floor(runRandom()*3)];return null;
+ if(game.room>=2&&runRandom()<.15)return runRandom()<.5?'duelist':'hexer';if(runRandom()<.18)return ['harpy','beetle','wraith'][Math.floor(runRandom()*3)];return null;
 }
 function newEnemyTick(e,dt){
- if(e.kind==='goldSlime')return tickGoldenDash(e,dt);
+ if(e.kind==='goldSlime')return tickGoldenDash(e,dt);if(distinctMobTick(e,dt))return true;
  if(e.kind==='harpy'&&e.state==='chase'&&(distance(e,p)>170||!canStand(e.x,e.y,e.r)||!coverClear(e,p))){const n=norm(p.x-e.x,p.y-e.y);e.x=clamp(e.x+n.x*e.speed*dt,100,660);e.y=clamp(e.y+n.y*e.speed*dt,STAGES[game.stage].y-170,STAGES[game.stage].y+320)}
  if(e.kind==='wraith'&&e.state==='recover'&&e.timer<.1){const q=safePoint(p.x+(runRandom()<.5?-160:160),clampPlayerY(p.y-70),e.r);particle(e.x,e.y,'#c4d2ff',8,75);e.x=q.x;e.y=q.y;particle(e.x,e.y,'#c4d2ff',8,75)}return false;
 }
 function drawNewEnemy(e,t){
- const glow=e.flash>0?'#fff7d5':'#c8e9ef';ctx.save();
+ if(['duelist','hexer'].includes(e.kind)){drawDistinctMob(e,t);return}const glow=e.flash>0?'#fff7d5':'#c8e9ef';ctx.save();
  if(e.kind==='harpy'){const flap=Math.sin(t*13+e.phase)*13;for(const s of [-1,1]){path([[s*7,-40],[s*40,-65+flap],[s*50,-32+flap],[s*23,-25]],'#d9d5a6','#fff2ce');path([[s*15,-28],[s*21,-4],[s*8,-10]],'#9aaeb6')}ellipse(0,-34,13,21,'#668fa3');ellipse(0,-57,12,12,glow);path([[3,-58],[24,-53],[4,-49]],'#e8b067');ellipse(3,-59,3,3,'#23333f')}
  if(e.kind==='beetle'){for(const s of [-1,1])for(let i=0;i<3;i++){ctx.strokeStyle='#c2b094';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(s*13,-28+i*10);ctx.lineTo(s*31,-20+i*12);ctx.lineTo(s*35,-9+i*11);ctx.stroke()}ellipse(0,-20,23,29,'#796c91');path([[0,-49],[17,-35],[15,-8],[0,6]],'#4e496d',glow);path([[-5,-42],[0,-72],[8,-44]],'#e4ceaa');ellipse(-9,-38,3,3,'#ffb782');ellipse(9,-38,3,3,'#ffb782')}
  if(e.kind==='wraith'){const bob=Math.sin(t*5+e.phase)*5;path([[-22,0],[-18,-47+bob],[0,-67+bob],[18,-47+bob],[22,0],[10,-8],[0,4],[-10,-8]],'#667998',glow);ellipse(0,-40+bob,13,16,'#1a2946');ellipse(-5,-42+bob,3,3,'#9cffe9');ellipse(5,-42+bob,3,3,'#9cffe9');for(const s of [-1,1])path([[s*14,-36+bob],[s*33,-18],[s*29,-3],[s*22,-22]],'#94b6bb')}

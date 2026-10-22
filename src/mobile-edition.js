@@ -79,7 +79,7 @@ function skillDisplayName(s,rank){if(!s)return '';const level=rank??p?.learned?.
 function darkCrashUnlocked(){return !!campaign&&campaign.rares.includes('nova')}
 function darkCrashDamage(rank=p.learned.nova||1){return (rank>=3?460:rank===2?240:190)*p.power}
 function castDarkCrash(boost,manual=false){
- const rank=p.learned.nova||1,target=nearest(rank>=3?480:260);if(!target){acquisitionToast('敵に近づこう');return}const color=rank>=3?'#e8b6ff':'#a880de';p.face=norm(target.x-p.x,target.y-p.y);slashEffect(true,p.face,color);hurtEnemy(target,darkCrashDamage(rank)*boost,true,color,false,false,manual,'dark');signatureRelease('nova',p.x,p.y,{length:Math.max(260,distance(p,target)+80)});if(rank>=3)trueSkillEffect(getSkill('nova'));playCue('impact');
+ const rank=p.learned.nova||1,target=nearest(skillReach(rank>=3?480:260));if(!target){acquisitionToast('敵に近づこう');return}const color=rank>=3?'#e8b6ff':'#a880de';p.face=norm(target.x-p.x,target.y-p.y);slashEffect(true,p.face,color);hurtEnemy(target,darkCrashDamage(rank)*boost,true,color,false,false,manual,'dark');signatureRelease('nova',p.x,p.y,{length:Math.max(260,distance(p,target)+80)});if(rank>=3)trueSkillEffect(getSkill('nova'));playCue('impact');
 }
 function trueSkillEffect(s){
  if(effects.length>260)return;const color=s.color||'#d7f8ff';effects.push({kind:'sigil',x:p.x,y:p.y,r:65,color,life:.65,max:.65},{kind:'burst',x:p.x,y:p.y,r:115,color,life:.45,max:.45});particle(p.x,p.y-20,color,10,150);
@@ -106,7 +106,7 @@ function randomRefuge(){
  return candidates.length?candidates[Math.floor(runRandom()*candidates.length)]:{x:p.x,y:p.y};
 }
 function roamMythicBoss(e,dt,speed){
- e.roamClock=(e.roamClock||0)-dt;if(!e.roamTarget||e.roamClock<=0||distance(e,e.roamTarget)<35){e.roamClock=1.4+runRandom()*.6;let best=null;for(let i=0;i<12;i++){const q=safePoint(155+runRandom()*450,STAGES[game.stage].y-110+runRandom()*390,e.r);if(!best||distance(e,q)>distance(e,best))best=q}e.roamTarget=best}
+ e.roamClock=(e.roamClock||0)-dt;if(!e.roamTarget||e.roamClock<=0||distance(e,e.roamTarget)<35){e.roamClock=1.4+runRandom()*.6;let best=null;for(let i=0;i<12;i++){const q=safePoint(arenaX(155+runRandom()*450),arenaY(STAGES[game.stage].y-110+runRandom()*390),e.r);if(!best||distance(e,q)>distance(e,best))best=q}e.roamTarget=best}
  const d=routeClear(e,e.roamTarget,e.r)?norm(e.roamTarget.x-e.x,e.roamTarget.y-e.y):routeDirection(e,e.roamTarget);const before={x:e.x,y:e.y};moveActor(e,d.x*speed*dt,d.y*speed*dt);if(distance(before,e)<speed*dt*.3)e.roamClock=0;
 }
 

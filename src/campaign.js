@@ -1,6 +1,6 @@
 // Short, independently replayable stages. One versioned snapshot commits rewards atomically.
 const CAMPAIGN_KEY='azure-campaign-v1';
-const REGIONS=[{name:'陽だまりの草原',stage:0,boss:'翠角の森王',color:'#9fdfa7',icon:'♣',hint:'広い足場と、斬り倒しやすい群れ',hp:1500},{name:'翡翠の水路',stage:1,boss:'蒼潮の番人',color:'#83d9ee',icon:'≈',hint:'橋と水路で射線を見極める',hp:2100},{name:'熾火の火山',stage:6,boss:'熔翼の古竜',color:'#ffb487',icon:'♨',hint:'火薬樽と炎を使い分ける',hp:2900},{name:'星霜の遺跡',stage:8,boss:'星核の守護者',color:'#c9b7ff',icon:'✦',hint:'柱の陰から反撃を狙う',hp:4200},{name:'闇の世界',stage:4,boss:'冥王ヴァルガ',color:'#dd9fff',icon:'♜',hint:'闇の門を越え、復活する魔王へ',hp:4600},{name:'天界',stage:5,boss:'創世神アストラ',color:'#fff0b5',icon:'☀',hint:'雲海の神殿。神の障壁が解ける瞬間を狙う',hp:6200},{name:'影の世界',stage:7,boss:'影の大魔王',color:'#c9ced8',icon:'◈',hint:'深まる闇と三波の屍。残影を操る名もなき王',hp:8500}];
+const REGIONS=[{name:'陽だまりの草原',stage:0,boss:'翠角の森王',color:'#9fdfa7',icon:'♣',hint:'広い足場と、斬り倒しやすい群れ',hp:1500},{name:'翡翠の水路',stage:1,boss:'蒼潮の番人',color:'#83d9ee',icon:'≈',hint:'橋と水路で射線を見極める',hp:2100},{name:'熾火の火山',stage:6,boss:'熔翼の古竜',color:'#ffb487',icon:'♨',hint:'火薬樽と炎を使い分ける',hp:3300},{name:'星霜の遺跡',stage:8,boss:'星核の守護者',color:'#c9b7ff',icon:'✦',hint:'柱の陰から反撃を狙う',hp:4200},{name:'闇の世界',stage:4,boss:'冥王ヴァルガ',color:'#dd9fff',icon:'♜',hint:'闇の門を越え、復活する魔王へ',hp:5500},{name:'天界',stage:5,boss:'創世神アストラ',color:'#fff0b5',icon:'☀',hint:'雲海の神殿。神の障壁が解ける瞬間を狙う',hp:7400},{name:'影の世界',stage:7,boss:'影の大魔王',color:'#c9ced8',icon:'◈',hint:'深まる闇と三波の屍。残影を操る名もなき王',hp:10200}];
 // Keep the historical save key; all skills can now be inherited.
 const RARE_IDS=SKILLS.map(s=>s.id);
 const STAGE_ICONS=['☀','≈','♣','♜','☾','◇','♨','ϟ','✦'];
@@ -16,7 +16,7 @@ function normalizeCampaign(raw){
  c.selected=finiteInt(raw.selected,0,c.unlocked-1);c.style=STYLES.some(s=>s.id===raw.style)?raw.style:'azure';
  for(const id of ['hp','mp'])c.wallet+=finiteInt(raw.stock?.[id],0,3)*SUPPLIES[id].price;
  for(let i=0;i<REGIONS.length;i++){const r=raw.clears?.[i];if(r&&Number.isFinite(r.score)&&Number.isFinite(r.time)&&['S','A','B','C','D'].includes(r.rank))c.clears[i]={score:finiteInt(r.score),time:Math.max(.01,Math.min(36000,r.time)),rank:r.rank,visits:finiteInt(r.visits,1)};}
- if(raw.missionVersion!==1&&(c.clears[4]||c.dawnUpgrade)){c.dawnUpgrade=true;for(const id of ['nova','dawn'])if(!c.rares.includes(id))c.rares.push(id)}else if(c.dawnUpgrade&&!c.rares.includes('dawn'))c.rares.push('dawn')
+ if(raw.missionVersion!==1&&(c.clears[4]||c.dawnUpgrade)){c.dawnUpgrade=true;if(!c.rares.includes('nova'))c.rares.push('nova')}
  if(heavenUnlocked(c)){c.unlocked=shadowUnlocked(c)?7:6;c.selected=finiteInt(raw.selected,0,c.unlocked-1)}c.suspended=normalizeRest(raw.suspended);if(c.suspended&&(c.suspended.run.region===6?!shadowUnlocked(c):c.suspended.run.region===5?!heavenUnlocked(c):c.suspended.run.region===4?!darkUnlocked(c):c.suspended.run.region===3?!finaleUnlocked(c):c.suspended.run.region>=c.unlocked))c.suspended=null;
  c.finaleRevealed=raw.finaleRevealed===true||!!c.clears[3];
  const validResult=r=>r&&Number.isInteger(r.stage)&&r.stage>=0&&r.stage<REGIONS.length&&Number.isFinite(r.score)&&Number.isFinite(r.time)&&['S','A','B','C','D'].includes(r.rank)&&typeof r.win==='boolean';
@@ -55,7 +55,7 @@ function startStageAttempt(index,seed){
  refreshCampaign();if(!availableStage(index)||campaign.pending||!['preparation','stageResult','stageSelect'].includes(game.mode))return false;
  const n=cloneCampaign(),carries=n.carries.slice(),prepared={...n.prepared};n.selected=index;n.suspended=null;for(const id of ['hp','mp'])if(prepared[id]&&n.stock[id]>0){n.stock[id]--;n.prepared[id]=false}else prepared[id]=false;for(const id of ['hp','mp'])n.prepared[id]=false;saveCampaign(n);
  selectedStyle=n.style;reset(seed);game.singleStage=true;game.roomRoute=makeRoomRoute();game.relic=null;game.relicOffers=[];game.weapon=campaign.weapon;game.ultimateArt=campaign.ultimate;game.fieldPotions=0;game.roomPotionCollected=false;game.restPotionUsed=false;game.region=index;game.stage=REGIONS[index].stage;game.room=1;game.waves=roomWaveCount(index,1);game.attemptId=Date.now().toString(36)+'-'+game.seed.toString(36)+'-'+Math.random().toString(36).slice(2,8);game.settled=false;game.damageSources={};game.chosenSkills=[];game.roomEntryKills=0;game.bossDamage=0;game.nextAttackAt=0;game.draftDeferred=0;game.targetId=null;game.restHealing=0;
- applyStyle();const permanent=missionBonuses();p.maxHp+=permanent.hp;p.maxMp+=permanent.mp;p.x=380;p.y=STAGES[game.stage].y+145;p.maxHp+=index*6+(prepared.hp?24:0);p.maxMp+=Math.floor(index/2)+(prepared.mp?10:0);p.hp=p.maxHp;p.mp=p.maxMp;p.power*=1+index*.08;p.magicPower*=1+index*.08;p.xpNext=18;p.potions=0;p.ultimate=20;applyWeapon();
+ applyStyle();const permanent=missionBonuses();p.maxHp+=permanent.hp;p.maxMp+=permanent.mp;p.x=380;p.y=STAGES[game.stage].y+145;p.maxHp+=index*6+(prepared.hp?24:0);p.maxMp+=Math.floor(index/2)+(prepared.mp?10:0);p.hp=p.maxHp;p.mp=p.maxMp;p.power*=1+index*.08;p.magicPower*=1+index*.08;p.xpNext=stageExperienceThreshold(1);p.potions=0;p.ultimate=20;applyWeapon();
  applyCarrySkills(carries);
  game.mode='play';closeModal();buildTerrain();
  cam={x:p.x,y:p.y-view.h/(view.scale*CAMERA.depth)*((view.w<600?CAMERA.mobileAnchor:CAMERA.desktopAnchor)-.5)};game.furthest=p.y;encounter();updateUI();return true;
@@ -71,7 +71,7 @@ function attackLabel(attack){return ({bossDash:'突進',dash:'突進',leap:'着�
 function collectStageGold(){for(const d of drops)if(d.type==='coin'&&!d.collected)gainGold(d.value);drops=drops.filter(d=>['fieldPotion','bomb'].includes(d.type)&&!d.collected)}
 function chestOffers(first){
  // Pending old rewards stay intact; exclusions apply only when generating a new chest.
- const excluded=new Set([...campaign.rares,...styleStartingSkills(),...(!darkCrashUnlocked()?['nova']:[]),...(game.region===4?['nova','dawn']:[])]);
+ const excluded=new Set([...campaign.rares,...styleStartingSkills(),...(!darkCrashUnlocked()?['nova']:[]),...(game.region===4?['nova']:[])]);
  const selected=[...new Set(game.chosenSkills||[])].filter(id=>!!getSkill(id)&&!excluded.has(id));
  const picks=shuffle(selected).slice(0,4);
  for(const id of shuffle(RARE_IDS.filter(id=>!excluded.has(id)&&!picks.includes(id)))){if(picks.length>=4)break;picks.push(id)}
@@ -138,7 +138,7 @@ function advanceRoom(){
  if(game.relicOffers?.length){game.relicOffers=[];acquisitionToast('秘宝は見送りました')}game.restPotionUsed=false;game.roomPotionCollected=false;game.room++;game.roomEntryKills=game.kills;game.wave=0;game.waves=roomWaveCount(game.region,game.room);game.phase='travel';game.campReady=false;game.bossPrepared=false;game.bossFallen=false;game.stageGoalDone=false;game.nextAttackAt=game.time+.5;game.spawnPlan=[];game.waveQueued=false;enemies=[];drops=[];p.x=380;p.y=STAGES[game.stage].y+145;buildTerrain();makeDecor();resetInput();cam={x:p.x,y:p.y-view.h/(view.scale*CAMERA.depth)*((view.w<600?CAMERA.mobileAnchor:CAMERA.desktopAnchor)-.5)};encounter();updateUI();return true;
 }
 function generateRoomTerrain(){
- groundChunks.clear();terrain=[];const y=STAGES[game.stage].y,region=game.region,boss=game.room===5;game.roomLayout=[];
+ groundChunks.clear();terrain=[];const y=STAGES[game.stage].y,region=game.region,boss=game.room===5;game.roomLayout=[];if(boss){buildOpenBossArena();return}
  if(boss)terrain.push({kind:'water',x:35,y:y-290,w:690,h:85,solid:true});else terrain.push({kind:'wall',x:90,y:y-222,w:210,h:24,solid:true},{kind:'wall',x:460,y:y-222,w:210,h:24,solid:true});
  if(region===1){const riverY=y+runRange(-45,50),bridgeWidth=boss?250:190;terrain.push({kind:'water',x:95,y:riverY,w:285-bridgeWidth/2,h:65,solid:true},{kind:'water',x:380+bridgeWidth/2,y:riverY,w:285-bridgeWidth/2,h:65,solid:true},{kind:'bridge',x:380-bridgeWidth/2,y:riverY,w:bridgeWidth,h:65,solid:false})}
  const count=boss?2:region===0?3:5;

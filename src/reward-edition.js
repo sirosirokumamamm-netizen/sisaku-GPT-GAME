@@ -38,12 +38,12 @@ function empowerBossThreat(w,owner=enemies.find(e=>e.id===w.owner)){
 // Movement shadows never enter warnings, projectiles, hazards or damage resolution.
 function chooseShadowLanding(e){
  const y=STAGES[game.stage].y,points=[[145,-95],[615,-75],[155,255],[605,255],[380,-125],[145,110],[615,120],[380,280]];
- const candidates=points.map(([x,dy])=>safePoint(x,y+dy,e.r)).filter(q=>canStand(q.x,q.y,e.r)&&distance(q,p)>110&&distance(q,e)>200).sort((a,b)=>distance(b,e)-distance(a,e));
+ const candidates=points.map(([x,dy])=>safePoint(arenaX(x),arenaY(y+dy),e.r)).filter(q=>canStand(q.x,q.y,e.r)&&distance(q,p)>110&&distance(q,e)>200).sort((a,b)=>distance(b,e)-distance(a,e));
  return candidates.length?candidates[Math.floor(runRandom()*Math.min(3,candidates.length))]:null;
 }
 function startShadowTransit(e){
  const to=chooseShadowLanding(e);if(!to)return false;
- const duration=e.awakened?.5:.65;e.shadowTransit={from:{x:e.x,y:e.y},to,time:0,duration};e.shadowMoveClock=e.awakened?1.1:1.6;e.shadowMirage={life:duration,max:duration};return true;
+ const duration=e.awakened?.5:.65;e.shadowTransit={from:{x:e.x,y:e.y},to,time:0,duration};e.shadowMoveClock=e.awakened?.8:1.4;e.shadowMirage={life:duration,max:duration};return true;
 }
 function updateShadowTransit(e,dt){
  const transit=e.shadowTransit;if(transit){
@@ -53,7 +53,7 @@ function updateShadowTransit(e,dt){
  if(e.shadowMoveClock<=0&&!warnings.some(w=>w.owner===e.id)&&startShadowTransit(e))return true;return false;
 }
 function drawShadowTransitCues(t){
- if(game.bossScene)return;for(const e of enemies){const s=e.shadowTransit;if(!s||e.hp<=0)continue;const q=clamp(s.time/s.duration,0,1);ctx.save();
+ drawRoyalTransitCues(t);if(game.bossScene)return;for(const e of enemies){const s=e.shadowTransit;if(!s||e.hp<=0)continue;const q=clamp(s.time/s.duration,0,1);ctx.save();
   for(const [point,arrival]of [[s.from,false],[s.to,true]]){ctx.save();ctx.translate(point.x,point.y);ctx.strokeStyle=arrival?'#aebbd5':'#746e89';ctx.fillStyle='#09091366';ctx.lineWidth=2;ctx.setLineDash([2,7]);ctx.beginPath();ctx.ellipse(0,0,e.r+12+q*10,(e.r+12+q*10)*.45,0,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.setLineDash([]);
    for(let i=0;i<6;i++){const a=i*Math.PI/3+t*2,r=e.r*.8;ctx.strokeStyle='#9096b799';ctx.beginPath();ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r*.4);ctx.quadraticCurveTo(Math.cos(a+.7)*r,-30-q*30,Math.cos(a+.3)*r*.5,-45-q*45);ctx.stroke()}
    if(arrival){ctx.save();ctx.translate(0,24);ctx.scale(1,1/CAMERA.depth);ctx.font='700 11px system-ui';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#0b101b';ctx.strokeText('影渡り · 移動',0,0);ctx.fillStyle='#d0d8eb';ctx.fillText('影渡り · 移動',0,0);ctx.restore()}ctx.restore();

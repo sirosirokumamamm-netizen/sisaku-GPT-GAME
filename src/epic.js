@@ -32,7 +32,7 @@ function updateGod(e,dt){
  e.cycleTime-=dt;e.godAttack=(e.godAttack||0)-dt;
  if(e.cycleTime<=0){clearHostiles();e.godCycle++;e.ward=e.ward>0?0:1;e.cycleTime=e.ward>0?(e.bossPhase===2?8:7):(e.bossPhase===2?4:5);e.state=e.ward>0?'chase':'recover';e.exposed=e.ward>0?0:e.cycleTime;e.godAttack=.25;banner(e.ward>0?'神の障壁、再生':'神の障壁が砕けた！',e.ward>0?'雷を避けて、次の好機を待て':'核心へ全力で攻撃！',1.3);particle(e.x,e.y-60,'#fff4be',35,190)}
  if(!e.ward){e.state='recover';e.exposed=e.cycleTime;return true}
- const y=STAGES[game.stage].y,angle=game.time*.65,target=safePoint(380+Math.sin(angle)*205,y+60+Math.cos(angle)*130,e.r),n=norm(target.x-e.x,target.y-e.y);if(e.bossPhase===2)glideJudgingGod(e,dt);else{const pulse=godMotion(e);e.motionPhase=pulse.phase;moveActor(e,n.x*pulse.speed*dt,n.y*pulse.speed*dt);}
+ const y=STAGES[game.stage].y,angle=game.time*.65,target=safePoint(arenaX(380+Math.sin(angle)*205),arenaY(y+60+Math.cos(angle)*130),e.r),n=norm(target.x-e.x,target.y-e.y);if(e.bossPhase===2)glideJudgingGod(e,dt);else{const pulse=godMotion(e);e.motionPhase=pulse.phase;moveActor(e,n.x*pulse.speed*dt,n.y*pulse.speed*dt);}
  if(e.godAttack<=0){const pattern=(e.godPattern||0)%4;e.godPattern=(e.godPattern||0)+1;e.godAttack=e.bossPhase===2?1.85:2.15;godEdict(e,pattern)}
  return true;
 }

@@ -7,7 +7,7 @@ function missionCatalog(){
  ]);
  return [...quests,
   {id:'demon-legacy',title:'冥王の遺産',region:4,rank:'D',icon:'☾',gold:250,skill:'nova',weapon:'abyss',detail:'ダーククラッシュを永久解放。冥王の黒刃がよろずやに入荷。'},
-  {id:'dawn-reforged',title:'黎明、再鍛',region:4,rank:'D',icon:'☀',gold:250,upgrade:true,detail:'黎明の大剣・改を解放。威力と射程の封印が解ける。'},
+  {id:'dawn-reforged',title:'黎明、再鍛',region:4,rank:'D',icon:'☀',gold:250,upgrade:true,detail:'黎明の大剣を習得すると「・改」に。威力・射程を解放。持ち越し権は宝箱で別に獲得。'},
   {id:'heaven-steel',title:'神を穿つ鋼',region:5,rank:'D',icon:'✦',gold:100,weapon:'starfall',detail:'天穿つ大剣がよろずやに入荷。'},
   {id:'holy-steel',title:'光を継ぐ剣',region:5,rank:'A',icon:'☼',gold:100,weapon:'dawn',detail:'黎明の聖剣がよろずやに入荷。'},
   {id:'slayer-300',title:'刃の旅路',stat:'kills',target:300,icon:'⚔',gold:100,hp:2},
@@ -34,7 +34,7 @@ function normalizeMissions(c,raw){
 function applyMissionUnlock(c,m){
  if(m.skill&&!c.rares.includes(m.skill))c.rares.push(m.skill);
  if(m.weapon&&!c.shopUnlocks.includes(m.weapon))c.shopUnlocks.push(m.weapon);
- if(m.upgrade){c.dawnUpgrade=true;if(!c.rares.includes('dawn'))c.rares.push('dawn')}
+ if(m.upgrade)c.dawnUpgrade=true;
 }
 function missionBonuses(c=campaign){return missionCatalog().filter(m=>c.claimedMissions.includes(m.id)).reduce((b,m)=>({hp:b.hp+(m.hp||0),mp:b.mp+(m.mp||0)}),{hp:0,mp:0})}
 function recordMissionRun(c){

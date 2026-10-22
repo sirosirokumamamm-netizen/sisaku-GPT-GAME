@@ -2,7 +2,7 @@ const{chromium}=require('playwright');const assert=require('node:assert/strict')
 (async()=>{const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',args:['--no-sandbox']});try{const page=await browser.newPage();await page.addInitScript(()=>{let seed=0x5eeda11;Math.random=()=>{seed=(Math.imul(1664525,seed)+1013904223)>>>0;return seed/4294967296}});await page.goto(process.env.BASE_URL||'http://127.0.0.1:8000');const results=await page.evaluate(({novice,quick})=>{
 const results=[];for(const style of novice||quick?['azure']:['azure','storm','ward']){campaign=normalizeCampaign({version:1,style});saveCampaign(campaign);
  for(let stage=0;stage<(novice?1:REGIONS.length);stage++){
-  openStageSelect();if(game.mode==='stageSelect'){const sword=recommendedSword();if(campaign.weapon!==sword.id&&(campaign.weapons.includes(sword.id)||campaign.wallet>=sword.price)){openWeaponShop('stageSelect',sword.id);$('buySword').click();$('weaponBack').click()}}openPreparation(stage);if(!startStageAttempt(stage,102400+stage+['azure','storm','ward'].indexOf(style)*100))throw Error('stage locked '+stage);sounds=false;let frames=0,ultimates=0,firstLevel=0;
+  openStageSelect();if(game.mode==='stageSelect'){const sword=recommendedSword();if(campaign.weapon!==sword.id&&(campaign.weapons.includes(sword.id)||campaign.wallet>=sword.price)){openWeaponShop('stageSelect',sword.id);$('buySword').click();$('weaponBack').click()}}openPreparation(stage);if(!startStageAttempt(stage,102400+stage+['azure','storm','ward'].indexOf(style)*100))throw Error('stage locked '+stage);sounds=false;let frames=0,ultimates=0,firstLevel=0;const roomLevels={};
   const escape=(w,target)=>{let best={x:1,y:0},score=-Infinity;for(let i=0;i<16;i++){const a=i*Math.PI/8,n={x:Math.cos(a),y:Math.sin(a)},q={x:p.x+n.x*95,y:p.y+n.y*95};if(!canStand(q.x,q.y,p.r)||q.y!==clampPlayerY(q.y))continue;const safe=w.kind?!warningContains(w,q,20):distance(q,w)>w.r+25,value=(safe?500:0)-hazards.filter(z=>distance(q,z)<z.r+25).length*700-warnings.filter(z=>warningContains(z,q,18)).length*250+distance(q,w)-distance(q,target)*.25;if(value>score){score=value;best=n}}return best};
   for(;frames<60*420&&game.mode!=='stageResult'&&game.mode!=='chest';frames++){
    if(game.mode==='roomEquipment'){if(game.relicOffers?.length){chooseRelic(0);continue}$('roomEquipmentDone').click();continue}
@@ -10,18 +10,18 @@ const results=[];for(const style of novice||quick?['azure']:['azure','storm','wa
    if(game.phase==='roomRest'&&game.mode==='play'){advanceRoom();continue}
    if(game.mode==='draft'){const ranked=game.offers.map((id,i)=>({i,score:(['whirl','orbit','wave','frost','power','haste','guard','focus','ultimatePower','charge'].includes(id)?5:0)+(p.learned[id]?1:0)+(style==='storm'&&getSkill(id).category==='element'?4:0)})).sort((a,b)=>b.score-a.score);chooseOffer(ranked[0].i)}
    if(game.mode==='replace')replaceAcquiredSkill(1+(frames%2));if(game.mode!=='play')continue;
-   if(p.lv>1&&!firstLevel)firstLevel=game.time;
+   roomLevels[game.room]=Math.max(roomLevels[game.room]||1,p.lv);if(p.lv>1&&!firstLevel)firstLevel=game.time;
    if(p.hp<p.maxHp*.5&&game.fieldPotions>0)useCombatPotion();
    if(p.ultimate>=100&&activateUltimate())ultimates++;
    let target=nearest(2000)||{x:380,y:STAGES[game.stage].y};const w=novice?null:warnings.find(w=>warningContains(w));
    if(w){const n=escape(w,target);if(w.life<=p.justWindow&&p.cd.roll===0){joystick=n;action('roll')}target={x:p.x+n.x*140,y:p.y+n.y*140}}
    else if(!novice){const z=hazards.find(z=>distance(z,p)<z.r+25),b=hostileShots.find(b=>distance(b,p)<95&&(p.x-b.x)*b.dir.x+(p.y-b.y)*b.dir.y>0);if(z){const n=escape(z,target);target={x:p.x+n.x*140,y:p.y+n.y*140}}else if(b){const n=norm(-b.dir.y,b.dir.x);target={x:p.x+n.x*150,y:p.y+n.y*150};if(p.cd.roll===0&&distance(b,p)<55){joystick=n;action('roll')}}else if(target.kind==='shield'&&distance(p,target)<180){target=safePoint(target.x-target.facing.x*75+target.facing.y*65,target.y-target.facing.y*75-target.facing.x*65,p.r)}}
-   if(novice&&target.kind){const angle=frames/60*1.4;target={x:clamp(target.x+Math.cos(angle)*75,125,635),y:clampPlayerY(target.y+Math.sin(angle)*75)}}
+   if(novice&&target.kind){const angle=frames/60*1.4,b=battleBounds();target={x:clamp(target.x+Math.cos(angle)*75,b.left+60,b.right-60),y:clampPlayerY(target.y+Math.sin(angle)*75)}}
    if(distance(p,target)>55)joystick=routeClear(p,target,p.r)?norm(target.x-p.x,target.y-p.y):routeDirection(p,target);else joystick={x:0,y:0};
    for(let slot=0;slot<3;slot++){const s=getSkill(p.loadout[slot]);if(s&&nearest(s.r||s.range||180)&&!(p.skillCooldowns[s.id]>0))action(SLOT_NAMES[slot])}
    update(1/60);updateVisuals(1/60);
   }
-  const win=game.mode==='chest'||game.mode==='stageResult'&&campaign.pending?.result.win===true;const row={style,stage:stage+1,win,time:Math.round(game.time),kills:game.kills,earnedGold:game.goldEarned,weapon:game.weapon,level:p.lv,firstLevel:Math.round(firstLevel),damage:Math.round(game.damageTaken),hp:Math.round(p.hp),ultimates,perfects:game.perfects,phase:game.phase,room:game.room,wave:game.wave,remaining:enemies.map(e=>({kind:e.kind,hp:Math.round(e.hp),x:Math.round(e.x),y:Math.round(e.y)})),p:{x:Math.round(p.x),y:Math.round(p.y)}};results.push(row);
+  const win=game.mode==='chest'||game.mode==='stageResult'&&campaign.pending?.result.win===true;const row={style,stage:stage+1,win,time:Math.round(game.time),kills:game.kills,earnedGold:game.goldEarned,weapon:game.weapon,roomLevels,level:p.lv,firstLevel:Math.round(firstLevel),damage:Math.round(game.damageTaken),hp:Math.round(p.hp),ultimates,perfects:game.perfects,phase:game.phase,room:game.room,wave:game.wave,remaining:enemies.map(e=>({kind:e.kind,hp:Math.round(e.hp),x:Math.round(e.x),y:Math.round(e.y)})),p:{x:Math.round(p.x),y:Math.round(p.y)}};results.push(row);
   if(win){if(game.mode==='stageResult')$('resultStages').click();const q=campaign.pending;let pick=q.offers.findIndex(o=>o.kind==='rare'&&['whirl','orbit','wave','guard'].includes(o.id));claimChest(q.id,pick>=0?pick:0)}else break;
  }
 }return results;

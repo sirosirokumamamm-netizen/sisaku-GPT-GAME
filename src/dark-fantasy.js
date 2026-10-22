@@ -8,7 +8,7 @@ function dawnRadius(rank=p.learned.dawn||1){return campaign.dawnUpgrade?Infinity
 function castDawnBlade(boost,manual=false){
  const rank=p.learned.dawn||1,r=dawnRadius(rank),color=campaign.dawnUpgrade?'#fff2bd':'#f2cb83';
  // Unsealed dawn reaches all living enemies, including beyond the camera. Cosmetic radius is bounded.
- for(const e of enemies)if(e.hp>0&&distance(p,e)<=r+e.r)hurtEnemy(e,dawnDamage(rank)*boost,true,color,false,false,manual,'light');
+ for(const e of enemies)if(e.hp>0&&distance(p,e)<=r+e.r)hurtEnemy(e,dawnDamage(rank)*boost,true,color,false,false,manual,'light',false,'dawn');
  const visual=Math.min(Number.isFinite(r)?r:620,620);signatureRelease('dawn',p.x,p.y,{r:visual});
  if(rank>=3)trueSkillEffect(getSkill('dawn'));playCue('impact');
 }
@@ -35,6 +35,7 @@ const SKILL_ART_SHEETS={
 };
 const SKILL_ART_INDEX=Object.fromEntries(Object.entries(SKILL_ART_SHEETS).flatMap(([sheet,ids])=>ids.map((id,cell)=>[id,{sheet,cell}])));
 function skillArtwork(s){
+ if(['laststand','bloodpact'].includes(s?.id))return eternalSkillArtwork(s);
  const key=s?.id==='dawn'&&campaign.dawnUpgrade?'dawn-upgraded':s?.id||'fallback',art=SKILL_ART_INDEX[key]||SKILL_ART_INDEX.fallback;
  return '<span class="skill-art skill-illustration art-'+art.sheet+'" data-art-key="'+(SKILL_ART_INDEX[key]?key:'fallback')+'" style="--art-x:'+((art.cell%3)*50)+'%;--art-y:'+(Math.floor(art.cell/3)*50)+'%" aria-hidden="true"></span>';
 }

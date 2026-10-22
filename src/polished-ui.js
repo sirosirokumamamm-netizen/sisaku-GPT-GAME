@@ -12,6 +12,7 @@ function weaponComparison(w,current){
  return '<div class="weapon-role">'+WEAPON_ROLES[w.id]+'</div><dl class="weapon-comparison">'+[['attack','攻撃力'],['speed','速度'],['reach','間合い']].map(([key,label])=>{const scale=key==='attack'?1:100,delta=Math.round((w[key]-current[key])*scale),state=delta>0?'gain':delta<0?'loss':'equal';return `<div><dt>${label}</dt><dd>${Math.round(w[key]*scale)}${key==='attack'?'':'%'}<span class="stat-delta ${state}">${delta?(delta>0?'▲ +':'▼ ')+Math.abs(delta)+'pt':'＝ 同じ'}</span></dd></div>`}).join('')+'</dl>';
 }
 function regionArtwork(i){
+ if(i>=7)return eternalRegionArtwork(i);
  const colors=[['#224c47','#b4ed9b'],['#164054','#90e4f2'],['#4b293b','#ffbd76'],['#39493e','#d2c792'],['#2b2346','#daafff'],['#334b66','#fff0ba'],['#20242d','#dee4f1']],c=colors[i];
  const scenery=[
  '<path d="M0 80Q50 30 115 73T200 55V125H0Z" fill="#356447"/><g fill="#163e37" stroke="#79a87a"><path d="M12 89L35 20L57 89ZM66 94L94 13L120 94ZM132 86L156 25L182 86Z"/></g>',

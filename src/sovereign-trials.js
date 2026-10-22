@@ -2,7 +2,7 @@
 const AILMENTS={poison:{name:'毒',icon:'毒',color:'#b2e97a',duration:5},blind:{name:'視界狭窄',icon:'暗',color:'#b9a2ed',duration:4},paralyze:{name:'しびれ',icon:'痺',color:'#ffe28a',duration:.42},weaken:{name:'攻撃力半減',icon:'↓',color:'#eab0d3',duration:4}};
 Object.assign(COMBAT_SOUNDS,{'seal-gather':[180,720,1.1,'sine',.45,2400,.06],'seal-tick':[1100,500,.12,'triangle',.2,3600,.045],'seal-break':[2300,400,.65,'sine',.8,6500,.07],'judgment-fall':[70,24,1.3,'sawtooth',1,1800,.085],'poison-hiss':[350,100,.4,'sine',.9,1800,.05],'status-shock':[2000,220,.2,'square',.6,5000,.04]});
 function rankAssessment(win,completion){
- const target=[130,160,190,225,280,300,370][game.region]||240,damageRatio=game.damageTaken/Math.max(1,p.maxHp),pace=clamp((target*1.6-game.time)/target,0,1);
+ const target=[130,160,190,225,280,300,370,490,1150][game.region]||240,damageRatio=game.damageTaken/Math.max(1,p.maxHp),pace=clamp((target*1.6-game.time)/target,0,1);
  const quality=(win?70:completion*35)+18*clamp(1-damageRatio/1.25,0,1)+(win?10*pace:0)+Math.min(2,game.perfects*.25);
  return {rank:win?(quality>=94&&game.hitsTaken<=5&&damageRatio<=.45?'S':quality>=84?'A':quality>=70?'B':'C'):quality>=40?'C':'D',quality:Math.round(quality*10)/10,target};
 }
@@ -63,7 +63,7 @@ function updateSovereignTrial(e,dt){
  if(e.catastropheRecovery>0){e.catastropheRecovery=Math.max(0,e.catastropheRecovery-dt);e.timer=e.exposed=e.catastropheRecovery;e.ward=0;if(e.catastropheRecovery===0){e.state='chase';e.cycle='assault';e.cycleTime=e.shadowLord?7:4;e.shadowBeat=.6;e.godAttack=.7;}return true}
  tickBossSequence(e,dt);
  if(e.bossPhase!==2||e.shadowLord&&!e.awakened||!(e.form==='god'||e.shadowLord)||e.state==='revive')return false;
- e.challengeClock=(e.challengeClock??(e.shadowLord?14:12))-dt;if(e.challengeClock<=0)return beginCatastrophe(e);return false;
+ e.challengeClock=(e.challengeClock??(e.shadowLord?14:12))-dt;if(e.challengeClock<=0)return bossCommitmentPending(e)?true:beginCatastrophe(e);return false;
 }
 function tickBossSequence(e,dt){
  const s=e.attackSequence;if(!s)return;s.clock-=dt;if(s.clock>0)return;

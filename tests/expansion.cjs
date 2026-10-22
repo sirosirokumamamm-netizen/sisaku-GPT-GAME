@@ -37,7 +37,7 @@ const assert=require('node:assert/strict');
   await page.evaluate(()=>{finishStageLoss()});assert.equal(await page.evaluate(()=>campaign.wallet),180);await page.evaluate(()=>finishStageLoss());assert.equal(await page.evaluate(()=>campaign.wallet),180);
   for(const width of [320,390,1280]){
    await page.setViewportSize({width,height:900});await page.evaluate(()=>{openStageSelect()});await page.screenshot({path:'/tmp/expanded-map-'+width+'.png'});
-   await page.locator('#campaignCollection').click();assert.equal(await page.locator('.collection-grid article').count(),43);await page.locator('[data-collection="owned"]').click();assert.equal(await page.locator('.collection-grid article').count(),0);await page.locator('[data-collection="all"]').click();await page.screenshot({path:'/tmp/expanded-collection-'+width+'.png'});
+   await page.locator('#campaignCollection').click();assert.equal(await page.locator('.collection-grid article').count(),45);await page.locator('[data-collection="owned"]').click();assert.equal(await page.locator('.collection-grid article').count(),0);await page.locator('[data-collection="all"]').click();await page.screenshot({path:'/tmp/expanded-collection-'+width+'.png'});
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'collection fits viewport');await page.locator('#collectionBack').click();
    await page.evaluate(()=>{openPreparation(0);startStageAttempt(0,19);game.roomRoute=['approach','treasure','horde','elite','boss'];game.room=2;enemies=[];game.pendingChoices=0;game.phase='stageClear';grantStageReward();roomEquipment()});
    assert.equal(await page.locator('[data-relic]').count(),4);await page.screenshot({path:'/tmp/expanded-treasure-'+width+'.png'});

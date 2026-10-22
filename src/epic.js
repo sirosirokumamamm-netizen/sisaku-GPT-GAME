@@ -3,7 +3,7 @@ function heavenUnlocked(c=campaign){return !!c.clears[4]||!!c.clears[5]}
 function openHeavenReveal(){
  game.mode='heavenReveal';game.active=false;resetInput();openModal('<div class="celestial-seal">☀</div><div class="eyebrow">魔王を越えた者へ</div><h2>天界への扉が開いた</h2><p>雲海の向こうで、神が剣士を待っている。<br>ミッションで報酬を受け取り、神へ挑む力を手にしよう。</p><button id="heavenContinue" class="cta">新しい世界を地図に刻む</button>');$('modal').classList.add('heaven-reveal');$('heavenContinue').onclick=()=>{const n=cloneCampaign();n.heavenRevealed=true;saveCampaign(n);openStageSelect()};tone(520,.6,'sine',.04);
 }
-function availableWeapons(){return WEAPONS.filter(w=>!w.postDemon||campaign.weapons.includes(w.id)||campaign.shopUnlocks.includes(w.id))}
+function availableWeapons(){return WEAPONS.filter(w=>(w.regionUnlock==null||campaign.clears[w.regionUnlock]||campaign.weapons.includes(w.id))&&(!w.postDemon||campaign.weapons.includes(w.id)||campaign.shopUnlocks.includes(w.id)))}
 function startEpicEvent(label,title,color,life=2){game.epicEvent={label,title,color,life:preferences.shortCinematics?Math.min(life,1):life,max:preferences.shortCinematics?Math.min(life,1):life};announce(label+' '+title)}
 function drawEpicEvent(){
  const e=game.epicEvent;if(game.bossScene||!e||e.life<=0||!['play','roomEquipment','chest','stageResult'].includes(game.mode))return;const progress=1-e.life/e.max,fade=Math.min(1,progress*7,(1-progress)*6),h=view.h,w=view.w;ctx.save();ctx.globalAlpha=fade;

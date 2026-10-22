@@ -45,7 +45,7 @@ const {chromium}=require('playwright'),assert=require('node:assert/strict');
  for(const [width,height]of [[320,568],[390,844],[568,320],[844,390],[1280,900]]){
   await page.setViewportSize({width,height});await page.evaluate(()=>{game.mode='stageSelect';campaign.carries=[];campaign.carry=null;saveCampaign(campaign);openStageSelect()});assert.deepEqual(await contrast(),[],'map button contrast '+width);
   assert.equal(await page.locator('.region-art svg').count(),7);assert.equal(await page.locator('.cleared-ribbon').first().textContent(),'クリア');
-  await page.locator('[data-stage="0"]').tap();assert.equal(await page.locator('.carry-grid [data-carry]').count(),43);assert.equal(await page.locator('.carry-grid [hidden]').count(),0);assert.equal(await page.locator('.embark-pages').count(),0);
+  await page.locator('[data-stage="0"]').tap();assert.equal(await page.locator('.carry-grid [data-carry]').count(),45);assert.equal(await page.locator('.carry-grid [hidden]').count(),0);assert.equal(await page.locator('.embark-pages').count(),0);
   const last=page.locator('.carry-grid [data-carry]').last();await last.scrollIntoViewIfNeeded();assert(await last.isVisible());await last.tap();assert((await page.locator('#carryCount').textContent()).includes('1 /'));
   assert(await page.locator('#startStageButton').evaluate(e=>{const r=e.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight}));assert.deepEqual(await contrast(),[],'departure button contrast '+width);
   await page.locator('#prepStore').tap();assert.equal(await page.locator('.store-card-art svg').count(),9);assert.deepEqual(await contrast(),[],'store button contrast '+width);

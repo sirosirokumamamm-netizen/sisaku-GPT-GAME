@@ -1,12 +1,12 @@
 // Seventh realm and the victory transaction. Existing stage IDs and saves are retained.
 function shadowUnlocked(c=campaign){return !!c.clears[5]||!!c.clears[6]}
-function visibleRegionCount(){return shadowUnlocked()?7:heavenUnlocked()?6:darkUnlocked()?5:finaleUnlocked()?4:3}
-function atlasPositions(){return shadowUnlocked()?[[17,82],[83,82],[83,50],[17,50],[17,18],[83,18],[50,50]]:[[25,82],[75,82],[75,50],[25,50],[25,18],[75,18]]}
+function visibleRegionCount(){return templeUnlocked()?9:wastelandUnlocked()?8:shadowUnlocked()?7:heavenUnlocked()?6:darkUnlocked()?5:finaleUnlocked()?4:3}
+function atlasPositions(){if(visibleRegionCount()>=8)return [[17,84],[50,84],[83,84],[17,52],[50,52],[83,52],[17,20],[50,20],[83,20]];return shadowUnlocked()?[[17,82],[83,82],[83,50],[17,50],[17,18],[83,18],[50,50]]:[[25,82],[75,82],[75,50],[25,50],[25,18],[75,18]]}
 function renderVictoryResult(){
  const q=campaign.pending;if(!q)return;const result=q.result;game.mode='stageResult';game.active=false;game.result=result;
  const gold=(result.bankGold??result.gold)+(q.first?150:40)+(q.legacyBonus||0);
  openModal(`<div class="eyebrow">STAGE CLEAR · ${q.first?'初踏破':'再踏破'}</div><h2>${REGIONS[result.stage].name}</h2><div class="score-hero"><div class="rank-badge rank-${result.rank}"><small>RANK</small><b>${result.rank}</b></div><div><small>総合スコア</small><strong>${result.score.toLocaleString('ja-JP')}</strong><span>${formatTime(result.time)} · ${result.kills}体撃破</span></div></div><div class="result-summary"><span>獲得 <b>${gold.toLocaleString('ja-JP')} G</b></span><span>被弾 <b>${result.hits}回</b></span><span>ジャスト回避 <b>${result.perfects}回</b></span></div><p>この戦いで得た力を、次の旅へ。</p><button id="resultStages" class="cta">継承する力を選ぶ →</button>`);
- $('modal').classList.add('result-modal','clear-result');$('resultStages').onclick=()=>{refreshCampaign();if(!campaign.pending)return;const n=cloneCampaign();n.pending.summarySeen=true;saveCampaign(n);renderInheritance()};
+ $('modal').classList.add('result-modal','clear-result');addEternalResult(result,q.first);$('resultStages').onclick=()=>{refreshCampaign();if(!campaign.pending)return;const n=cloneCampaign();n.pending.summarySeen=true;saveCampaign(n);renderInheritance()};
 }
 function personalizeStore(sword,art){
  $('modal').querySelector('.sword-detail').classList.toggle('weapon-detail',sword);
@@ -17,8 +17,8 @@ function personalizeStore(sword,art){
  }
 }
 function weaponArtwork(w){
- const id=w.id,c=w.color,advanced=['abyss','starfall','dawn'].includes(id);
- const silhouettes={traveler:'M80 11L92 35L86 116H74L68 35Z',rapier:'M81 7L86 32L83 118H77L76 34Z',greatsword:'M80 8L106 29L99 112L89 121H71L61 112L54 29Z',ember:'M80 9L98 34L88 51L96 55L86 76L92 80L84 118H73L65 34Z',frostblade:'M80 7L100 40L88 57L94 74L84 118H74L67 75L72 56L62 40Z',echo:'M80 11L89 30L84 118H76L71 30Z',abyss:'M69 119L67 42L78 14L98 7L92 27L100 41L91 47L97 64L86 69L91 84L81 119Z',starfall:'M80 5L103 32L95 47L100 63L88 118H72L60 63L65 47L57 32Z',dawn:'M80 8L99 32L93 44L89 113L80 122L71 113L67 44L61 32Z'};
+ const id=w.id,c=w.color,advanced=['abyss','starfall','dawn','origin','ancient'].includes(id);
+ const silhouettes={origin:'M80 6L99 30L91 41L94 52L87 113L80 121L73 113L66 52L69 41L61 30Z',ancient:'M89 5L100 28L96 45L92 68L84 95L74 119H64L74 93L81 64L85 34Z',traveler:'M80 11L92 35L86 116H74L68 35Z',rapier:'M81 7L86 32L83 118H77L76 34Z',greatsword:'M80 8L106 29L99 112L89 121H71L61 112L54 29Z',ember:'M80 9L98 34L88 51L96 55L86 76L92 80L84 118H73L65 34Z',frostblade:'M80 7L100 40L88 57L94 74L84 118H74L67 75L72 56L62 40Z',echo:'M80 11L89 30L84 118H76L71 30Z',abyss:'M69 119L67 42L78 14L98 7L92 27L100 41L91 47L97 64L86 69L91 84L81 119Z',starfall:'M80 5L103 32L95 47L100 63L88 118H72L60 63L65 47L57 32Z',dawn:'M80 8L99 32L93 44L89 113L80 122L71 113L67 44L61 32Z'};
  const fill=id==='abyss'?'#14141e':id==='traveler'?'#bad4e2':c;
  let aura='';if(advanced){for(let i=0;i<3;i++)aura+=`<ellipse cx="80" cy="81" rx="${42+i*10}" ry="${64-i*5}" fill="none" stroke="${c}" stroke-width="${7-i*2}" opacity="${.16-i*.035}" transform="rotate(${i*50} 80 81)"/>`;aura='<g class="weapon-aura">'+aura+'<path d="M25 126Q38 64 52 39L44 81L72 17L69 63L110 18L99 79L135 47Q112 106 139 139" fill="none" stroke="'+c+'" opacity=".35" stroke-width="3"/></g>'}
  const blade=`<g class="blade-figure" transform="rotate(-25 80 85)"><path d="${silhouettes[id]||silhouettes.traveler}" fill="${fill}" stroke="${id==='abyss'?'#cba9f2':'#eaf6f6'}" stroke-width="1.8"/><path d="${id==='abyss'?'M94 14L85 49L86 68L78 112':'M80 24L80 110'}" fill="none" stroke="${id==='abyss'?'#b399ce':'#ffffffb3'}" stroke-width="2"/><path d="M${id==='greatsword'?48:57} 118L64 108L80 113L96 108L${id==='greatsword'?112:103} 118L95 124L80 120L65 124Z" fill="${id==='abyss'?'#39293f':'#b88d49'}" stroke="#e6c78d"/><path d="M75 123H85V146L80 153L75 146Z" fill="#2a3444" stroke="#c5a66b"/><path d="M76 128H84M76 135H84M76 142H84" stroke="#ad8d57"/>${id==='dawn'?'<circle cx="80" cy="116" r="8" fill="#fff4bd"/>':id==='starfall'?'<path d="M80 30L88 48L80 66L72 48Z" fill="#d5e7ff" stroke="#fbfbff"/>':''}</g>`;

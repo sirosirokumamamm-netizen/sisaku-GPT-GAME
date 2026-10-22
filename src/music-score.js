@@ -22,7 +22,7 @@ function musicSceneKey(){
  if(game.bossScene)return game.bossScene.kind==='defeat'?'victory':'omen';
  if(game.mode==='weaponShop')return 'shop';if(['stageSelect','preparation','start'].includes(game.mode))return 'map';
  if(['stageResult','chest'].includes(game.mode))return 'victory';
- if(game.mode==='play'&&game.active)return isBossStage()?(game.region===6?'shadow':game.region===5?'god':game.region===4?'demon':'boss'):['grass','water','volcano','ruins','dark','heaven','shadow'][game.region||0];return 'rest';
+ if(game.mode==='play'&&game.active)return isBossStage()?(endgameBossRegion()===6?'shadow':endgameBossRegion()===5?'god':endgameBossRegion()===4?'demon':'boss'):['grass','water','volcano','ruins','dark','heaven','shadow','ruins','dark'][game.region||0];return 'rest';
 }
 function layeredScoreNote(f,d,type,volume,delay=0){
  if(!sounds||!audio||audio.state!=='running'||preferences.music<=0||musicVoices>=48||!Number.isFinite(f))return;

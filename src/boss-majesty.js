@@ -52,7 +52,7 @@ function arenaRefuge(){
 function demonDuel(e,dt){
  if(updateDemonRush(e,dt))return true;
  if(e.awakened){
-  e.cycleTime-=dt;if(e.cycleTime<=0){clearHostiles();e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?10:3.8;e.state=e.cycle==='exposed'?'recover':'chase';e.exposed=e.cycle==='exposed'?e.cycleTime:0;e.timer=e.exposed;e.barrageClock=.65;e.royalFootClock=.8;banner(e.cycle==='exposed'?'黒炎が消えた · 核心露出！':'冥王、猛攻再開',e.cycle==='exposed'?'今こそ大剣を叩き込め':'突進の軌道から横へ',1.1)}
+  e.cycleTime-=dt;if(e.cycleTime<=0&&bossCommitmentPending(e))return true;if(e.cycleTime<=0){clearHostiles();e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?10:3.8;e.state=e.cycle==='exposed'?'recover':'chase';e.exposed=e.cycle==='exposed'?e.cycleTime:0;e.timer=e.exposed;e.barrageClock=.65;e.royalFootClock=.8;banner(e.cycle==='exposed'?'黒炎が消えた · 核心露出！':'冥王、猛攻再開',e.cycle==='exposed'?'今こそ大剣を叩き込め':'突進の軌道から横へ',1.1)}
   if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}
  }else if(e.state==='recover'){e.timer-=dt;e.exposed=Math.max(0,e.timer);if(e.timer>0)return true;e.state='chase';e.magicClock=.4;}
  if(e.state==='revive'){e.timer-=dt;if(e.timer<=0)e.state='chase';return true}

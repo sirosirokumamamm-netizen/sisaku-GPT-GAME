@@ -1,12 +1,12 @@
 // Each late realm has a visual descent and its own boss vocabulary. Stable save IDs.
-function roomWaveCount(region=game.region,room=game.room){return room===5?1:region===6?3:2}
+function roomWaveCount(region=game.region,room=game.room){return region===8||room===5?1:region===6||region===7?3:2}
 function realmDepth(room=game.room){return clamp((room-1)/4,0,1)}
-function realmChapter(region=game.region,room=game.room){return ({4:['魔城の外縁','黒炎の回廊','禁術の広間','王の近衛域','冥王の玉座'],5:['雲海の入口','天への階段','星詠みの聖堂','裁きの門','創世の神座'],6:['灰の墓地','屍の参道','忘却の霊廟','黒月の王域','影葬の玉座']})[region]?.[clamp(room,1,5)-1]||''}
+function realmChapter(region=game.region,room=game.room){if(region===TEMPLE)return '第'+room+'刻・'+REGIONS[endgameBossRegion()].name;if(region===WASTELAND)return ['風化した街道','剣塚の丘','忘却の集落','始原の参道','剣鬼の玉座'][room-1]||'';return ({4:['魔城の外縁','黒炎の回廊','禁術の広間','王の近衛域','冥王の玉座'],5:['雲海の入口','天への階段','星詠みの聖堂','裁きの門','創世の神座'],6:['灰の墓地','屍の参道','忘却の霊廟','黒月の王域','影葬の玉座']})[region]?.[clamp(room,1,5)-1]||''}
 function shadowLightAt(x,y){const d=Math.hypot(x-p.x,(y-p.y)*CAMERA.depth),depth=realmDepth();return clamp(1-(d-95)/(330-depth*65),.2,1)}
 function shadowBodyColor(e,base,hit){return e.flash>0?hit:base}
 function drawWorldScene(t,sx,sy){
  const shadow=game.singleStage&&game.region===6,b=worldBounds();
- drawGround(t);if(bossArenaActive()){drawOpenBossArena(t);drawArenaIdentity(t)}else{drawDarkFloor(t);drawHeavenFloor(t);drawCinematicScenery(t);drawOvergrownRuins(t);drawExpeditionFloor(t);drawRealmDescent(t)}drawTerrainGround(t);drawRealmAmbience(t);
+ drawGround(t);if(bossArenaActive()){drawOpenBossArena(t);drawArenaIdentity(t)}else{drawDarkFloor(t);drawHeavenFloor(t);drawCinematicScenery(t);drawOvergrownRuins(t);drawExpeditionFloor(t);drawRealmDescent(t)}drawEternalScenery(t);drawTerrainGround(t);drawRealmAmbience(t);
  if(!shadow){drawRoomGate(t);drawCombatObjects(t);for(const w of warnings)drawWarning(w,t)}
  const scene=decor.filter(d=>!bossArenaActive()&&d.y>b.top-30&&d.y<b.bottom+140).map(d=>({y:d.y,draw:()=>aboveView(()=>drawDecor(d,t),d.x,d.y)}));
  for(const o of terrain)if(o.y>b.top-160&&o.y<b.bottom+150&&['rock','ruin','barrel','crystal','furnace'].includes(o.kind))scene.push({y:o.y+(o.h||0),draw:()=>drawTerrainProp(o,t)});
@@ -82,7 +82,7 @@ function godEdict(e,pattern){
 function updateShadowSovereign(e,dt){if(e.shadowMirage){e.shadowMirage.life=Math.max(0,e.shadowMirage.life-dt);if(!e.shadowMirage.life)e.shadowMirage=null;}
  if(e.state==='revive'){e.timer-=dt;if(e.timer<=0){e.state='chase';e.cooldown=.5}return true}
  e.shadowTrailClock=(e.shadowTrailClock||0)-dt;if(e.shadowTrailClock<=0){e.shadowTrailClock=.45;e.shadowTrail=[...(e.shadowTrail||[]),{x:p.x,y:p.y}].slice(-4)}
- if(e.awakened){e.cycleTime-=dt;if(e.cycleTime<=0){clearHostiles();e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?8:4;e.state=e.cycle==='exposed'?'recover':'chase';e.exposed=e.cycle==='exposed'?4:0;e.shadowBeat=.5;banner(e.cycle==='exposed'?'影がほどけた！':'影葬王、残影を展開',e.cycle==='exposed'?'本体へ反撃！':'過去の足跡から離れよう',1.2)}if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}}
+ if(e.awakened){e.cycleTime-=dt;if(e.cycleTime<=0&&bossCommitmentPending(e))return true;if(e.cycleTime<=0){clearHostiles();e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?8:4;e.state=e.cycle==='exposed'?'recover':'chase';e.exposed=e.cycle==='exposed'?4:0;e.shadowBeat=.5;banner(e.cycle==='exposed'?'影がほどけた！':'影葬王、残影を展開',e.cycle==='exposed'?'本体へ反撃！':'過去の足跡から離れよう',1.2)}if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}}
  if(!e.awakened&&e.state==='recover'){e.timer-=dt;e.exposed=e.timer;if(e.timer>0)return true;e.state='chase'}
  // Discrete shadow passages replace continuous walking. Movement cues cause no damage.
  if(updateShadowTransit(e,dt))return true;

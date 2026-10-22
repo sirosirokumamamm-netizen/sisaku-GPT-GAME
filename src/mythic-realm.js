@@ -1,7 +1,7 @@
 // Seventh realm and the victory transaction. Existing stage IDs and saves are retained.
-function shadowUnlocked(c=campaign){return !!c.clears[5]||!!c.clears[6]}
-function visibleRegionCount(){return templeUnlocked()?9:wastelandUnlocked()?8:shadowUnlocked()?7:heavenUnlocked()?6:darkUnlocked()?5:finaleUnlocked()?4:3}
-function atlasPositions(){if(visibleRegionCount()>=8)return [[17,84],[50,84],[83,84],[17,52],[50,52],[83,52],[17,20],[50,20],[83,20]];return shadowUnlocked()?[[17,82],[83,82],[83,50],[17,50],[17,18],[83,18],[50,50]]:[[25,82],[75,82],[75,50],[25,50],[25,18],[75,18]]}
+function shadowUnlocked(c=campaign){return !!c.legacyShadowAccess||!!c.clears[7]||!!c.clears[6]}
+function visibleRegionCount(){return templeUnlocked()?9:shadowUnlocked()?8:wastelandUnlocked()?7:heavenUnlocked()?6:darkUnlocked()?5:finaleUnlocked()?4:3}
+function atlasPositions(){if(visibleRegionCount()>=7)return [[17,84],[50,84],[83,84],[17,52],[50,52],[83,52],[17,20],[50,20],[83,20]];return shadowUnlocked()?[[17,82],[83,82],[83,50],[17,50],[17,18],[83,18],[50,50]]:[[25,82],[75,82],[75,50],[25,50],[25,18],[75,18]]}
 function renderVictoryResult(){
  const q=campaign.pending;if(!q)return;const result=q.result;game.mode='stageResult';game.active=false;game.result=result;
  const gold=(result.bankGold??result.gold)+(q.first?150:40)+(q.legacyBonus||0);

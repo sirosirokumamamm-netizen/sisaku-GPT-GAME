@@ -36,7 +36,7 @@ function tickMobile(dt){tickGoldAnimations(dt);
 function drawAcquisitionLog(){if(game.mode!=='play'||game.bossScene)return;ctx.save();ctx.textAlign='left';ctx.font='bold 13px system-ui';let y=view.h*.32;for(const n of lootNotices){ctx.globalAlpha=Math.min(1,n.life*2);ctx.lineWidth=4;ctx.strokeStyle='#193c50';ctx.strokeText('＋ '+n.text,18,y);ctx.fillStyle=n.color;ctx.fillText('＋ '+n.text,18,y);y+=23}ctx.restore()}
 function drawThreatHUD(){
  if(game.mode!=='play'||game.bossScene||p.cutin>0)return;
- const warning=warnings.some(w=>showAttackWarning(w)&&!w.perfectUsed&&warningContains(w)),burning=hazards.some(z=>showAttackWarning(z)&&(z.kind?warningContains(z):distance(z,p)<z.r+p.r*.4)),pending=!!game.pendingHit&&showAttackWarning(game.pendingHit.warning);
+ const warning=warnings.some(w=>isMajorWarning(w)&&!w.perfectUsed&&warningContains(w)),burning=hazards.some(z=>showAttackWarning(z)&&(z.kind?warningContains(z):distance(z,p)<z.r+p.r*.4)),pending=!!game.pendingHit&&showAttackWarning(game.pendingHit.warning);
  ctx.save();ctx.textAlign='center';if((warning||burning||pending)&&!game.royalPressure?.life){const y=view.h*.36,x=view.w/2,scale=view.w<450?.8:1;ctx.translate(x,y);ctx.scale(scale,scale);path([[-112,-20],[-132,16],[-92,16]],'#fff3c1','#843c20');ctx.font='900 27px system-ui';ctx.fillStyle='#903519';ctx.fillText('!',-112,11);ctx.font='900 30px system-ui';ctx.lineWidth=6;ctx.strokeStyle='#5b2f31';ctx.strokeText('注意！！',20,12);ctx.fillStyle='#fff0ba';ctx.fillText('注意！！',20,12);ctx.font='bold 13px system-ui';ctx.fillStyle='#fff';ctx.lineWidth=3;const status=warnings.find(w=>w.stateOnly&&warningContains(w)),hint=status?AILMENTS[status.ailment].name+' · 回避で防ぐ':warnings.some(w=>w.kind==='ring'&&warningContains(w))?'全域攻撃 · 蒼緑の避難域へ！':burning?'攻撃中！ 外へ':warnings.some(w=>w.follow&&w.life>w.lockTime&&warningContains(w))?'追尾中！ 動き続けよう':'範囲の外へ回避！';ctx.strokeText(hint,0,38);ctx.fillText(hint,0,38);}
  ctx.restore();if(game.lastHit?.life>0){ctx.save();ctx.textAlign='center';ctx.font='bold 14px system-ui';ctx.strokeStyle='#442c37';ctx.lineWidth=4;const text=game.lastHit.source+' −'+game.lastHit.amount+' HP';ctx.strokeText(text,view.w/2,view.h*.48);ctx.fillStyle='#fff0df';ctx.fillText(text,view.w/2,view.h*.48);ctx.restore()}
 }
@@ -112,7 +112,7 @@ function roamMythicBoss(e,dt,speed){
 
 function drawMythicCrown(e,t){
  const god=e.form==='god',color=god?'#ffe3a0':'#e4a0ff';ctx.save();ctx.rotate(t*(god?.22:-.15));
- for(let i=0;i<8;i++){const a=i*Math.PI/4,r=130+Math.sin(t*2+i)*12,x=Math.cos(a)*r,y=Math.sin(a)*r*.8;ctx.save();ctx.translate(x,y);ctx.rotate(a);path([[-14,0],[0,-12],[22,0],[0,12]],god?'#fff7dd':'#421b54',color);ellipse(2,0,5,8,god?'#bf7739':'#ffbda5');ellipse(3,0,2,6,'#251d3e');ctx.restore();ctx.strokeStyle=color+'77';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(Math.cos(a)*88,Math.sin(a)*70);ctx.lineTo(x,y);ctx.stroke()}
+ for(let i=0;i<8;i++){const a=i*Math.PI/4,r=130+Math.sin(t*2+i)*12,x=Math.cos(a)*r,y=Math.sin(a)*r*.8;ctx.save();ctx.translate(x,y);ctx.rotate(a);path([[-14,0],[0,-12],[22,0],[0,12]],god?'#fff7dd':'#421b54',color);ellipse(2,0,5,8,god?'#bf7739':'#ffbda5');if(god){const gaze=divineGaze(e,t*.22+a,1);ellipse(gaze.x*2,gaze.y*2,2,6,'#251d3e')}else ellipse(3,0,2,6,'#251d3e');ctx.restore();ctx.strokeStyle=color+'77';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(Math.cos(a)*88,Math.sin(a)*70);ctx.lineTo(x,y);ctx.stroke()}
  ctx.restore();if(god){path([[0,-115],[18,-66],[0,-36],[-18,-66]],'#183d66','#fff2ab');ellipse(0,-66,7,12,'#a9edff')}
 }
 function bossStrikeFlare(w,owner){

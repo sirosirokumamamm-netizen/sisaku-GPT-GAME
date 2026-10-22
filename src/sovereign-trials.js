@@ -2,7 +2,7 @@
 const AILMENTS={poison:{name:'毒',icon:'毒',color:'#b2e97a',duration:5},blind:{name:'視界狭窄',icon:'暗',color:'#b9a2ed',duration:4},paralyze:{name:'しびれ',icon:'痺',color:'#ffe28a',duration:.42},weaken:{name:'攻撃力半減',icon:'↓',color:'#eab0d3',duration:4}};
 Object.assign(COMBAT_SOUNDS,{'seal-gather':[180,720,1.1,'sine',.45,2400,.06],'seal-tick':[1100,500,.12,'triangle',.2,3600,.045],'seal-break':[2300,400,.65,'sine',.8,6500,.07],'judgment-fall':[70,24,1.3,'sawtooth',1,1800,.085],'poison-hiss':[350,100,.4,'sine',.9,1800,.05],'status-shock':[2000,220,.2,'square',.6,5000,.04]});
 function rankAssessment(win,completion){
- const target=[130,160,190,225,280,300,370,490,1150][game.region]||240,damageRatio=game.damageTaken/Math.max(1,p.maxHp),pace=clamp((target*1.6-game.time)/target,0,1);
+ const target=[130,160,190,225,310,390,660,540,1200][game.region]||240,damageRatio=game.damageTaken/Math.max(1,p.maxHp),pace=clamp((target*1.6-game.time)/target,0,1);
  const quality=(win?70:completion*35)+18*clamp(1-damageRatio/1.25,0,1)+(win?10*pace:0)+Math.min(2,game.perfects*.25);
  return {rank:win?(quality>=94&&game.hitsTaken<=5&&damageRatio<=.45?'S':quality>=84?'A':quality>=70?'B':'C'):quality>=40?'C':'D',quality:Math.round(quality*10)/10,target};
 }
@@ -35,7 +35,7 @@ function resolveAilmentWave(w,owner){
 function mirrorGuard(e,ritual=false){
  if(game.time-(e.mirrorClock??-9)<.16)return;e.mirrorClock=game.time;
  effects.push({kind:'mirrorGuard',x:e.x,y:e.y-65,r:e.r+35,ritual,life:.45,max:.45,face:norm(p.x-e.x,p.y-e.y)});combatSound('hit-metal',e.x);
- if(game.time-(e.guardNotice??-9)>.45){e.guardNotice=game.time;floating(e.x,e.y-150,ritual?'術式を攻撃！':'無効！',ritual?'#ffd395':'#e8faff',true)}
+ if((ritual||e.bossPhase===2)&&game.time-(e.guardNotice??-9)>.45){e.guardNotice=game.time;floating(e.x,e.y-150,ritual?'術式を攻撃！':'無効！',ritual?'#ffd395':'#e8faff',true)}
 }
 function beginCatastrophe(e){
  if(e.catastrophe||e.hp<=0||game.bossScene||e.bossPhase!==2||e.shadowLord&&!e.awakened||!(e.form==='god'||e.shadowLord))return false;
@@ -72,7 +72,7 @@ function tickBossSequence(e,dt){
  if(--s.left<=0){e.attackSequence=null;e.godAttack=1;e.shadowBeat=1;}
 }
 function godSecondArt(e,pattern){
- if(pattern===4){e.attackSequence={kind:'thunder',left:7,clock:0};e.godAttack=4.6;return true}
+ if(pattern===4){e.attackSequence={kind:'thunder',left:3,clock:0};e.godAttack=2.6;return true}
  if(pattern===5){for(let i=0;i<6;i++){const a=i*Math.PI/3;personaWarning(e,'line',e.x,e.y,1.3+i*.12,{dir:{x:Math.cos(a),y:Math.sin(a)},length:700,width:65,atk:52,move:'seraphBlades'})}return true}
  if(pattern===6){castAilmentWave(e,'paralyze');return true}return false;
 }
@@ -88,11 +88,11 @@ function demonSecondArt(e,pattern){
 }
 function updateGodTrial(e,dt){
  e.cycleTime-=dt;e.godAttack=(e.godAttack||0)-dt;
- if(e.cycleTime<=0){e.godCycle++;e.ward=e.ward>0?0:1;e.cycleTime=e.ward>0?(e.bossPhase===2?2.8:4):(e.bossPhase===2?4.5:5.5);if(e.ward)mirrorGuard(e);}
+ if(e.cycleTime<=0){e.godCycle++;e.ward=e.ward>0?0:1;e.cycleTime=e.ward>0?(e.bossPhase===2?2.8:3.3):(e.bossPhase===2?4.5:5.5);if(e.ward)mirrorGuard(e);}
  if(e.state==='recover'){e.timer-=dt;e.exposed=Math.max(0,e.timer);if(e.timer>0)return true;e.state='chase';}
  const angle=game.time*(e.bossPhase===2?1.2:.65),target=safePoint(arenaX(380+Math.sin(angle)*210),arenaY(STAGES[game.stage].y+50+Math.cos(angle)*160),e.r),n=norm(target.x-e.x,target.y-e.y),phase=game.time%2.8,speed=e.bossPhase===2?(phase<.8?65:phase<1.6?425:145):godMotion(e).speed;
  moveActor(e,n.x*speed*dt,n.y*speed*dt);e.motionPhase=e.bossPhase===2?(phase<.8?'still':phase<1.6?'surge':'settle'):godMotion(e).phase;
- if(e.godAttack<=0&&!e.attackSequence){const pattern=(e.godPattern||0)%(e.bossPhase===2?7:4);e.godPattern=(e.godPattern||0)+1;e.godAttack=e.bossPhase===2?1.25:2;godEdict(e,pattern)}return true;
+ if(e.godAttack<=0&&!e.attackSequence&&!warnings.some(w=>w.owner===e.id&&w.life>.2)){const pattern=nextGodEdict(e);e.godPattern=(e.godPattern||0)+1;e.godAttack=e.bossPhase===2?1.05:1.65;godEdict(e,pattern)}return true;
 }
 function drawPlainGod(e,t){
  ctx.save();ctx.translate(0,-45+Math.sin(t*1.4)*3);ctx.strokeStyle='#aebbbb';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,-70,28,9,0,0,Math.PI*2);ctx.stroke();

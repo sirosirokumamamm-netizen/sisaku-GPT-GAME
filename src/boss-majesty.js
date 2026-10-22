@@ -52,26 +52,26 @@ function arenaRefuge(){
 function demonDuel(e,dt){
  if(updateDemonRush(e,dt))return true;
  if(e.awakened){
-  e.cycleTime-=dt;if(e.cycleTime<=0&&bossCommitmentPending(e))return true;if(e.cycleTime<=0){clearHostiles();e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?10:3.8;e.state=e.cycle==='exposed'?'recover':'chase';e.exposed=e.cycle==='exposed'?e.cycleTime:0;e.timer=e.exposed;e.barrageClock=.65;e.royalFootClock=.8;banner(e.cycle==='exposed'?'黒炎が消えた · 核心露出！':'冥王、猛攻再開',e.cycle==='exposed'?'今こそ大剣を叩き込め':'突進の軌道から横へ',1.1)}
+  e.cycleTime-=dt;if(e.cycleTime<=0&&bossCommitmentPending(e))return true;if(e.cycleTime<=0){clearHostiles();e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?9:3.2;e.state=e.cycle==='exposed'?'recover':'chase';e.exposed=e.cycle==='exposed'?e.cycleTime:0;e.timer=e.exposed;e.barrageClock=.65;e.royalFootClock=.8;banner(e.cycle==='exposed'?'黒炎が消えた · 核心露出！':'冥王、猛攻再開',e.cycle==='exposed'?'今こそ大剣を叩き込め':'突進の軌道から横へ',1.1)}
   if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}
  }else if(e.state==='recover'){e.timer-=dt;e.exposed=Math.max(0,e.timer);if(e.timer>0)return true;e.state='chase';e.magicClock=.4;}
  if(e.state==='revive'){e.timer-=dt;if(e.timer<=0)e.state='chase';return true}
  const active=warnings.some(w=>w.owner===e.id&&w.life>0);
  if(e.nextRush&&!active){e.nextRush=false;warnDemonCharge(e,true);return true}
- if(active)return true;
+ if(active){if(warnings.filter(w=>w.owner===e.id).every(w=>['circle','ring'].includes(w.kind))&&distance(e,p)>240){const n=norm(p.x-e.x,p.y-e.y);moveActor(e,n.x*135*dt,n.y*135*dt)}return true;}
  e.doomClock=(e.doomClock??6)-dt;if(e.doomClock<=0){demonRoyalSignature(e,0);return true}
  if(e.awakened){e.barrageClock=(e.barrageClock||0)-dt;if(e.barrageClock<=0){demonSwordAssault(e,0);return true}}
- else{e.magicClock=(e.magicClock??.8)-dt;if(e.magicClock<=0){e.magicClock=e.bossPhase===2?1.25:1.65;demonMagicWarning(e,p,norm(p.x-e.x,p.y-e.y));return true}}
+ else{e.magicClock=(e.magicClock??.8)-dt;if(e.magicClock<=0){e.magicClock=e.bossPhase===2?1:1.18;demonMagicWarning(e,p,norm(p.x-e.x,p.y-e.y));return true}}
  e.royalFootClock=(e.royalFootClock??.6)-dt;if(e.royalFootClock<=0){const b=battleBounds(),side=(e.pattern||0)%2?1:-1,n=norm(p.x-e.x,p.y-e.y),to=safePoint(p.x-n.y*side*220,p.y+n.x*side*220,e.r);if(distance(e,to)>130){startDemonRush(e,{x:e.x,y:e.y,landing:to,atk:0,width:110,harmless:true});e.royalFootClock=e.awakened?1.6:2.2}else e.royalFootClock=.6}
  return true;
 }
 function warnDemonCharge(e,follow=false){
  const n=norm(p.x-e.x,p.y-e.y),b=battleBounds(),length=Math.min(1000,Math.max(460,distance(e,p)+180)),to=safePoint(e.x+n.x*length,e.y+n.y*length,e.r),dir=norm(to.x-e.x,to.y-e.y);
- const w=personaWarning(e,'line',e.x,e.y,follow?1:1.3,{dir,width:e.awakened?160:130,length:distance(e,to),landing:to,atk:follow?60:64,move:'royalLunge',rush:true,chain:e.awakened&&!follow&&(e.barrageIndex||0)%3===1});
+ const w=personaWarning(e,'line',e.x,e.y,follow?.82:1.02,{dir,width:e.awakened?170:145,length:distance(e,to),landing:to,atk:follow?60:64,move:'royalLunge',rush:true,tracking:true,lockTime:.32,swift:true,chain:e.awakened&&!follow&&(e.barrageIndex||0)%3===1});
  e.state='windup';e.timer=w.life;e.facing=dir;combatSound('demon-gather',e.x);banner(follow?'追撃・王断疾走':'王断疾走',follow?'もう一度、横へ抜けろ':'剣を引いた · 直線の軌道から離れろ',1);return w;
 }
 function startDemonRush(e,w){
- const to=safePoint(w.landing.x,w.landing.y,e.r),from={x:e.x,y:e.y},duration=Math.max(.26,distance(from,to)/(w.harmless?1350:1700));
+ const to=safePoint(w.landing.x,w.landing.y,e.r),from={x:e.x,y:e.y},duration=Math.max(.2,distance(from,to)/(w.harmless?1550:2000));
  e.demonRush={from,to,time:0,duration,atk:w.atk||0,width:w.width||150,harmless:!!w.harmless,perfectUsed:!!w.perfectUsed,owner:e.id,kind:'line',x:from.x,y:from.y,dir:norm(to.x-from.x,to.y-from.y),length:distance(from,to),hit:false,chain:!!w.chain,echo:0};e.state='royalRush';e.facing={...e.demonRush.dir};combatSound('demon-rush',e.x);
 }
 function updateDemonRush(e,dt){
@@ -86,22 +86,22 @@ function updateDemonRush(e,dt){
  return true;
 }
 function castDemonCataclysm(e){
- warnings=warnings.filter(w=>w.owner!==e.id);hostileShots=hostileShots.filter(w=>w.owner!==e.id);hazards=hazards.filter(w=>w.owner!==e.id);if(game.pendingHit?.warning.owner===e.id)game.pendingHit=null;e.nextRush=false;const refuge=randomRefuge(),r=arenaCoverRadius(refuge),time=3.15;
+ warnings=warnings.filter(w=>w.owner!==e.id);hostileShots=hostileShots.filter(w=>w.owner!==e.id);hazards=hazards.filter(w=>w.owner!==e.id);if(game.pendingHit?.warning.owner===e.id)game.pendingHit=null;e.nextRush=false;const refuge=randomRefuge(),r=arenaCoverRadius(refuge),time=2.7;
  const w=personaWarning(e,'ring',refuge.x,refuge.y,time,{r,inner:120,atk:92,move:'infernalDominion',style:'doom',dominion:true});e.cycleTime=Math.max(e.cycleTime||0,time+1.4);e.state='windup';e.timer=time;e.doomClock=e.awakened?9.5:13;e.barrageClock=1.2;
  combatSound('demon-gather',e.x);game.royalPressure={owner:e.id,life:time,max:time,color:'#ef7856'};bannerTTL=0;$('banner').classList.remove('show');game.epicEvent=null;return w;
 }
 function castDemonSorcery(e,target,dir){
  const pattern=(e.pattern++)%3;e.state='windup';e.timer=1.6;
- if(pattern===0){const b=battleBounds();for(let i=0;i<3;i++){const x=clamp(target.x+(i-1)*150,b.left+140,b.right-140),y=clamp(target.y+(i%2?130:-50),b.top+140,b.bottom-140);personaWarning(e,'circle',x,y,1.65+i*.3,{r:115,atk:52,move:'blackStarfall'})}combatSound('demon-gather',e.x);banner('黒星墜','三つの黒炎が落ちる',1)}
- else if(pattern===1){const b=battleBounds(),x=clamp(target.x,b.left+100,b.right-100);for(const side of [-1,1])personaWarning(e,'line',x+side*110,b.top,1.85,{dir:{x:0,y:1},width:125,length:b.bottom-b.top,atk:56,persist:1.1,move:'hellPillars'});combatSound('demon-gather',e.x);banner('冥門の双炎','区画を貫く黒炎 · 間を抜けろ',1.3)}
- else{personaWarning(e,'fan',e.x,e.y,1.5,{dir,length:850,spread:.85,atk:54,move:'abyssReap'});combatSound('demon-blade',e.x);banner('闇刃の扇','大きく横へ',1)}
+ if(pattern===0){const b=battleBounds();for(let i=0;i<3;i++){const x=clamp(target.x+(i-1)*150,b.left+140,b.right-140),y=clamp(target.y+(i%2?130:-50),b.top+140,b.bottom-140);personaWarning(e,'circle',x,y,1.02+i*.24,{r:118,atk:56,move:'blackStarfall',follow:i===0,lockTime:.3,swift:true})}combatSound('demon-gather',e.x);banner('黒星墜','三つの黒炎が落ちる',1)}
+ else if(pattern===1){const b=battleBounds(),x=clamp(target.x,b.left+100,b.right-100);for(const side of [-1,1])personaWarning(e,'line',x+side*110,b.top,1.15,{swift:true,dir:{x:0,y:1},width:145,length:b.bottom-b.top,atk:56,persist:1.1,move:'hellPillars'});combatSound('demon-gather',e.x);banner('冥門の双炎','区画を貫く黒炎 · 間を抜けろ',1.3)}
+ else{personaWarning(e,'fan',e.x,e.y,1.05,{swift:true,dir,length:1000,spread:.85,atk:54,move:'abyssReap'});combatSound('demon-blade',e.x);banner('闇刃の扇','大きく横へ',1)}
 }
 function castDemonSword(e){
- if(warnings.some(w=>w.owner===e.id&&w.life>.15))return;e.barrageClock=1.45;const pattern=(e.barrageIndex||0)%6;e.barrageIndex=(e.barrageIndex||0)+1;if(demonSecondArt(e,pattern))return;
+ if(warnings.some(w=>w.owner===e.id&&w.life>.15))return;e.barrageClock=1.05;const pattern=(e.barrageIndex||0)%6;e.barrageIndex=(e.barrageIndex||0)+1;if(demonSecondArt(e,pattern))return;
  if(pattern===0)return warnDemonCharge(e);
  const n=norm(p.x-e.x,p.y-e.y);
- if(pattern===1){for(const [i,a]of [-.36,.36].entries()){const angle=Math.atan2(n.y,n.x)+a;personaWarning(e,'fan',e.x,e.y,1.35+i*.5,{dir:{x:Math.cos(angle),y:Math.sin(angle)},length:410,spread:1.05,atk:58,move:'royalReap'})}combatSound('demon-blade',e.x);banner('獄王の二連薙ぎ','振り終わるまで正面に入るな',1)}
- else{const length=arenaCoverRadius(e);personaWarning(e,'line',e.x,e.y,1.65,{dir:n,width:175,length,atk:62,persist:1.25,move:'hellbrand'});combatSound('demon-gather',e.x);banner('黒炎・地断ち','区画の果てまで剣が走る',1.25)}
+ if(pattern===1){for(const [i,a]of [-.36,.36].entries()){const angle=Math.atan2(n.y,n.x)+a;personaWarning(e,'fan',e.x,e.y,1+i*.36,{swift:true,dir:{x:Math.cos(angle),y:Math.sin(angle)},length:410,spread:1.05,atk:58,move:'royalReap'})}combatSound('demon-blade',e.x);banner('獄王の二連薙ぎ','振り終わるまで正面に入るな',1)}
+ else{const length=arenaCoverRadius(e);personaWarning(e,'line',e.x,e.y,1.12,{swift:true,dir:n,width:190,length,atk:62,persist:1.25,move:'hellbrand'});combatSound('demon-gather',e.x);banner('黒炎・地断ち','区画の果てまで剣が走る',1.25)}
 }
 function playerArtSound(s){combatSound(s.id);if(isManualSkill(s))game.artCaption={id:s.id,life:.8,max:.8};}
 function combatImpactAccent(e,hit){

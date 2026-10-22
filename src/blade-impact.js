@@ -22,7 +22,7 @@ function tickImpactReaction(e,dt){
 function drawEnemy(e,t){
  ctx.save();if(e.demonRush&&!reduced){ctx.translate(e.x,e.y);ctx.rotate(e.demonRush.dir.x*.13);ctx.scale(1.1,.9);ctx.translate(-e.x,-e.y);}if(e.royalTransit){const q=e.royalTransit.time/e.royalTransit.duration;ctx.globalAlpha*=Math.max(.12,1-q);ctx.translate(e.x,e.y);ctx.scale(1-q*.45,1+q*.25);ctx.translate(-e.x,-e.y);}
  if(!reduced&&e.impactPose>0){const q=Math.sin(e.impactPose/.16*Math.PI)*(e.impactWeight||.5),boss=e.kind==='boss';ctx.translate(e.x,e.y);ctx.rotate(q*(boss?.018:.075)*(e.knock.x<0?-1:1));ctx.scale(1+q*(boss?.006:.065),1-q*(boss?.008:.07));ctx.translate(-e.x,-e.y)}
- drawEnemyBody(e,t);ctx.restore();
+ drawTempleAura(e,t);drawDivineWardState(e,t);drawEnemyBody(e,t);ctx.restore();
 }
 function drawBladeScar(e,a){
  const q=1-a,length=e.r*(reduced?1:.65+Math.min(1,q*5)*.8);ctx.save();ctx.translate(e.x,e.y);ctx.rotate(e.angle);ctx.lineCap='round';

@@ -1,21 +1,21 @@
 // Each late realm has a visual descent and its own boss vocabulary. Stable save IDs.
-function roomWaveCount(region=game.region,room=game.room){return region===8||room===5?1:region===6||region===7?3:2}
-function realmDepth(room=game.room){return clamp((room-1)/4,0,1)}
-function realmChapter(region=game.region,room=game.room){if(region===TEMPLE)return '第'+room+'刻・'+REGIONS[endgameBossRegion()].name;if(region===WASTELAND)return ['風化した街道','剣塚の丘','忘却の集落','始原の参道','剣鬼の玉座'][room-1]||'';return ({4:['魔城の外縁','黒炎の回廊','禁術の広間','王の近衛域','冥王の玉座'],5:['雲海の入口','天への階段','星詠みの聖堂','裁きの門','創世の神座'],6:['灰の墓地','屍の参道','忘却の霊廟','黒月の王域','影葬の玉座']})[region]?.[clamp(room,1,5)-1]||''}
+function roomWaveCount(region=game.region,room=game.room){return region===TEMPLE||room===stageRoomCount(region)?1:region===6?(room>=4?4:3):region===7?3:region===5?(room===1||room===3?2:3):2}
+function realmDepth(room=game.room){return clamp((room-1)/(stageRoomCount()-1),0,1)}
+function realmChapter(region=game.region,room=game.room){if(region===TEMPLE)return '第'+room+'刻・'+REGIONS[endgameBossRegion()].name;if(region===WASTELAND)return ['風化した街道','剣塚の丘','忘却の集落','始原の参道','王骸の封印','王骸の玉座'][room-1]||'';return ({4:['魔城の外縁','黒炎の回廊','禁術の広間','王の近衛域','冥王の玉座'],5:['雲海の入口','天への階段','星詠みの聖堂','裁きの門','神託の回廊','創世の神座'],6:['灰の墓地','屍の参道','忘却の霊廟','黒月の王域','終影の回廊','影葬の玉座']})[region]?.[clamp(room,1,stageRoomCount())-1]||''}
 function shadowLightAt(x,y){const d=Math.hypot(x-p.x,(y-p.y)*CAMERA.depth),depth=realmDepth();return clamp(1-(d-95)/(330-depth*65),.2,1)}
 function shadowBodyColor(e,base,hit){return e.flash>0?hit:base}
 function drawWorldScene(t,sx,sy){
  const shadow=game.singleStage&&game.region===6,b=worldBounds();
  drawGround(t);if(bossArenaActive()){drawOpenBossArena(t);drawArenaIdentity(t)}else{drawDarkFloor(t);drawHeavenFloor(t);drawCinematicScenery(t);drawOvergrownRuins(t);drawExpeditionFloor(t);drawRealmDescent(t)}drawEternalScenery(t);drawTerrainGround(t);drawRealmAmbience(t);
  if(!shadow){drawRoomGate(t);drawCombatObjects(t);for(const w of warnings)drawWarning(w,t)}
- const scene=decor.filter(d=>!bossArenaActive()&&d.y>b.top-30&&d.y<b.bottom+140).map(d=>({y:d.y,draw:()=>aboveView(()=>drawDecor(d,t),d.x,d.y)}));
- for(const o of terrain)if(o.y>b.top-160&&o.y<b.bottom+150&&['rock','ruin','barrel','crystal','furnace'].includes(o.kind))scene.push({y:o.y+(o.h||0),draw:()=>drawTerrainProp(o,t)});
+ const scene=decor.filter(d=>!bossArenaActive()&&visibleWorldCircle(d.x,d.y,140)).map(d=>({y:d.y,draw:()=>aboveView(()=>drawDecor(d,t),d.x,d.y)}));
+ for(const o of terrain)if(visibleWorldBox(o.x-(o.r||0)-70,o.y-160,o.x+(o.w||o.r||0)+70,o.y+(o.h||o.r||0)+70)&&['rock','ruin','barrel','crystal','furnace'].includes(o.kind))scene.push({y:o.y+(o.h||0),draw:()=>drawTerrainProp(o,t)});
  if(!shadow)scene.push(...worldActors(t));scene.sort((a,b)=>a.y-b.y).forEach(a=>a.draw());
  if(shadow){ctx.save();const d=cv.width/view.w;ctx.setTransform(d,0,0,d,0,0);drawShadowGrade(t,sx,sy);ctx.restore()}
 }
 function worldActors(t){
- const actors=drops.map(d=>({x:d.x,y:d.y,draw:()=>aboveView(()=>drawDrop(d,t),d.x,d.y)}));
- for(const e of enemies)if(e.hp>0&&(!game.bossScene||!game.bossScene.ids.includes(e.id)))actors.push({x:e.x,y:e.y,draw:()=>aboveView(()=>{ctx.save();const w=e.leapTo&&warnings.find(w=>w.owner===e.id&&w.attack==='leap');if(w)ctx.translate(0,-Math.sin(warningProgress(w)*Math.PI)*110);drawEnemy(e,elapsed);ctx.restore()},e.x,e.y)});
+ const actors=drops.filter(d=>visibleWorldCircle(d.x,d.y,90)).map(d=>({x:d.x,y:d.y,draw:()=>aboveView(()=>drawDrop(d,t),d.x,d.y)}));
+ for(const e of enemies)if(e.hp>0&&visibleWorldBox(e.x-330,e.y-400,e.x+330,e.y+180)&&(!game.bossScene||!game.bossScene.ids.includes(e.id)))actors.push({x:e.x,y:e.y,draw:()=>aboveView(()=>{ctx.save();const w=e.leapTo&&warnings.find(w=>w.owner===e.id&&w.attack==='leap');if(w)ctx.translate(0,-Math.sin(warningProgress(w)*Math.PI)*110);drawEnemy(e,elapsed);ctx.restore()},e.x,e.y)});
  actors.push({x:p.x,y:p.y,draw:()=>aboveView(()=>drawPlayer(t),p.x,p.y)});return actors;
 }
 // Only scenery is graded. Projectiles, effects, warning shapes and UI never pass
@@ -42,17 +42,17 @@ function drawRealmDescent(t){
   ctx.fillStyle='rgba(27,8,32,'+(.06+d*.14)+')';ctx.fillRect(65,y-280,630,660);
   for(const side of [-1,1])for(let i=0;i<room;i++){const x=380+side*(235+(i%2)*24),yy=y-180+i*105;prism(x-12,yy,24,24,40+room*11,'#63505a','#312035','#1c1728');path([[x-21,yy-50-room*10],[x,yy-75-room*10],[x+21,yy-50-room*10]],'#3c253b','#8d647b');if(room>=2){const h=20+Math.sin(t*5+i)*5;path([[x-9,yy-62],[x,yy-84-h],[x+10,yy-62]],'#d96a4eaa','#ffc285')}}
   if(room>=3){ctx.strokeStyle='#ae637d66';ctx.lineWidth=2;for(const r of [90,120+room*7]){ctx.beginPath();ctx.ellipse(380,y+40,r,r*.7,t*.04,0,Math.PI*2);ctx.stroke()}}
-  if(room===5){path([[320,y-150],[320,y-245],[340,y-231],[350,y-278],[380,y-249],[410,y-278],[420,y-231],[440,y-245],[440,y-150]],'#221625','#ac8193');rounded(335,y-205,90,72,5,'#472337','#966878');prism(310,y-110,140,24,18,'#77505a','#3b2333','#251929')}
+  if(room===stageRoomCount()){path([[320,y-150],[320,y-245],[340,y-231],[350,y-278],[380,y-249],[410,y-278],[420,y-231],[440,y-245],[440,y-150]],'#221625','#ac8193');rounded(335,y-205,90,72,5,'#472337','#966878');prism(310,y-110,140,24,18,'#77505a','#3b2333','#251929')}
  }else if(game.region===5){
   ctx.fillStyle='rgba(255,233,171,'+(.025+d*.09)+')';ctx.fillRect(65,y-280,630,660);
   for(const side of [-1,1])for(let i=0;i<room;i++){const x=380+side*(220+(i%2)*28),yy=y-190+i*110;prism(x-12,yy,24,28,45+room*13,'#eee7cf','#a6b5bd','#6e8c9e');rounded(x-18,yy-51-room*13,36,8,2,'#ffedba','#c1a364');if(room>=3){ctx.strokeStyle='#fff4c299';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,yy-70-room*13,21,-Math.PI,0);ctx.stroke()}}
   if(room>=2){for(let i=0;i<room+1;i++){ctx.strokeStyle='#fff1c270';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(255-i*6,y-205+i*12);ctx.lineTo(505+i*6,y-205+i*12);ctx.stroke()}}
   if(room>=4){ctx.strokeStyle='#ffeab0';ctx.lineWidth=3;ctx.beginPath();ctx.arc(380,y-185,70+room*7,Math.PI,Math.PI*2);ctx.stroke();for(const side of [-1,1])prism(380+side*100-11,y-160,22,20,110,'#f8efd4','#bbc6c5','#73909e')}
-  if(room===5){for(const r of [42,62,84]){ctx.strokeStyle='#fff1ab';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(380,y-180,r,r*.5,t*.08,0,Math.PI*2);ctx.stroke()}}
+  if(room===stageRoomCount()){for(const r of [42,62,84]){ctx.strokeStyle='#fff1ab';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(380,y-180,r,r*.5,t*.08,0,Math.PI*2);ctx.stroke()}}
  }else{
   for(const side of [-1,1])for(let i=0;i<room+1;i++){const x=380+side*(200+(i%3)*27),yy=y-200+i*90;drawShadowMonument({x,y:yy});if(room>=3){ctx.strokeStyle='#4d505a';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x-25,yy+20);ctx.lineTo(x+12,yy+28);ctx.lineTo(x-10,yy+45);ctx.stroke()}}
   if(room>=3){ctx.globalAlpha=.25+d*.15;ellipse(380,y-240,36+room*9,36+room*9,'#090a0f');ctx.strokeStyle='#9a9ca8';ctx.lineWidth=1;ctx.beginPath();ctx.arc(380,y-240,40+room*9,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1}
-  if(room===5)path([[302,y-145],[327,y-238],[343,y-214],[380,y-281],[417,y-214],[433,y-238],[458,y-145]],'#18191f','#737581');
+  if(room===stageRoomCount())path([[302,y-145],[327,y-238],[343,y-214],[380,y-281],[417,y-214],[433,y-238],[458,y-145]],'#18191f','#737581');
  }
  ctx.restore();
 }
@@ -74,7 +74,7 @@ function glideJudgingGod(e,dt){
 function godEdict(e,pattern){
  if(e.bossPhase===2&&godSecondArt(e,pattern))return;
  const y=STAGES[game.stage].y;
- if(pattern===0){for(const [i,x]of [170,310,450,590].entries())personaWarning(e,'circle',arenaX(x),arenaY(y-40+(i%2)*150),1.4+i*.18,{r:72,atk:48,move:'holyPillar'});banner('四柱の宣告','光の柱が順番に降りる',1)}
+ if(pattern===0){for(const [i,x]of [170,310,450,590].entries())personaWarning(e,'circle',i<2?clamp(p.x+(i?115:-65),battleBounds().left+90,battleBounds().right-90):arenaX(x),i<2?p.y+(i?95:-30):arenaY(y-40+(i%2)*150),1.15+i*.18,{r:82,atk:50,move:'holyPillar'});banner('四柱の宣告','光の柱が順番に降りる',1)}
  else if(pattern===1){const center={x:clamp(p.x,battleBounds().left+100,battleBounds().right-100),y:clamp(p.y,battleBounds().top+100,battleBounds().bottom-100)};for(const [i,dir]of [{x:.707,y:.707},{x:-.707,y:.707}].entries())personaWarning(e,'line',center.x-dir.x*370,center.y-dir.y*370,1.65+i*.4,{dir,length:740,width:88,atk:52,move:'heavenScales'});banner('天秤の光剣','交差する光を見切れ',1.2)}
  else if(pattern===2){const refuge=randomRefuge();epicWarning(e,'ring',refuge.x,refuge.y,arenaCoverRadius(refuge),2.8,{inner:105,atk:100,persist:1,style:'doom',persona:'god'});e.godAttack=3.2;startEpicEvent('創世神の審判','唯一の聖域へ','#fff0a6',1.15);banner('創世の審判','光る聖域へ！',2.2)}
  else{const q={x:clamp(p.x,battleBounds().left+100,battleBounds().right-100),y:clamp(p.y,battleBounds().top+100,battleBounds().bottom-100)};for(const side of [-1,1])personaWarning(e,'line',q.x+side*100,q.y-210,1.55,{dir:{x:0,y:1},length:430,width:65,atk:50,move:'constellation'});personaWarning(e,'line',q.x-205,q.y-105,1.95,{dir:{x:1,y:0},length:410,width:65,atk:50,move:'constellation'});banner('星座の檻','幾何学の光のすき間へ',1.2)}

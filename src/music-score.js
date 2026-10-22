@@ -20,7 +20,7 @@ const SCORE_THEMES={
 let musicVoices=0,drumNoise=null;
 function musicSceneKey(){
  if(game.bossScene)return game.bossScene.kind==='defeat'?'victory':'omen';
- if(game.mode==='weaponShop')return 'shop';if(['stageSelect','preparation','start'].includes(game.mode))return 'map';
+ if(game.mode==='weaponShop'||game.mode==='training')return 'shop';if(['stageSelect','preparation','start'].includes(game.mode))return 'map';
  if(['stageResult','chest'].includes(game.mode))return 'victory';
  if(game.mode==='play'&&game.active)return isBossStage()?(endgameBossRegion()===6?'shadow':endgameBossRegion()===5?'god':endgameBossRegion()===4?'demon':'boss'):['grass','water','volcano','ruins','dark','heaven','shadow','ruins','dark'][game.region||0];return 'rest';
 }

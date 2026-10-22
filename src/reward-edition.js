@@ -19,7 +19,7 @@ function tickGoldAnimations(dt){
 function recommendedStage(){
  if(game.mode==='preparation')return campaign.selected;
  if(game.mode==='weaponShop')return storeRegion;
- const next=REGIONS.findIndex((_,i)=>availableStage(i)&&!campaign.clears[i]);return next<0?campaign.selected:next;
+ const next=WORLD_ORDER.find(i=>availableStage(i)&&!campaign.clears[i]);return next==null?campaign.selected:next;
 }
 function weaponSale(id,region=recommendedStage()){
  const w=getWeapon(id),sale=w.price>0&&recommendedSword(region).id===id;

@@ -1,10 +1,10 @@
 // Rewards and their receipt live in the same campaign snapshot. IDs are save contracts.
 function missionCatalog(){
- const quests=REGIONS.flatMap((r,i)=>[
+ const quests=WORLD_ORDER.flatMap(i=>{const r=REGIONS[i];return [
   {id:'clear-'+i,title:r.name+'を踏破',region:i,rank:'D',icon:r.icon,gold:100},
   {id:'rank-a-'+i,title:r.name+'の熟練者',region:i,rank:'A',icon:'✧',gold:80},
   {id:'rank-s-'+i,title:r.name+'の覇者',region:i,rank:'S',icon:'♛',gold:120}
- ]);
+ ]});
  return [...quests,
   {id:'demon-legacy',title:'冥王の遺産',region:4,rank:'D',icon:'☾',gold:250,skill:'nova',weapon:'abyss',detail:'ダーククラッシュを永久解放。冥王の黒刃がよろずやに入荷。'},
   {id:'dawn-reforged',title:'黎明、再鍛',region:4,rank:'D',icon:'☀',gold:250,upgrade:true,detail:'黎明の大剣を習得すると「・改」に。威力・射程を解放。持ち越し権は宝箱で別に獲得。'},
@@ -50,7 +50,7 @@ function missionReward(m){return [m.gold+' G',m.hp?'永続HP ＋'+m.hp:'',m.mp?'
 let missionReturnMode='stageSelect',missionReturnStage=0,missionView={tab:'ready',selection:null},missionReceipt=null;
 function missionRevealed(m,c=campaign){
  if(c.claimedMissions.includes(m.id)||missionComplete(m,c))return true;
- if(m.region>=3){const unlocked=m.region===6?shadowUnlocked(c):m.region===5?heavenUnlocked(c):m.region===4?darkUnlocked(c):finaleUnlocked(c);if(!unlocked)return false;}
+ if(m.region>=3){const unlocked=m.region===8?templeUnlocked(c):m.region===7?wastelandUnlocked(c):m.region===6?shadowUnlocked(c):m.region===5?heavenUnlocked(c):m.region===4?darkUnlocked(c):finaleUnlocked(c);if(!unlocked)return false;}
  if(m.rank==='S'&&!c.clears[m.region])return false;
  if(m.id==='slayer-1200'&&c.missionStats.kills<300)return false;
  if(m.id==='perfect-20'&&!c.clears[0]&&c.missionStats.perfects===0)return false;
@@ -94,7 +94,7 @@ function openMissions(tab='ready',selection=null){
 }
 function addMissionHub(){
  const shop=$('weaponShop');if(!shop)return;const ready=missionClaimable().length,button=document.createElement('button');button.id='missionHub';button.className='map-missions';button.innerHTML='<i>✧</i><span><b>ミッション</b><small>'+(ready?'報酬を受け取れます':'冒険の実績と解放報酬')+'</small></span><em>'+(ready||'›')+'</em>';button.onclick=()=>openMissions(ready?'ready':'progress');
- const hub=document.createElement('div');hub.className='map-hub';shop.before(hub);hub.append(shop,button);const map=$('modal').querySelector('.world-map');map?.classList.add('atlas-living');
+ const hub=document.createElement('div');hub.className='map-hub';shop.before(hub);hub.append(shop,button);addTrainingHub(hub);const map=$('modal').querySelector('.world-map');map?.classList.add('atlas-living');
  const svg=map?.querySelector('svg');if(svg)svg.insertAdjacentHTML('beforeend',`<g class="atlas-wind" fill="none" stroke="#d4f1db55" stroke-width="2"><path d="M30 290Q120 180 255 235T650 180"/><path d="M60 165Q200 75 360 130T670 80"/></g><g class="atlas-ship" fill="#ead1a0" stroke="#243c52" stroke-width="2"><path d="M344 259L377 263L369 274L351 272Z"/><path d="M358 259V228L377 254Z" fill="#f6e7c4"/><path d="M355 232L342 253H355Z" fill="#c79f69"/></g><g class="atlas-beacon" fill="none" stroke="#fff2b2" opacity=".6"><ellipse cx="565" cy="45" rx="42" ry="14"/><path d="M565 3V22M565 66V82M519 45H532M599 45H613"/></g>`);
 
 }

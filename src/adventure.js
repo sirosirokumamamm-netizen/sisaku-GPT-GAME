@@ -11,7 +11,7 @@ const WEAPONS=[
  {id:'dawn',name:'黎明の聖剣',price:3600,icon:'☀',color:'#fff0b1',attack:215,speed:1.35,reach:1.2,element:'光',extra:'4撃ごとにMPと必殺ゲージ回復',postDemon:true,desc:'連撃で光を蓄える聖剣。剣技と覚醒をつなげる。'}
 ];
 function getWeapon(id=game.weapon||'traveler'){return WEAPONS.find(w=>w.id===id)||WEAPONS[0]}
-function applyWeapon(){const w=getWeapon();p.power*=w.attack/WEAPONS[0].attack*(1+.03*forgeLevel('weapon',w.id));p.autoInterval/=w.speed;p.reach*=w.reach;game.weaponHits=0}
+function applyWeapon(){const w=getWeapon();p.power*=w.attack/WEAPONS[0].attack*(1+.06*forgeLevel('weapon',w.id));p.autoInterval/=w.speed;p.reach*=w.reach;game.weaponHits=0}
 function weaponStrike(targets){
  if(!game.singleStage||!targets.length)return;game.weaponHits=(game.weaponHits||0)+1;const w=getWeapon();
  if(w.id==='ember'&&game.weaponHits%3===0)for(const e of targets){e.burn=3;e.burnTick=0;particle(e.x,e.y-20,w.color,4,70)}

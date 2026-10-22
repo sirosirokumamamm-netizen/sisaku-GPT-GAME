@@ -1,0 +1,571 @@
+[
+  {
+    "style": "azure",
+    "stage": 1,
+    "win": true,
+    "time": 81,
+    "kills": 105,
+    "earnedGold": 1435,
+    "weapon": "traveler",
+    "roomLevels": {
+      "1": 3,
+      "2": 5,
+      "3": 6,
+      "4": 7,
+      "5": 9
+    },
+    "level": 9,
+    "firstLevel": 8,
+    "damage": 12,
+    "damageSources": {
+      "突進": 5,
+      "範囲攻撃": 7
+    },
+    "interrupts": 0,
+    "events": [
+      {
+        "time": 28,
+        "event": "damage",
+        "hp": 97,
+        "source": "突進"
+      },
+      {
+        "time": 39,
+        "event": "damage",
+        "hp": 107,
+        "source": "範囲攻撃"
+      }
+    ],
+    "hp": 126,
+    "ultimates": 3,
+    "perfects": 26,
+    "phase": "stageClear",
+    "room": 5,
+    "wave": 2,
+    "remaining": [],
+    "p": {
+      "x": 424,
+      "y": 5868
+    }
+  },
+  {
+    "style": "azure",
+    "stage": 2,
+    "win": true,
+    "time": 105,
+    "kills": 121,
+    "earnedGold": 1654,
+    "weapon": "echo",
+    "roomLevels": {
+      "1": 3,
+      "2": 6,
+      "3": 7,
+      "4": 8,
+      "5": 10
+    },
+    "level": 10,
+    "firstLevel": 4,
+    "damage": 16,
+    "damageSources": {
+      "範囲攻撃": 6,
+      "弾": 10
+    },
+    "interrupts": 0,
+    "events": [
+      {
+        "time": 25,
+        "event": "damage",
+        "hp": 102,
+        "source": "範囲攻撃"
+      },
+      {
+        "time": 60,
+        "event": "damage",
+        "hp": 129,
+        "source": "弾"
+      },
+      {
+        "time": 73,
+        "event": "damage",
+        "hp": 122,
+        "source": "弾"
+      }
+    ],
+    "hp": 138,
+    "ultimates": 4,
+    "perfects": 32,
+    "phase": "stageClear",
+    "room": 5,
+    "wave": 2,
+    "remaining": [],
+    "p": {
+      "x": 501,
+      "y": 5267
+    }
+  },
+  {
+    "style": "azure",
+    "stage": 3,
+    "win": true,
+    "time": 88,
+    "kills": 137,
+    "earnedGold": 2002,
+    "weapon": "frostblade",
+    "roomLevels": {
+      "1": 3,
+      "2": 6,
+      "3": 7,
+      "4": 9,
+      "5": 10
+    },
+    "level": 10,
+    "firstLevel": 2,
+    "damage": 94,
+    "damageSources": {
+      "弾": 8,
+      "残る炎": 86
+    },
+    "interrupts": 0,
+    "events": [
+      {
+        "time": 49,
+        "event": "damage",
+        "hp": 130,
+        "source": "弾"
+      },
+      {
+        "time": 64,
+        "event": "damage",
+        "hp": 135,
+        "source": "残る炎"
+      },
+      {
+        "time": 65,
+        "event": "damage",
+        "hp": 120,
+        "source": "残る炎"
+      },
+      {
+        "time": 82,
+        "event": "damage",
+        "hp": 94,
+        "source": "残る炎"
+      },
+      {
+        "time": 87,
+        "event": "damage",
+        "hp": 64,
+        "source": "残る炎"
+      }
+    ],
+    "hp": 123,
+    "ultimates": 5,
+    "perfects": 24,
+    "phase": "stageClear",
+    "room": 5,
+    "wave": 2,
+    "remaining": [],
+    "p": {
+      "x": 400,
+      "y": 2291
+    }
+  },
+  {
+    "style": "azure",
+    "stage": 4,
+    "win": true,
+    "time": 168,
+    "kills": 152,
+    "earnedGold": 2201,
+    "weapon": "rapier",
+    "roomLevels": {
+      "1": 3,
+      "2": 6,
+      "3": 8,
+      "4": 9,
+      "5": 13
+    },
+    "level": 13,
+    "firstLevel": 5,
+    "damage": 27,
+    "damageSources": {
+      "突進": 2,
+      "範囲攻撃": 12,
+      "弾": 13
+    },
+    "interrupts": 0,
+    "events": [
+      {
+        "time": 12,
+        "event": "damage",
+        "hp": 110,
+        "source": "突進"
+      },
+      {
+        "time": 29,
+        "event": "damage",
+        "hp": 121,
+        "source": "範囲攻撃"
+      },
+      {
+        "time": 67,
+        "event": "damage",
+        "hp": 136,
+        "source": "弾"
+      },
+      {
+        "time": 95,
+        "event": "damage",
+        "hp": 147,
+        "source": "弾"
+      },
+      {
+        "time": 121,
+        "event": "damage",
+        "hp": 138,
+        "source": "範囲攻撃"
+      }
+    ],
+    "hp": 160,
+    "ultimates": 7,
+    "perfects": 55,
+    "phase": "stageClear",
+    "room": 5,
+    "wave": 2,
+    "remaining": [],
+    "p": {
+      "x": 398,
+      "y": 491
+    }
+  },
+  {
+    "style": "azure",
+    "stage": 5,
+    "win": true,
+    "time": 182,
+    "kills": 163,
+    "earnedGold": 2408,
+    "weapon": "echo",
+    "roomLevels": {
+      "1": 3,
+      "2": 6,
+      "3": 8,
+      "4": 9,
+      "5": 13
+    },
+    "level": 13,
+    "firstLevel": 6,
+    "damage": 89,
+    "damageSources": {
+      "突進": 49,
+      "弾": 14,
+      "範囲攻撃": 26
+    },
+    "interrupts": 0,
+    "events": [
+      {
+        "time": 17,
+        "event": "damage",
+        "hp": 122,
+        "source": "突進"
+      },
+      {
+        "time": 36,
+        "event": "damage",
+        "hp": 141,
+        "source": "弾"
+      },
+      {
+        "time": 37,
+        "event": "damage",
+        "hp": 134,
+        "source": "弾"
+      },
+      {
+        "time": 158,
+        "event": "damage",
+        "hp": 140,
+        "source": "範囲攻撃"
+      },
+      {
+        "time": 163,
+        "event": "damage",
+        "hp": 93,
+        "source": "突進"
+      }
+    ],
+    "hp": 151,
+    "ultimates": 8,
+    "perfects": 49,
+    "phase": "stageClear",
+    "room": 5,
+    "wave": 2,
+    "remaining": [],
+    "p": {
+      "x": 852,
+      "y": 3246
+    }
+  },
+  {
+    "style": "azure",
+    "stage": 6,
+    "win": true,
+    "time": 112,
+    "kills": 297,
+    "earnedGold": 4547,
+    "weapon": "abyss",
+    "roomLevels": {
+      "1": 4,
+      "2": 7,
+      "3": 9,
+      "4": 11,
+      "5": 13,
+      "6": 15
+    },
+    "level": 15,
+    "firstLevel": 2,
+    "damage": 69,
+    "damageSources": {
+      "弾": 8,
+      "残る炎": 61
+    },
+    "interrupts": 1,
+    "events": [
+      {
+        "time": 57,
+        "event": "damage",
+        "hp": 164,
+        "source": "弾"
+      },
+      {
+        "time": 76,
+        "event": "damage",
+        "hp": 135,
+        "source": "残る炎"
+      },
+      {
+        "time": 107,
+        "event": "charge",
+        "hp": 135,
+        "guard": 830
+      },
+      {
+        "time": 110,
+        "event": "release",
+        "hp": 135
+      }
+    ],
+    "hp": 135,
+    "ultimates": 6,
+    "perfects": 25,
+    "phase": "stageClear",
+    "room": 6,
+    "wave": 2,
+    "remaining": [],
+    "p": {
+      "x": 421,
+      "y": 2875
+    }
+  },
+  {
+    "style": "azure",
+    "stage": 8,
+    "win": true,
+    "time": 159,
+    "kills": 369,
+    "earnedGold": 6289,
+    "weapon": "dawn",
+    "roomLevels": {
+      "1": 6,
+      "2": 10,
+      "3": 12,
+      "4": 14,
+      "5": 16,
+      "6": 17
+    },
+    "level": 17,
+    "firstLevel": 2,
+    "damage": 51,
+    "damageSources": {
+      "追撃": 51.39999999999999
+    },
+    "interrupts": 0,
+    "events": [
+      {
+        "time": 130,
+        "event": "damage",
+        "hp": 190,
+        "source": "追撃"
+      },
+      {
+        "time": 148,
+        "event": "damage",
+        "hp": 169,
+        "source": "追撃"
+      }
+    ],
+    "hp": 169,
+    "ultimates": 10,
+    "perfects": 48,
+    "phase": "stageClear",
+    "room": 6,
+    "wave": 2,
+    "remaining": [],
+    "p": {
+      "x": 465,
+      "y": 4155
+    }
+  },
+  {
+    "style": "azure",
+    "stage": 7,
+    "win": true,
+    "time": 294,
+    "kills": 403,
+    "earnedGold": 7177,
+    "weapon": "starfall",
+    "roomLevels": {
+      "1": 5,
+      "2": 8,
+      "3": 11,
+      "4": 13,
+      "5": 15,
+      "6": 19
+    },
+    "level": 19,
+    "firstLevel": 3,
+    "damage": 19,
+    "damageSources": {
+      "範囲攻撃": 19
+    },
+    "interrupts": 1,
+    "events": [
+      {
+        "time": 246,
+        "event": "damage",
+        "hp": 205,
+        "source": "範囲攻撃"
+      },
+      {
+        "time": 256,
+        "event": "charge",
+        "hp": 205,
+        "guard": 860
+      },
+      {
+        "time": 257,
+        "event": "release",
+        "hp": 205
+      }
+    ],
+    "hp": 205,
+    "ultimates": 18,
+    "perfects": 77,
+    "phase": "stageClear",
+    "room": 6,
+    "wave": 2,
+    "remaining": [],
+    "p": {
+      "x": 362,
+      "y": 1591
+    }
+  },
+  {
+    "style": "azure",
+    "stage": 9,
+    "win": true,
+    "time": 287,
+    "kills": 9,
+    "earnedGold": 8015,
+    "weapon": "origin",
+    "roomLevels": {
+      "1": 9,
+      "2": 11,
+      "3": 13,
+      "4": 16,
+      "5": 20,
+      "6": 23,
+      "7": 24,
+      "8": 27
+    },
+    "level": 27,
+    "firstLevel": 0,
+    "damage": 96,
+    "damageSources": {
+      "突進": 4,
+      "残る炎": 26,
+      "追撃": 66
+    },
+    "interrupts": 3,
+    "events": [
+      {
+        "time": 76,
+        "event": "damage",
+        "hp": 230,
+        "source": "突進"
+      },
+      {
+        "time": 96,
+        "event": "damage",
+        "hp": 232,
+        "source": "残る炎"
+      },
+      {
+        "time": 129,
+        "event": "charge",
+        "hp": 232,
+        "guard": 830
+      },
+      {
+        "time": 131,
+        "event": "release",
+        "hp": 232
+      },
+      {
+        "time": 138,
+        "event": "damage",
+        "hp": 234,
+        "source": "追撃"
+      },
+      {
+        "time": 153,
+        "event": "damage",
+        "hp": 210,
+        "source": "追撃"
+      },
+      {
+        "time": 243,
+        "event": "charge",
+        "hp": 265,
+        "guard": 860
+      },
+      {
+        "time": 244,
+        "event": "release",
+        "hp": 265
+      },
+      {
+        "time": 282,
+        "event": "charge",
+        "hp": 265,
+        "guard": 860
+      },
+      {
+        "time": 283,
+        "event": "release",
+        "hp": 265
+      }
+    ],
+    "hp": 265,
+    "ultimates": 18,
+    "perfects": 59,
+    "phase": "stageClear",
+    "room": 8,
+    "wave": 2,
+    "remaining": [],
+    "p": {
+      "x": 341,
+      "y": 405
+    }
+  }
+]

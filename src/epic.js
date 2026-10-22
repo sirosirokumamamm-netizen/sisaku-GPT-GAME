@@ -19,7 +19,7 @@ function resolveEpicStrike(w,owner){if(w.stateOnly){resolveAilmentWave(w,owner);
  if(warningContains(w)&&!w.perfectUsed){game.hitSource=w.style==='lightning'?'雷撃':w.style==='doom'?'終末の一撃':'追撃';takeHit(w.atk,w.x,w.y)}hitExplosives(q=>warningContains(w,q,16),w.atk);
  if(owner.kind==='boss')combatSound(owner.form==='god'?'god-verdict':owner.form==='dragon'?'dragon-breath':'stone-break',owner.x);bossStrikeFlare(w,owner);effects.push({...w,shape:w.kind,kind:'telegraphHit',life:.4,max:.4});if(w.style==='lightning'){for(let i=0;i<5;i++)effects.push({kind:'beam',x:w.x+(i%2?22:-22),y:w.y-270+i*54,ex:w.x+(i%2?-22:22),ey:w.y-216+i*54,color:'#fff1ae',life:.35,max:.35})}else effects.push({kind:'nova',x:w.x,y:w.y,r:w.r||140,color:w.style==='tide'?'#8be7ff':w.style==='doom'?'#d78dff':'#ffb382',life:.7,max:.7});
  particle(w.x,w.y,w.style==='tide'?'#8be7ff':w.style==='lightning'?'#fff2b7':'#f3a8d5',18,210);if(w.persist&&hazards.length<9)hazards.push({...w,life:w.persist,tick:.7,atk:Math.round(w.atk*.48),protected:false});
- if(!reduced&&preferences.shake)shake=Math.max(shake,w.style==='doom'?8:4);if(owner.kind!=='boss'){owner.state='recover';owner.timer=1.1}else if(owner.form!=='god'&&!owner.awakened){owner.state='recover';owner.timer=1.4;owner.exposed=1.4}
+ releaseGodWardAfterJudgment(w,owner);if(!reduced&&preferences.shake)shake=Math.max(shake,w.style==='doom'?8:4);if(owner.kind!=='boss'){owner.state='recover';owner.timer=1.1}else if(owner.form!=='god'&&!owner.awakened){owner.state='recover';owner.timer=owner.ancientWarden?(owner.bossPhase===2?.28:.42):1.4;owner.exposed=owner.timer}
 }
 function epicEnemyWarning(e){
  if(e.kind==='boss'||e.kind==='goldSlime'||game.time<(game.nextAttackAt||0)||warnings.filter(w=>w.attack==='epic').length>=2)return false;

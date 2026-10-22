@@ -73,7 +73,7 @@ function drawPersistentArt(f,t){
 const ART_MOTIONS={crescent:'blue-crescent',whirl:'full-turn',pierce:'thrust',flurry:'three-cuts',dash:'draw-cut',cross:'cross-cut',wave:'flying-blade',blood:'crimson-hook',flame:'fire-fang',frost:'ice-flower',thunder:'falling-sword',meteor:'falling-star',chain:'chain-lightning',tornado:'wind-coil',rain:'sword-rain',quake:'ground-break',execute:'judgment',blink:'shadow-cut',parry:'mirror',orbit:'twin-orbit',wisp:'star-companion',guard:'hex-guard',focus:'sword-spirit',heal:'healing-light'};
 function emitArtMotion(s){
  if(s.category==='passive'||['nova','dawn'].includes(s.id))return;
- if(s.category==='sword'&&isManualSkill(s)){p.swing=.3;p.swingHeavy=true;p.swingSide*=-1;p.swingFace={...p.face};}const target=nearest(s.range||500),aim=['target','meteor','field','execute'].includes(s.kind)&&target?target:p;
+ if(s.category==='sword'&&isManualSkill(s)){p.swing=.3;p.swingHeavy=true;p.swingSide*=-1;p.swingFace={...p.face};}const target=skillAimTarget(s,s.range||500,!['target','meteor','field','execute'].includes(s.kind)),aim=['target','meteor','field','execute'].includes(s.kind)&&target?target:p;
  const life=s.id==='meteor'?1.15:s.id==='flurry'?.58:.65;
  effects.push({kind:'artMotion',id:s.id,motion:ART_MOTIONS[s.id],manual:!!s.manual,x:aim.x,y:aim.y,r:s.r||s.range||110,face:{...p.face},color:s.id==='crescent'?'#419dff':s.color,life,max:life});
 }

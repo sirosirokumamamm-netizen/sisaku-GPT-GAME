@@ -21,6 +21,7 @@ function chooseNewEnemy(){
  if(game.room>=2&&runRandom()<.15)return runRandom()<.5?'duelist':'hexer';if(runRandom()<.18)return ['harpy','beetle','wraith'][Math.floor(runRandom()*3)];return null;
 }
 function newEnemyTick(e,dt){
+ if(e.shadowMaster!=null&&tickShadowRetainer(e,dt))return true;
  if(e.kind==='goldSlime')return tickGoldenDash(e,dt);if(distinctMobTick(e,dt))return true;
  if(e.kind==='harpy'&&e.state==='chase'&&(distance(e,p)>170||!canStand(e.x,e.y,e.r)||!coverClear(e,p))){const n=norm(p.x-e.x,p.y-e.y);e.x=clamp(e.x+n.x*e.speed*dt,100,660);e.y=clamp(e.y+n.y*e.speed*dt,STAGES[game.stage].y-170,STAGES[game.stage].y+320)}
  if(e.kind==='wraith'&&e.state==='recover'&&e.timer<.1){const q=safePoint(p.x+(runRandom()<.5?-160:160),clampPlayerY(p.y-70),e.r);particle(e.x,e.y,'#c4d2ff',8,75);e.x=q.x;e.y=q.y;particle(e.x,e.y,'#c4d2ff',8,75)}return false;

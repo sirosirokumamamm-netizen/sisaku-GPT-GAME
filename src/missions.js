@@ -10,11 +10,11 @@ function missionCatalog(){
   {id:'dawn-reforged',title:'黎明、再鍛',region:4,rank:'D',icon:'☀',gold:250,upgrade:true,detail:'黎明の大剣を習得すると「・改」に。威力・射程を解放。持ち越し権は宝箱で別に獲得。'},
   {id:'heaven-steel',title:'神を穿つ鋼',region:5,rank:'D',icon:'✦',gold:100,weapon:'starfall',detail:'天穿つ大剣がよろずやに入荷。'},
   {id:'holy-steel',title:'光を継ぐ剣',region:5,rank:'A',icon:'☼',gold:100,weapon:'dawn',detail:'黎明の聖剣がよろずやに入荷。'},
-  {id:'slayer-300',title:'刃の旅路',stat:'kills',target:300,icon:'⚔',gold:100,hp:2},
-  {id:'slayer-1200',title:'千の影を越えて',stat:'kills',target:1200,icon:'⚔',gold:150,hp:2},
-  {id:'perfect-20',title:'見切りの心得',stat:'perfects',target:20,icon:'◇',gold:100,mp:1},
-  {id:'arts-100',title:'剣と魔術の呼吸',stat:'skills',target:100,icon:'✴',gold:100,mp:1},
-  {id:'shadow-heart',title:'影に呑まれぬ心',region:6,rank:'D',icon:'◈',gold:100,hp:2}
+  {id:'slayer-300',title:'刃の旅路',stat:'kills',target:300,icon:'⚔',gold:100,hp:4,defense:2},
+  {id:'slayer-1200',title:'千の影を越えて',stat:'kills',target:1200,icon:'⚔',gold:150,hp:4,attack:4},
+  {id:'perfect-20',title:'見切りの心得',stat:'perfects',target:20,icon:'◇',gold:100,mp:2,defense:2},
+  {id:'arts-100',title:'剣と魔術の呼吸',stat:'skills',target:100,icon:'✴',gold:100,mp:2,attack:4},
+  {id:'shadow-heart',title:'影に呑まれぬ心',region:6,rank:'D',icon:'◈',gold:100,hp:4,defense:2}
  ];
 }
 function normalizeMissions(c,raw){
@@ -36,7 +36,7 @@ function applyMissionUnlock(c,m){
  if(m.weapon&&!c.shopUnlocks.includes(m.weapon))c.shopUnlocks.push(m.weapon);
  if(m.upgrade)c.dawnUpgrade=true;
 }
-function missionBonuses(c=campaign){return missionCatalog().filter(m=>c.claimedMissions.includes(m.id)).reduce((b,m)=>({hp:b.hp+(m.hp||0),mp:b.mp+(m.mp||0)}),{hp:0,mp:0})}
+function missionBonuses(c=campaign){return missionCatalog().filter(m=>c.claimedMissions.includes(m.id)).reduce((b,m)=>Object.fromEntries(Object.keys(b).map(k=>[k,b[k]+(m[k]||0)])),{hp:0,mp:0,attack:0,defense:0})}
 function recordMissionRun(c){
  const id=game.attemptId;if(!id)return;const prior=c.missionRuns[id]||{};
  const now={kills:game.kills||0,perfects:game.perfects||0,skills:game.skillUses||0};
@@ -46,7 +46,7 @@ function recordMissionRun(c){
 function missionComplete(m,c=campaign){return m.stat?(c.missionStats[m.stat]||0)>=m.target:!!c.clears[m.region]&&'SABCD'.indexOf(c.clears[m.region].rank)<='SABCD'.indexOf(m.rank)}
 function missionClaimable(c=campaign){return missionCatalog().filter(m=>!c.claimedMissions.includes(m.id)&&missionComplete(m,c))}
 function missionCondition(m){return m.stat?({kills:'累計撃破',perfects:'累計ジャスト回避',skills:'手動技の累計発動'})[m.stat]+' '+m.target+'回':REGIONS[m.region].name+'を'+(m.rank==='D'?'クリア':m.rank==='A'?'Aランク以上でクリア':'Sランクでクリア')}
-function missionReward(m){return [m.gold+' G',m.hp?'永続HP ＋'+m.hp:'',m.mp?'永続MP ＋'+m.mp:'',m.upgrade?'技を強化':'',m.skill?'技を解放':'',m.weapon?'武器が入荷':''].filter(Boolean).join(' · ')}
+function missionReward(m){return [m.gold+' G',m.hp?'永続HP ＋'+m.hp:'',m.mp?'永続MP ＋'+m.mp:'',m.attack?'永続攻撃力・属性威力 ＋'+m.attack+'%':'',m.defense?'永続守備力 ＋'+m.defense:'',m.upgrade?'技を強化':'',m.skill?'技を解放':'',m.weapon?'武器が入荷':''].filter(Boolean).join(' · ')}
 let missionReturnMode='stageSelect',missionReturnStage=0,missionView={tab:'ready',selection:null},missionReceipt=null;
 function missionRevealed(m,c=campaign){
  if(c.claimedMissions.includes(m.id)||missionComplete(m,c))return true;
@@ -59,8 +59,8 @@ function missionRevealed(m,c=campaign){
 function receiveMissionRewards(ids){
  if(game.mode!=='missions')return null;refreshCampaign();
  const valid=new Set(ids),missions=missionClaimable().filter(m=>valid.has(m.id));if(!missions.length)return null;
- const before=campaign,n=cloneCampaign(),receipt={count:missions.length,gold:0,hp:0,mp:0,skills:[],weapons:[],upgrade:false};
- for(const m of missions){n.claimedMissions.push(m.id);receipt.gold+=m.gold;receipt.hp+=m.hp||0;receipt.mp+=m.mp||0;applyMissionUnlock(n,m)}
+ const before=campaign,n=cloneCampaign(),receipt={count:missions.length,gold:0,hp:0,mp:0,attack:0,defense:0,skills:[],weapons:[],upgrade:false};
+ for(const m of missions){n.claimedMissions.push(m.id);receipt.gold+=m.gold;receipt.hp+=m.hp||0;receipt.mp+=m.mp||0;receipt.attack+=m.attack||0;receipt.defense+=m.defense||0;applyMissionUnlock(n,m)}
  n.wallet+=receipt.gold;n.revision=(before.revision||0)+1;
  try{localStorage.setItem(CAMPAIGN_KEY,JSON.stringify(n));storageAvailable=true}catch{storageAvailable=false;openMissions(missionView.tab,missionView.selection);announce('保存できませんでした。報酬は未受取です。空き容量をご確認のうえ、もう一度お試しください。');return null}
  receipt.upgrade=!before.dawnUpgrade&&n.dawnUpgrade;
@@ -78,7 +78,7 @@ function claimAllMissions(){
 function showMissionReceipt(){
  const r=missionReceipt;if(!r)return;game.mode='missionReceipt';lootClock=0;lootNotices=[];if($('lootToast'))$('lootToast').hidden=true;
  const unlocks=[...r.skills.map(id=>'<li><i>✧</i><span>技を解放<b>'+getSkill(id).name+'</b></span></li>'),...(r.upgrade?['<li><i>☀</i><span>技を強化<b>黎明の大剣・改</b></span></li>']:[]),...r.weapons.map(id=>'<li><i>⚔</i><span>よろずやに入荷<b>'+getWeapon(id).name+'</b></span></li>')];
- openModal(`<div class="eyebrow">REWARDS RECEIVED</div><div class="receipt-seal">✧</div><h2>報酬を受け取りました</h2><p>${r.count}件のミッション達成</p><div class="receipt-gold"><small>獲得ゴールド 合計</small><strong>＋${r.gold.toLocaleString('ja-JP')} <span>G</span></strong></div>${r.hp||r.mp?`<div class="receipt-stats">${r.hp?'<b>永続HP ＋'+r.hp+'</b>':''}${r.mp?'<b>永続MP ＋'+r.mp+'</b>':''}</div>`:''}${unlocks.length?'<ul class="receipt-unlocks">'+unlocks.join('')+'</ul>':''}<div class="receipt-wallet">所持金 ${goldCounterMarkup(campaign.wallet,'wallet')} G</div><button id="missionReceiptOK" class="cta">OK</button>`);
+ openModal(`<div class="eyebrow">REWARDS RECEIVED</div><div class="receipt-seal">✧</div><h2>報酬を受け取りました</h2><p>${r.count}件のミッション達成</p><div class="receipt-gold"><small>獲得ゴールド 合計</small><strong>＋${r.gold.toLocaleString('ja-JP')} <span>G</span></strong></div>${r.hp||r.mp||r.attack||r.defense?`<div class="receipt-stats">${r.hp?'<b>永続HP ＋'+r.hp+'</b>':''}${r.mp?'<b>永続MP ＋'+r.mp+'</b>':''}${r.attack?'<b>永続攻撃力・属性威力 ＋'+r.attack+'%</b>':''}${r.defense?'<b>永続守備力 ＋'+r.defense+'</b>':''}</div>`:''}${unlocks.length?'<ul class="receipt-unlocks">'+unlocks.join('')+'</ul>':''}<div class="receipt-wallet">所持金 ${goldCounterMarkup(campaign.wallet,'wallet')} G</div><button id="missionReceiptOK" class="cta">OK</button>`);
  $('modal').classList.add('mission-receipt-modal');$('missionReceiptOK').onclick=closeMissionReceipt;
 }
 function closeMissionReceipt(){if(game.mode!=='missionReceipt')return;missionReceipt=null;openMissions(missionView.tab,missionView.selection)}
@@ -89,7 +89,7 @@ function openMissions(tab='ready',selection=null){
  const list=all.filter(m=>tab==='claimed'?claimed.includes(m.id):tab==='progress'?!claimed.includes(m.id)&&!missionComplete(m):missionComplete(m)&&!claimed.includes(m.id));
  const chosen=list.find(m=>m.id===selection)||list[0],bonus=missionBonuses(),known=chosen&&missionRevealed(chosen);
  const cards=list.map(m=>{const reveal=missionRevealed(m),done=claimed.includes(m.id),canClaim=missionComplete(m)&&!done;return `<article class="mission-row"><button data-mission="${m.id}" aria-pressed="${chosen?.id===m.id}" class="mission-item ${done?'claimed':''} ${canClaim?'can-claim':''}"><i>${reveal?m.icon:'?'}</i><span><b>${reveal?m.title:'？？？？'}</b><small>${reveal?missionReward(m):'シークレット · 冒険の進行で判明'}</small></span>${canClaim?'':'<em>'+(done?'受取済':reveal?'挑戦中':'未判明')+'</em>'}</button>${canClaim?`<button data-mission-claim="${m.id}" class="mission-receive" aria-label="${m.title}の報酬を受け取る"><b>達成！</b><small>受け取る</small></button>`:''}</article>`}).join('');
- openModal(`<div class="mission-heading"><div><div class="eyebrow">ADVENTURER'S GUILD</div><h2>ミッション</h2></div><b>${goldCounterMarkup(campaign.wallet,'wallet')} <small>G</small></b></div><div class="mission-tabs" role="group" aria-label="ミッションの絞り込み">${[['ready','受取可能 '+ready.length],['progress','挑戦中'],['claimed','受取済み '+claimed.length]].map(([id,label])=>`<button data-mission-tab="${id}" aria-pressed="${tab===id}">${label}</button>`).join('')}</div><div class="mission-body"><div class="mission-list" aria-label="ミッション一覧">${cards||'<div class="mission-empty"><b>✧</b><strong>'+(tab==='ready'?'報酬はすべて受取済み':tab==='claimed'?'最初の実績を刻もう':'すべてのミッションを達成！')+'</strong><p>新たな舞台へ、次の一歩を。</p></div>'}</div><div class="mission-detail">${chosen?`<span class="mission-seal">${known?chosen.icon:'?'}</span><small>${claimed.includes(chosen.id)?'REWARD RECEIVED':missionComplete(chosen)?'MISSION COMPLETE':known?'YOUR NEXT CHALLENGE':'SECRET MISSION'}</small><h3>${known?chosen.title:'？？？？'}</h3><p>${known?missionCondition(chosen):'まだ知らぬ冒険の先に。<br>進行に応じて内容が明らかになります。'}</p>${known&&chosen.stat?`<div class="mission-meter"><i style="width:${Math.min(100,campaign.missionStats[chosen.stat]/chosen.target*100)}%"></i></div><b>${Math.min(chosen.target,campaign.missionStats[chosen.stat])} / ${chosen.target}</b>`:''}<div class="mission-reward"><b>${known?missionReward(chosen):'報酬もシークレット'}</b>${known&&chosen.detail?'<p>'+chosen.detail+'</p>':''}</div>`:'<span class="mission-seal">♜</span><h3>冒険の記録が、力になる</h3><p>達成したミッションから<br>報酬を受け取れます。</p>'}</div></div><div class="mission-footer"><button id="missionBack">‹ ${missionReturnMode==='preparation'?'出発の確認へ':'地図へ'}</button><small>永続強化 HP＋${bonus.hp} · MP＋${bonus.mp}</small><button id="missionClaim" class="cta" ${ready.length?'':'disabled'}>すべて受け取る${ready.length?' ('+ready.length+')':''}</button></div>`);
+ openModal(`<div class="mission-heading"><div><div class="eyebrow">ADVENTURER'S GUILD</div><h2>ミッション</h2></div><b>${goldCounterMarkup(campaign.wallet,'wallet')} <small>G</small></b></div><div class="mission-tabs" role="group" aria-label="ミッションの絞り込み">${[['ready','受取可能 '+ready.length],['progress','挑戦中'],['claimed','受取済み '+claimed.length]].map(([id,label])=>`<button data-mission-tab="${id}" aria-pressed="${tab===id}">${label}</button>`).join('')}</div><div class="mission-body"><div class="mission-list" aria-label="ミッション一覧">${cards||'<div class="mission-empty"><b>✧</b><strong>'+(tab==='ready'?'報酬はすべて受取済み':tab==='claimed'?'最初の実績を刻もう':'すべてのミッションを達成！')+'</strong><p>新たな舞台へ、次の一歩を。</p></div>'}</div><div class="mission-detail">${chosen?`<span class="mission-seal">${known?chosen.icon:'?'}</span><small>${claimed.includes(chosen.id)?'REWARD RECEIVED':missionComplete(chosen)?'MISSION COMPLETE':known?'YOUR NEXT CHALLENGE':'SECRET MISSION'}</small><h3>${known?chosen.title:'？？？？'}</h3><p>${known?missionCondition(chosen):'まだ知らぬ冒険の先に。<br>進行に応じて内容が明らかになります。'}</p>${known&&chosen.stat?`<div class="mission-meter"><i style="width:${Math.min(100,campaign.missionStats[chosen.stat]/chosen.target*100)}%"></i></div><b>${Math.min(chosen.target,campaign.missionStats[chosen.stat])} / ${chosen.target}</b>`:''}<div class="mission-reward"><b>${known?missionReward(chosen):'報酬もシークレット'}</b>${known&&chosen.detail?'<p>'+chosen.detail+'</p>':''}</div>`:'<span class="mission-seal">♜</span><h3>冒険の記録が、力になる</h3><p>達成したミッションから<br>報酬を受け取れます。</p>'}</div></div><div class="mission-footer"><button id="missionBack">‹ ${missionReturnMode==='preparation'?'出発の確認へ':'地図へ'}</button><small>永続 HP＋${bonus.hp} · MP＋${bonus.mp}<br>攻撃・属性＋${bonus.attack}% · 守備＋${bonus.defense}</small><button id="missionClaim" class="cta" ${ready.length?'':'disabled'}>すべて受け取る${ready.length?' ('+ready.length+')':''}</button></div>`);
  $('modal').classList.add('mission-modal');document.querySelectorAll('[data-mission-tab]').forEach(b=>b.onclick=()=>openMissions(b.dataset.missionTab));document.querySelectorAll('[data-mission]').forEach(b=>b.onclick=()=>{const top=$('modal').querySelector('.mission-list').scrollTop;openMissions(tab,b.dataset.mission);$('modal').querySelector('.mission-list').scrollTop=top});document.querySelectorAll('[data-mission-claim]').forEach(b=>b.onclick=()=>claimMission(b.dataset.missionClaim));$('missionBack').onclick=closeMissions;$('missionClaim').onclick=claimAllMissions;
 }
 function addMissionHub(){

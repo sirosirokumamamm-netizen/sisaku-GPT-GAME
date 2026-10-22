@@ -76,24 +76,24 @@ function godEdict(e,pattern){
  const y=STAGES[game.stage].y;
  if(pattern===0){for(const [i,x]of [170,310,450,590].entries())personaWarning(e,'circle',i<2?clamp(p.x+(i?115:-65),battleBounds().left+90,battleBounds().right-90):arenaX(x),i<2?p.y+(i?95:-30):arenaY(y-40+(i%2)*150),1.15+i*.18,{r:82,atk:50,move:'holyPillar'});banner('四柱の宣告','光の柱が順番に降りる',1)}
  else if(pattern===1){const center={x:clamp(p.x,battleBounds().left+100,battleBounds().right-100),y:clamp(p.y,battleBounds().top+100,battleBounds().bottom-100)};for(const [i,dir]of [{x:.707,y:.707},{x:-.707,y:.707}].entries())personaWarning(e,'line',center.x-dir.x*370,center.y-dir.y*370,1.65+i*.4,{dir,length:740,width:88,atk:52,move:'heavenScales'});banner('天秤の光剣','交差する光を見切れ',1.2)}
- else if(pattern===2){const refuge=randomRefuge();epicWarning(e,'ring',refuge.x,refuge.y,arenaCoverRadius(refuge),2.8,{inner:105,atk:100,persist:1,style:'doom',persona:'god'});e.godAttack=3.2;startEpicEvent('創世神の審判','唯一の聖域へ','#fff0a6',1.15);banner('創世の審判','光る聖域へ！',2.2)}
+ else if(pattern===2){const refuge=randomRefuge();epicWarning(e,'ring',refuge.x,refuge.y,arenaCoverRadius(refuge),2.8,{inner:105,atk:100,persist:1,style:'doom',persona:'god',breakFirstWard:e.bossPhase!==2&&e.ward>0});e.godAttack=3.2;startEpicEvent('創世神の審判','唯一の聖域へ','#fff0a6',1.15);banner('創世の審判','光る聖域へ！',2.2)}
  else{const q={x:clamp(p.x,battleBounds().left+100,battleBounds().right-100),y:clamp(p.y,battleBounds().top+100,battleBounds().bottom-100)};for(const side of [-1,1])personaWarning(e,'line',q.x+side*100,q.y-210,1.55,{dir:{x:0,y:1},length:430,width:65,atk:50,move:'constellation'});personaWarning(e,'line',q.x-205,q.y-105,1.95,{dir:{x:1,y:0},length:410,width:65,atk:50,move:'constellation'});banner('星座の檻','幾何学の光のすき間へ',1.2)}
 }
-function updateShadowSovereign(e,dt){if(e.shadowMirage){e.shadowMirage.life=Math.max(0,e.shadowMirage.life-dt);if(!e.shadowMirage.life)e.shadowMirage=null;}
+function updateShadowSovereign(e,dt){if(e.shadowPhaseKnown!==(e.awakened?2:1)){e.shadowPhaseKnown=e.awakened?2:1;e.shadowPattern=e.awakened?7:4;e.shadowBeat=.4}if(e.shadowMirage){e.shadowMirage.life=Math.max(0,e.shadowMirage.life-dt);if(!e.shadowMirage.life)e.shadowMirage=null;}
  if(e.state==='revive'){e.timer-=dt;if(e.timer<=0){e.state='chase';e.cooldown=.5}return true}
  e.shadowTrailClock=(e.shadowTrailClock||0)-dt;if(e.shadowTrailClock<=0){e.shadowTrailClock=.45;e.shadowTrail=[...(e.shadowTrail||[]),{x:p.x,y:p.y}].slice(-4)}
- if(e.awakened){e.cycleTime-=dt;if(e.cycleTime<=0&&bossCommitmentPending(e))return true;if(e.cycleTime<=0){clearHostiles();e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?8:4;e.state=e.cycle==='exposed'?'recover':'chase';e.exposed=e.cycle==='exposed'?4:0;e.shadowBeat=.5;banner(e.cycle==='exposed'?'影がほどけた！':'影葬王、残影を展開',e.cycle==='exposed'?'本体へ反撃！':'過去の足跡から離れよう',1.2)}if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}}
+ if(e.awakened){e.cycleTime-=dt;if(e.cycleTime<=0&&bossCommitmentPending(e))return true;if(e.cycleTime<=0){clearHostiles();e.cycle=e.cycle==='assault'?'exposed':'assault';e.cycleTime=e.cycle==='assault'?11:2.6;e.state=e.cycle==='exposed'?'recover':'chase';e.exposed=e.cycle==='exposed'?2.6:0;e.shadowBeat=.5;banner(e.cycle==='exposed'?'影がほどけた！':'影葬王、残影を展開',e.cycle==='exposed'?'本体へ反撃！':'過去の足跡から離れよう',1.2)}if(e.cycle==='exposed'){e.exposed=e.cycleTime;return true}}
  if(!e.awakened&&e.state==='recover'){e.timer-=dt;e.exposed=e.timer;if(e.timer>0)return true;e.state='chase'}
  // Discrete shadow passages replace continuous walking. Movement cues cause no damage.
  if(updateShadowTransit(e,dt))return true;
- e.shadowBeat=(e.shadowBeat??1.3)-dt;if(e.shadowBeat<=0&&!e.attackSequence&&!warnings.some(w=>w.owner===e.id&&w.life>.6)){e.shadowBeat=e.awakened?2.05:2.45;shadowSovereignAttack(e)}return true;
+ e.shadowBeat=(e.shadowBeat??1.3)-dt;if(e.shadowBeat<=0&&!e.attackSequence&&!warnings.some(w=>w.owner===e.id&&w.life>.6)){e.shadowBeat=e.awakened?1.2:1.55;shadowSovereignAttack(e)}return true;
 }
 function shadowSovereignAttack(e){
- const pattern=(e.shadowPattern||0)%(e.awakened?7:4);e.shadowPattern=(e.shadowPattern||0)+1;if(e.awakened&&shadowSecondArt(e,pattern))return;const y=STAGES[game.stage].y;
- if(pattern===0){const marks=(e.shadowTrail?.length?e.shadowTrail:[{x:p.x,y:p.y}]).filter((q,i,a)=>!i||distance(q,a[i-1])>42).slice(-3);for(const [i,q]of marks.entries())personaWarning(e,'circle',q.x,q.y,1.45+i*.32,{r:e.awakened?88:74,atk:e.awakened?46:34,move:'memoryReap'});banner('残影葬','過去の足跡を刈り取る',1)}
- else if(pattern===1){const n=norm(p.x-e.x,p.y-e.y),angle=Math.atan2(n.y,n.x);e.shadowMirage={life:1.85,max:1.85};for(const [i,a]of [-.6,.6].entries())personaWarning(e,'fan',e.x,e.y,1.4+i*.45,{dir:{x:Math.cos(angle+a),y:Math.sin(angle+a)},length:280,spread:.75,atk:44,move:'shadeWaltz'});banner('影刃の輪舞','回る分身と二段の刃を見切れ',1)}
- else if(pattern===2){const q={x:p.x,y:p.y};for(const [i,dir]of [{x:.8,y:.6},{x:-.8,y:.6}].entries())personaWarning(e,'line',q.x-dir.x*235,q.y-dir.y*235,1.45+i*.5,{dir,length:470,width:75,atk:42,move:'shadowScissor'});banner('黒月の鋏','二つの影刃が遅れて交差',1.1)}
- else{const side=p.x>arenaX(380)?1:-1,dir={x:-side,y:0};for(let i=0;i<(e.awakened?3:2);i++)personaWarning(e,'line',arenaX(380+side*290),arenaY(y-100+i*155),1.5+i*.4,{dir,length:1000,width:78,atk:40,move:'graveMarch'});startEpicEvent('影葬王の残像','亡き王たちの葬列','#aaa4ff',.85)}
+ const pattern=(e.shadowPattern||0)%(e.awakened?10:6);e.shadowPattern=(e.shadowPattern||0)+1;if(shadowCourtArt(e,pattern))return;if(e.awakened&&shadowSecondArt(e,pattern))return;const y=STAGES[game.stage].y;
+ if(pattern===0){const marks=(e.shadowTrail?.length?e.shadowTrail:[{x:p.x,y:p.y}]).filter((q,i,a)=>!i||distance(q,a[i-1])>42).slice(-3);for(const [i,q]of marks.entries())personaWarning(e,'circle',q.x,q.y,1+i*.22,{r:e.awakened?110:90,atk:e.awakened?68:52,move:'memoryReap'});banner('残影葬','過去の足跡を刈り取る',1)}
+ else if(pattern===1){const n=norm(p.x-e.x,p.y-e.y),angle=Math.atan2(n.y,n.x);e.shadowMirage={life:1.85,max:1.85};for(const [i,a]of [-.6,.6].entries())personaWarning(e,'fan',e.x,e.y,1+i*.3,{dir:{x:Math.cos(angle+a),y:Math.sin(angle+a)},length:720,spread:.75,atk:56,move:'shadeWaltz'});banner('影刃の輪舞','回る分身と二段の刃を見切れ',1)}
+ else if(pattern===2){const q={x:p.x,y:p.y};for(const [i,dir]of [{x:.8,y:.6},{x:-.8,y:.6}].entries())personaWarning(e,'line',q.x-dir.x*235,q.y-dir.y*235,1+i*.3,{dir,length:850,width:90,atk:54,move:'shadowScissor'});banner('黒月の鋏','二つの影刃が遅れて交差',1.1)}
+ else{const side=p.x>arenaX(380)?1:-1,dir={x:-side,y:0};for(let i=0;i<(e.awakened?3:2);i++)personaWarning(e,'line',arenaX(380+side*290),arenaY(y-100+i*155),1.05+i*.25,{dir,length:1250,width:90,atk:52,move:'graveMarch'});startEpicEvent('影葬王の残像','亡き王たちの葬列','#aaa4ff',.85)}
 }
 function resolvePersonaStrike(w,owner){if(w.stateOnly){resolveAilmentWave(w,owner);return}empowerBossThreat(w,owner);if(w.rush){startDemonRush(owner,w);return}
  if(warningContains(w)&&!w.perfectUsed&&p.rollTime>0&&p.dodgeAge<.2)perfectDodge(w);
@@ -101,7 +101,7 @@ function resolvePersonaStrike(w,owner){if(w.stateOnly){resolveAilmentWave(w,owne
  if(w.landing){const before={x:owner.x,y:owner.y};Object.assign(owner,safePoint(w.landing.x,w.landing.y,owner.r));if(effects.length<effectBudget()-2)effects.push({kind:'sovereignImpact',persona:w.persona,move:'departure',x:before.x,y:before.y,shape:'circle',r:60,color:w.color,life:.45,max:.45})}
  bossAttackSpectacle(w,owner);if(w.dominion){effects.push({kind:'cataclysm',x:w.x,y:w.y,inner:w.inner,bounds:{...battleBounds()},life:1.65,max:1.65});combatSound('demon-cataclysm',owner.x);if(!reduced&&preferences.shake)shake=Math.max(shake,11);owner.state=owner.awakened?'chase':'recover';owner.timer=1.2;owner.exposed=owner.awakened?0:1.2;}else combatSound(w.persona==='demon'?'demon-blade':w.persona==='god'?'god-verdict':'shadow-rift',owner.x);
  if(w.persist&&hazards.length<9)hazards.push({...w,life:w.persist,tick:.7,atk:Math.round(w.atk*.45),protected:!!w.perfectUsed});
- if(!owner.awakened&&owner.form!=='god'&&!warnings.some(other=>other!==w&&other.owner===owner.id&&other.life>0)){owner.state='recover';owner.timer=.85;owner.exposed=.85}
+ releaseGodWardAfterJudgment(w,owner);if(!owner.awakened&&owner.form!=='god'&&!warnings.some(other=>other!==w&&other.owner===owner.id&&other.life>0)){owner.state='recover';owner.timer=owner.shadowLord?.5:.85;owner.exposed=owner.timer}
 }
 function emitSovereignImpact(w,owner){
  if(effects.filter(f=>f.kind==='sovereignImpact').length>=(reduced?3:renderLoad.slow?6:10))return;

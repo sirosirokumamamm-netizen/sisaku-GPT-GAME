@@ -12,7 +12,7 @@ function walkingWeight(){return game.singleStage&&getWeapon().id==='greatsword'?
 function clearPlayerAilments(){p.ailments={};p.ailmentGuard={};p.poisonClock=1}
 function applyPlayerAilment(id,duration=AILMENTS[id]?.duration){
  if(!AILMENTS[id]||p.hp<=0||game.mode!=='play'||(p.ailmentGuard?.[id]||0)>0)return false;
- p.ailments??={};p.ailmentGuard??={};p.ailments[id]=Math.min(id==='paralyze'?.42:6,Math.max(p.ailments[id]||0,duration));p.ailmentGuard[id]=id==='paralyze'?1.9:.6;
+ if(absorbCharmAilment()){p.ailmentGuard??={};p.ailmentGuard[id]=.6;return false}p.ailments??={};p.ailmentGuard??={};p.ailments[id]=Math.min(id==='paralyze'?.42:6,Math.max(p.ailments[id]||0,duration));p.ailmentGuard[id]=id==='paralyze'?1.9:.6;
  if(id==='poison')p.poisonClock=1;floating(p.x,p.y-120,AILMENTS[id].name+'！',AILMENTS[id].color,true);combatSound(id==='poison'?'poison-hiss':'status-shock');
  effects.push({kind:'ailmentPulse',ailment:id,x:p.x,y:p.y,r:90,life:.65,max:.65});return true;
 }
@@ -86,9 +86,21 @@ function demonSecondArt(e,pattern){
  if(pattern===4){castAilmentWave(e,'weaken');return true}
  if(pattern===5){for(let i=0;i<5;i++){const q=safePoint(p.x+(i-2)*95,p.y+(i%2?80:-30),20);personaWarning(e,'circle',q.x,q.y,1+i*.28,{r:105,atk:48,ailment:i===2?'poison':null,move:'corruptEruption'})}return true}return false;
 }
+function releaseGodWardAfterJudgment(w,e){
+ if(!w.breakFirstWard||e.form!=='god'||e.bossPhase===2||!e.ward)return;
+ e.godJudgmentPending=false;e.ward=0;e.cycleTime=5.5;e.godAttack=1.2;e.state='recover';e.timer=e.exposed=1.2;e.godCycle=(e.godCycle||0)+1;
+ effects.push({kind:'nova',x:e.x,y:e.y-45,r:130,color:'#ffe4a1',life:.75,max:.75});floating(e.x,e.y-160,'障壁解除！','#ffe4a1',true);if(game.mode==='play')banner('審判の反動 · 障壁解除！','5.5秒間、通常ダメージで反撃できる',1.6);
+}
 function updateGodTrial(e,dt){
+ if(e.bossPhase!==2&&!e.firstWardInitialized){e.firstWardInitialized=true;if(e.ward)e.cycleTime=Math.min(e.cycleTime||3.3,3.3)}
  e.cycleTime-=dt;e.godAttack=(e.godAttack||0)-dt;
- if(e.cycleTime<=0){e.godCycle++;e.ward=e.ward>0?0:1;e.cycleTime=e.ward>0?(e.bossPhase===2?2.8:3.3):(e.bossPhase===2?4.5:5.5);if(e.ward)mirrorGuard(e);}
+ if(e.bossPhase===2){if(e.cycleTime<=0){e.godCycle++;e.ward=e.ward>0?0:1;e.cycleTime=e.ward>0?2.8:4.5;if(e.ward)mirrorGuard(e)}}
+ else if(!e.ward&&e.cycleTime<=0){e.ward=1;e.cycleTime=3.3;e.godJudgmentPending=false;mirrorGuard(e)}
+ if(e.bossPhase!==2&&e.ward){
+  // A short stillness plus the 2.8s telegraph; the attack's actual resolution opens the ward.
+  if(!e.godJudgmentPending&&e.cycleTime<=2.8&&!warnings.some(w=>w.owner===e.id&&w.life>0)&&!e.attackSequence){godEdict(e,2);e.godJudgmentPending=true}
+  return true;
+ }
  if(e.state==='recover'){e.timer-=dt;e.exposed=Math.max(0,e.timer);if(e.timer>0)return true;e.state='chase';}
  const angle=game.time*(e.bossPhase===2?1.2:.65),target=safePoint(arenaX(380+Math.sin(angle)*210),arenaY(STAGES[game.stage].y+50+Math.cos(angle)*160),e.r),n=norm(target.x-e.x,target.y-e.y),phase=game.time%2.8,speed=e.bossPhase===2?(phase<.8?65:phase<1.6?425:145):godMotion(e).speed;
  moveActor(e,n.x*speed*dt,n.y*speed*dt);e.motionPhase=e.bossPhase===2?(phase<.8?'still':phase<1.6?'surge':'settle'):godMotion(e).phase;
@@ -129,8 +141,8 @@ function drawTrialVision(){
  if(!(p.ailments?.blind>0)||game.mode!=='play')return;const scale=view.scale*(reduced?1:combat.zoom),x=view.w/2+(p.x-cam.x)*scale,y=view.h/2+(p.y-cam.y)*scale*CAMERA.depth,gradient=ctx.createRadialGradient(x,y,80*view.scale,x,y,260*view.scale);gradient.addColorStop(0,'#100d1d00');gradient.addColorStop(1,'#0b071ee6');ctx.save();ctx.fillStyle=gradient;ctx.fillRect(0,0,view.w,view.h);ctx.restore();
 }
 function drawAilmentHUD(){
- if(game.mode!=='play'||!p.ailments)return;const active=Object.entries(p.ailments).filter(([id,n])=>n>0);if(!active.length)return;ctx.save();ctx.font='800 11px system-ui';ctx.textAlign='left';const boss=enemies.find(e=>e.kind==='boss'&&e.hp>0);let x=15,y=view.h<450&&boss?103+([...AUTO_IDS].some(id=>p.learned[id])?27:0)+(boss.catastrophe?81:27):105;
- for(const [id,time]of active){const c=AILMENTS[id],label=c.name+' '+time.toFixed(1)+'秒',width=ctx.measureText(label).width+16;if(x+width>view.w-10){x=15;y+=23}rounded(x,y,width,20,7,'#101724ef',c.color);ctx.fillStyle=c.color;ctx.fillText(label,x+8,y+14);x+=width+5}ctx.restore();
+ if(game.mode!=='play')return;const active=Object.entries(p.ailments||{}).filter(([id,n])=>n>0),charm=game.active&&game.roomCharm?.room===game.room?game.roomCharm:null;if(charm?.guard||charm?.hits)active.push(['charm',0]);if(!active.length)return;ctx.save();ctx.font='800 11px system-ui';ctx.textAlign='left';const boss=enemies.find(e=>e.kind==='boss'&&e.hp>0);let x=15,y=view.h<450&&boss?103+([...AUTO_IDS].some(id=>p.learned[id])?27:0)+(boss.catastrophe?81:27):105;
+ for(const [id,time]of active){const c=id==='charm'?{color:'#e8d9aa'}:AILMENTS[id],label=id==='charm'?(charm.guard?'お守り · 異常防御1回':'お守り · 軽減 残り'+charm.hits+'回'):c.name+' '+time.toFixed(1)+'秒',width=ctx.measureText(label).width+16;if(x+width>view.w-10){x=15;y+=23}rounded(x,y,width,20,7,'#101724ef',c.color);ctx.fillStyle=c.color;ctx.fillText(label,x+8,y+14);x+=width+5}ctx.restore();
 }
 
 // Subtle look-ahead retains the player's anchor; no zoom or gameplay geometry changes.

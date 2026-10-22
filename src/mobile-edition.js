@@ -79,7 +79,7 @@ function skillDisplayName(s,rank){if(!s)return '';const level=rank??p?.learned?.
 function darkCrashUnlocked(){return !!campaign&&campaign.rares.includes('nova')}
 function darkCrashDamage(rank=p.learned.nova||1){return (rank>=3?435:rank===2?240:190)*p.power}
 function castDarkCrash(boost,manual=false){
- const rank=p.learned.nova||1,target=nearest(skillReach(rank>=3?480:260));if(!target){acquisitionToast('敵に近づこう');return}const color=rank>=3?'#e8b6ff':'#a880de';p.face=norm(target.x-p.x,target.y-p.y);slashEffect(true,p.face,color);hurtEnemy(target,darkCrashDamage(rank)*boost,true,color,false,false,manual,'dark',false,'nova');signatureRelease('nova',p.x,p.y,{length:Math.max(260,distance(p,target)+80)});if(rank>=3)trueSkillEffect(getSkill('nova'));playCue('impact');
+ const rank=p.learned.nova||1,target=skillAimTarget(getSkill('nova'),skillReach(rank>=3?480:260),false);if(!target){acquisitionToast('敵に近づこう');return}const color=rank>=3?'#e8b6ff':'#a880de';p.face=norm(target.x-p.x,target.y-p.y);slashEffect(true,p.face,color);hurtEnemy(target,darkCrashDamage(rank)*boost,true,color,false,false,manual,'dark',false,'nova');signatureRelease('nova',p.x,p.y,{length:Math.max(260,distance(p,target)+80)});if(rank>=3)trueSkillEffect(getSkill('nova'));playCue('impact');
 }
 function trueSkillEffect(s){
  if(effects.length>260)return;const color=s.color||'#d7f8ff';effects.push({kind:'sigil',x:p.x,y:p.y,r:65,color,life:.65,max:.65},{kind:'burst',x:p.x,y:p.y,r:115,color,life:.45,max:.45});particle(p.x,p.y-20,color,10,150);

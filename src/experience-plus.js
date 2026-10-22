@@ -23,7 +23,7 @@ function openWeaponShop(returnMode='stageSelect',selection,tab='swords'){
  $('buySword').onclick=()=>{if(game.mode!=='weaponShop')return;refreshCampaign();const n=cloneCampaign();if(sword){if(!availableWeapons().some(item=>item.id===w.id))return;if(!n.weapons.includes(w.id)){const cost=weaponSale(w.id,storeRegion).price;if(n.wallet<cost)return;n.wallet-=cost;n.weapons.push(w.id)}n.weapon=w.id;}else if(art){if(!n.ultimates.includes(w.id)){if(n.wallet<w.price)return;n.wallet-=w.price;n.ultimates.push(w.id)}n.ultimate=w.id;}else{const item=storeProducts().find(x=>x.id===w.id);if(item.level>=item.max||n.wallet<item.price)return;n.wallet-=item.price;if(w.id==='carryExpansion')n.carrySlots++;else n.luckCharm++;}saveCampaign(n);playCue('purchase');acquisitionToast(w.name+(sword?' 装備！':art?' 習得！':' 強化！'));openWeaponShop(storeReturn,w.id,tab);announce(w.name+' '+(sword?'を装備しました':art?'を選択しました':'を強化しました'))};return true;
 }
 // Full danger outline from the first frame; fill and a clock show when it strikes.
-function threatName(w){return w.style==='doom'?'大技 · 安全地帯へ':w.follow?(w.life>w.lockTime?'追尾中 → 動き続ける':'位置確定 → 外へ'):w.kind==='line'?'直線攻撃 → 横へ':w.kind==='ring'?'光の輪の内側へ':w.persist||w.attack==='mine'?'着弾後も危険':'範囲の外へ'}
+function threatName(w){if(w.stateOnly)return AILMENTS[w.ailment].name+' · 回避で防ぐ';return w.style==='doom'?'大技 · 安全地帯へ':w.follow?(w.life>w.lockTime?'追尾中 → 動き続ける':'位置確定 → 外へ'):w.kind==='line'?'直線攻撃 → 横へ':w.kind==='ring'?'光の輪の内側へ':w.persist||w.attack==='mine'?'着弾後も危険':'範囲の外へ'}
 function drawWarning(w,t){
  if(!showAttackWarning(w))return;
  const progress=warningProgress(w),inside=warningContains(w),urgent=w.life<.45,color=urgent?'#fff0a3':inside?'#ff896b':'#ffc295';ctx.save();warningShape(w);ctx.fillStyle=inside?'#d7373438':'#b4363026';ctx.fill('evenodd');ctx.strokeStyle='#271c2d';ctx.lineWidth=7;ctx.stroke();ctx.strokeStyle=color;ctx.lineWidth=inside?3.5:2.5;ctx.stroke();
@@ -34,7 +34,7 @@ function drawWarning(w,t){
  ctx.restore();
 }
 function updateReadableThreats(dt){
- for(const w of warnings){empowerBossThreat(w);if(!w.readable){w.readable=true;const min=w.style==='doom'?2:w.follow?1.35:w.atk>=35?1.15:.7;if(w.max<min){w.life+=min-w.max;w.max=min;const e=enemies.find(e=>e.id===w.owner);if(e?.state==='windup')e.timer=Math.max(e.timer,w.life)}}if(showAttackWarning(w)&&warningContains(w)&&w.life<.55&&!w.alerted){w.alerted=true;playCue('danger')}}
+ for(const w of warnings){empowerBossThreat(w);if(!w.readable){w.readable=true;const min=w.stateOnly?.5:w.style==='doom'?2:w.follow?1.35:w.atk>=35?1.15:.7;if(w.max<min){w.life+=min-w.max;w.max=min;const e=enemies.find(e=>e.id===w.owner);if(e?.state==='windup')e.timer=Math.max(e.timer,w.life)}}if(showAttackWarning(w)&&warningContains(w)&&w.life<.55&&!w.alerted){w.alerted=true;playCue('danger')}}
 }
 function recordReadableHit(dmg,before){
  game.lastHit={amount:Math.min(dmg,before),source:game.hitSource||'敵の攻撃',life:2.2};playCue(p.hp<=p.maxHp*.3?'critical':'hurt');
@@ -53,7 +53,7 @@ function updateBossScene(dt){
  const s=game.bossScene;if(!s)return;s.time+=dt;const q=s.time/s.duration;if(!s.burst&&q>.55){s.burst=true;for(const e of s.cast){particle(e.x,e.y-45,s.kind==='defeat'?'#ffe8b6':'#c5bcff',50,260);effects.push({kind:'nova',x:e.x,y:e.y-30,r:s.kind==='defeat'?260:180,color:s.kind==='defeat'?'#ffe9b4':'#bfa9ff',life:1,max:1});}playCue(s.kind==='defeat'?'explosion':'impact');if(!reduced&&preferences.shake)shake=6;}if(s.time>=s.duration)endBossScene();
 }
 function endBossScene(){
- const s=game.bossScene;if(!s)return;game.bossScene=null;document.querySelector('.scene').classList.remove('cinematic-playing');if($('sceneSkip'))$('sceneSkip').hidden=true;for(const e of enemies)if(s.ids.includes(e.id)){e.spawnTime=0;e.cooldown=Math.max(e.cooldown,1.2);if(s.kind==='transform'){e.state='chase';e.timer=0;e.cycleTime=8;e.barrageClock=1.2;if(e.form==='god'){e.ward=1;e.godAttack=1.2}}}if(s.phaseGift){acquisitionToast('特別支給！ ポーション +1（所持 '+game.fieldPotions+'）','#baffce');banner('ポーション +1！','所持上限を超えて支給 · 回復ボタンで使える',3.5);playCue('rare')}p.invuln=Math.max(p.invuln,.8);resetInput();if(s.kind==='arrival')banner('BOSS 戦闘開始','予兆の外へ移動し、攻撃後に反撃',1.2);updateUI();
+ const s=game.bossScene;if(!s)return;if(['arrival','transform'].includes(s.kind))clearPlayerAilments();game.bossScene=null;document.querySelector('.scene').classList.remove('cinematic-playing');if($('sceneSkip'))$('sceneSkip').hidden=true;for(const e of enemies)if(s.ids.includes(e.id)){e.spawnTime=0;e.cooldown=Math.max(e.cooldown,1.2);if(s.kind==='transform'){e.state='chase';e.timer=0;e.cycleTime=8;e.barrageClock=1.2;if(e.form==='god'){e.ward=1;e.cycleTime=2.8;e.godAttack=1.2}}}if(s.phaseGift){acquisitionToast('特別支給！ ポーション +1（所持 '+game.fieldPotions+'）','#baffce');banner('ポーション +1！','所持上限を超えて支給 · 回復ボタンで使える',3.5);playCue('rare')}p.invuln=Math.max(p.invuln,.8);resetInput();if(s.kind==='arrival')banner('BOSS 戦闘開始','予兆の外へ移動し、攻撃後に反撃',1.2);updateUI();
 }
 function drawBossSceneWorld(t){
  const s=game.bossScene;if(!s)return;const q=clamp(s.time/s.duration,0,1);for(const e of s.cast){aboveView(()=>{ctx.save();ctx.translate(e.x,e.y);if(s.kind==='arrival')drawArrivalRitual(e,q);if(e.form==='god'&&s.kind==='arrival')drawDivineArrival(q);let alpha=1,scale=1;if(s.kind==='arrival'){scale=.55+.45*Math.min(1,q*2);alpha=Math.min(1,q*3);if(['dragon','god'].includes(e.form))ctx.translate(0,-(1-Math.min(1,q*2))*140);ellipse(0,3,90+q*100,20+q*15,'#dac4ff44')}else if(s.kind==='defeat'){alpha=q<.55?1:Math.max(0,1-(q-.55)/.35);scale=1+(q>.55?(q-.55)*1.8:Math.sin(q*70)*.018)}else if(s.kind==='transform')scale=.8+Math.min(.35,q*.4);ctx.scale(scale,scale);ctx.translate(-e.x,-e.y);
@@ -66,7 +66,7 @@ function drawBossSceneHUD(){
 function activateUltimate(){
  if(game.mode!=='play'||!combatActionsAvailable()||p.ultimate<100||p.ultimateTime>0||p.cutin>0||p.skillCharge)return false;
  const target=enemies.filter(e=>e.hp>0&&e.spawnTime<=0).sort((a,b)=>b.hp-a.hp)[0];if(!target){banner('標的がいない','敵が現れてから使おう',1);return false}
- if(target.form==='god'&&target.ward>0||target.form==='demon'&&target.awakened&&target.cycle!=='exposed'){banner('今は障壁に守られている','解除を待とう。ゲージは消費しません',1.5);playCue('deny');return false}
+ if(target.form==='god'&&target.ward>0&&!target.catastrophe){banner('今は障壁に守られている','解除を待とう。ゲージは消費しません',1.5);playCue('deny');return false}
  p.ultimateArt=game.ultimateArt||'sorai';p.ultimateTarget=target.id;p.ultimate=0;p.cutin=reduced||preferences.shortCinematics?.25:1.15;p.cutinMax=p.cutin;p.ultimateTime=8+(p.learned.ultimatePower||0);inputBuffer=null;p.face=norm(target.x-p.x,target.y-p.y);document.querySelector('.scene').classList.add('ultimate-cutin');playCue('ultimate');updateUI();return true;
 }
 function releaseAstralSlash(){combatSound('ultimate-'+(p.ultimateArt||'sorai'));

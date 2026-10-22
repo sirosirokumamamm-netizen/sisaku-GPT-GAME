@@ -33,7 +33,7 @@ function applyTouchLayout(){
   for(const [property,value]of Object.entries({left:(x-originX)+'px',top:(y-originY)+'px',right:'auto',bottom:'auto',transform:`translate(-50%,-50%) scale(${item.scale})`,opacity:String(item.opacity)}))if(node.style.getPropertyValue(property)!==value)node.style.setProperty(property,value,'important');
   node.classList.toggle('touch-selected',!!touchEdit&&touchEdit.selected===key);
  }
- if(touchEdit)validateTouchLayout();
+ if(touchEdit)validateTouchLayout();cacheBossTrackerLayout();
 }
 function validateTouchLayout(){
  const entries=Object.keys(TOUCH_TARGETS).map(key=>({key,node:touchNode(key),r:touchNode(key).getBoundingClientRect()})),overlap=new Set();

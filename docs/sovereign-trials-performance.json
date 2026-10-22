@@ -1,0 +1,46 @@
+{
+  "environment": "Headless Chromium, DPR 2, cloud host; god and shadow rituals plus blind/poison; not a phone",
+  "method": "30 warmup + 180 real animation frames; grass/shadow horde or second-form boss; automatic skills and repeated manual effects (signature=true: charged Dark Crash, Dawn, Meteor); simulation + render CPU costs",
+  "rows": [
+    {
+      "w": 390,
+      "h": 844,
+      "region": "天界",
+      "rate": 1,
+      "trial": true,
+      "enemies": 1,
+      "samples": 180,
+      "workMedianMs": 2.5,
+      "workP95Ms": 5.6,
+      "frameP95Ms": 33.4,
+      "maxEffects": 130,
+      "maxMajorEffects": 0,
+      "trialFrames": 179,
+      "adaptiveSlow": false,
+      "budget": 200,
+      "canvasPixelRatio": 2,
+      "finite": true,
+      "mode": "play"
+    },
+    {
+      "w": 390,
+      "h": 844,
+      "region": "影の世界",
+      "rate": 1,
+      "trial": true,
+      "enemies": 1,
+      "samples": 180,
+      "workMedianMs": 2,
+      "workP95Ms": 4,
+      "frameP95Ms": 33.4,
+      "maxEffects": 197,
+      "maxMajorEffects": 0,
+      "trialFrames": 179,
+      "adaptiveSlow": false,
+      "budget": 200,
+      "canvasPixelRatio": 2,
+      "finite": true,
+      "mode": "play"
+    }
+  ]
+}

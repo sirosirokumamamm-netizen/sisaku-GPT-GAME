@@ -72,6 +72,7 @@ function glideJudgingGod(e,dt){
  const center=STAGES[game.stage].y,n=norm(arenaX(380+Math.sin(game.time*.25)*160)-e.x,arenaY(center-80+Math.cos(game.time*.25)*55)-e.y);moveActor(e,n.x*245*dt,n.y*245*dt);
 }
 function godEdict(e,pattern){
+ if(e.bossPhase===2&&godSecondArt(e,pattern))return;
  const y=STAGES[game.stage].y;
  if(pattern===0){for(const [i,x]of [170,310,450,590].entries())personaWarning(e,'circle',arenaX(x),arenaY(y-40+(i%2)*150),1.4+i*.18,{r:72,atk:48,move:'holyPillar'});banner('四柱の宣告','光の柱が順番に降りる',1)}
  else if(pattern===1){const center={x:clamp(p.x,battleBounds().left+100,battleBounds().right-100),y:clamp(p.y,battleBounds().top+100,battleBounds().bottom-100)};for(const [i,dir]of [{x:.707,y:.707},{x:-.707,y:.707}].entries())personaWarning(e,'line',center.x-dir.x*370,center.y-dir.y*370,1.65+i*.4,{dir,length:740,width:88,atk:52,move:'heavenScales'});banner('天秤の光剣','交差する光を見切れ',1.2)}
@@ -85,16 +86,16 @@ function updateShadowSovereign(e,dt){if(e.shadowMirage){e.shadowMirage.life=Math
  if(!e.awakened&&e.state==='recover'){e.timer-=dt;e.exposed=e.timer;if(e.timer>0)return true;e.state='chase'}
  // Discrete shadow passages replace continuous walking. Movement cues cause no damage.
  if(updateShadowTransit(e,dt))return true;
- e.shadowBeat=(e.shadowBeat??1.3)-dt;if(e.shadowBeat<=0&&!warnings.some(w=>w.owner===e.id&&w.life>.6)){e.shadowBeat=e.awakened?2.05:2.45;shadowSovereignAttack(e)}return true;
+ e.shadowBeat=(e.shadowBeat??1.3)-dt;if(e.shadowBeat<=0&&!e.attackSequence&&!warnings.some(w=>w.owner===e.id&&w.life>.6)){e.shadowBeat=e.awakened?2.05:2.45;shadowSovereignAttack(e)}return true;
 }
 function shadowSovereignAttack(e){
- const pattern=(e.shadowPattern||0)%4;e.shadowPattern=(e.shadowPattern||0)+1;const y=STAGES[game.stage].y;
+ const pattern=(e.shadowPattern||0)%(e.awakened?7:4);e.shadowPattern=(e.shadowPattern||0)+1;if(e.awakened&&shadowSecondArt(e,pattern))return;const y=STAGES[game.stage].y;
  if(pattern===0){const marks=(e.shadowTrail?.length?e.shadowTrail:[{x:p.x,y:p.y}]).filter((q,i,a)=>!i||distance(q,a[i-1])>42).slice(-3);for(const [i,q]of marks.entries())personaWarning(e,'circle',q.x,q.y,1.45+i*.32,{r:e.awakened?88:74,atk:e.awakened?46:34,move:'memoryReap'});banner('残影葬','過去の足跡を刈り取る',1)}
  else if(pattern===1){const n=norm(p.x-e.x,p.y-e.y),angle=Math.atan2(n.y,n.x);e.shadowMirage={life:1.85,max:1.85};for(const [i,a]of [-.6,.6].entries())personaWarning(e,'fan',e.x,e.y,1.4+i*.45,{dir:{x:Math.cos(angle+a),y:Math.sin(angle+a)},length:280,spread:.75,atk:44,move:'shadeWaltz'});banner('影刃の輪舞','回る分身と二段の刃を見切れ',1)}
  else if(pattern===2){const q={x:p.x,y:p.y};for(const [i,dir]of [{x:.8,y:.6},{x:-.8,y:.6}].entries())personaWarning(e,'line',q.x-dir.x*235,q.y-dir.y*235,1.45+i*.5,{dir,length:470,width:75,atk:42,move:'shadowScissor'});banner('黒月の鋏','二つの影刃が遅れて交差',1.1)}
  else{const side=p.x>arenaX(380)?1:-1,dir={x:-side,y:0};for(let i=0;i<(e.awakened?3:2);i++)personaWarning(e,'line',arenaX(380+side*290),arenaY(y-100+i*155),1.5+i*.4,{dir,length:1000,width:78,atk:40,move:'graveMarch'});startEpicEvent('影葬王の残像','亡き王たちの葬列','#aaa4ff',.85)}
 }
-function resolvePersonaStrike(w,owner){empowerBossThreat(w,owner);if(w.rush){startDemonRush(owner,w);return}
+function resolvePersonaStrike(w,owner){if(w.stateOnly){resolveAilmentWave(w,owner);return}empowerBossThreat(w,owner);if(w.rush){startDemonRush(owner,w);return}
  if(warningContains(w)&&!w.perfectUsed&&p.rollTime>0&&p.dodgeAge<.2)perfectDodge(w);
  if(warningContains(w)&&!w.perfectUsed){game.hitSource=w.persona==='god'?'雷撃':w.move==='royalLunge'?'突進':'範囲攻撃';takeHit(w.atk,w.x,w.y)}hitExplosives(q=>warningContains(w,q,16),w.atk);
  if(w.landing){const before={x:owner.x,y:owner.y};Object.assign(owner,safePoint(w.landing.x,w.landing.y,owner.r));if(effects.length<effectBudget()-2)effects.push({kind:'sovereignImpact',persona:w.persona,move:'departure',x:before.x,y:before.y,shape:'circle',r:60,color:w.color,life:.45,max:.45})}
@@ -110,6 +111,7 @@ function emitSovereignImpact(w,owner){
 function drawSovereignImpact(e,a){
  const q=1-a;ctx.save();ctx.translate(e.x,e.y);ctx.strokeStyle=e.color;ctx.lineCap='round';
  if(e.persona==='god'){
+  if(e.move==='pursuingThunder'){for(const [width,color]of [[17,'#d79c36aa'],[7,'#ffe988'],[2,'#ffffff']]){ctx.strokeStyle=color;ctx.lineWidth=width*a;ctx.beginPath();ctx.moveTo(0,-380);for(let i=1;i<9;i++)ctx.lineTo(i===8?0:(i%2?24:-18),-380+i*47.5);ctx.stroke()}ctx.strokeStyle='#fff0aa';ctx.lineWidth=3*a;for(let i=0;i<4;i++){ctx.beginPath();ctx.moveTo(0,-280+i*65);ctx.lineTo((i%2?1:-1)*(65+q*35),-240+i*65);ctx.stroke()}ellipse(0,0,65*q,22*q,'#ffe68b66');}
   if(e.shape==='ring'){const inner=e.inner||105,r=inner+110+q*55;for(let i=0;i<(reduced?4:8);i++){const angle=i*Math.PI/4,x=Math.cos(angle)*r,y=Math.sin(angle)*r;path([[x-8,y],[x-4,y-110*a],[x,y-180*a],[x+6,y-100*a],[x+9,y]],'#fff2babb','#edc974')}ctx.strokeStyle='#ffeeb5';ctx.lineWidth=5*a+1;ctx.beginPath();ctx.arc(0,0,inner+65+q*100,0,Math.PI*2);ctx.stroke()}
   else if(e.shape==='line'){ctx.rotate(Math.atan2(e.dir.y,e.dir.x));for(const side of [-1,1]){ctx.strokeStyle=side<0?'#ffd574':'#fff8dd';ctx.lineWidth=side<0?14*a:3;ctx.beginPath();ctx.moveTo(-20,0);ctx.lineTo(e.length+30,0);ctx.stroke()}for(let i=0;i<(reduced?3:7);i++){const x=i*e.length/6;path([[x,-13*a],[x+8,0],[x,13*a],[x-8,0]],'#fff4be')}}
   else{const r=e.r||90;ctx.fillStyle='#fff0b422';ctx.fillRect(-r*.35,-240*a,r*.7,240*a);for(let i=0;i<3;i++){ctx.strokeStyle=i%2?'#fff9db':'#eac575';ctx.lineWidth=2+i;ctx.beginPath();ctx.ellipse(0,-i*45*a,r*(.6+q*.4),r*.35,0,0,Math.PI*2);ctx.stroke()}path([[0,-270*a],[16,-70*a],[7,0],[-7,0],[-16,-70*a]],'#fff5c8','#e4c16e')}
@@ -130,7 +132,7 @@ function drawTaperedCut(x,y,r,bend,color,width){
  ctx.save();ctx.translate(x,y);ctx.beginPath();ctx.moveTo(-r*.65,-r*.3*bend);ctx.bezierCurveTo(-r*.14,r*.46*bend,r*.56,r*.25*bend,r, -r*.18*bend);ctx.bezierCurveTo(r*.35,r*.32*bend,-r*.13,r*.3*bend,-r*.65,-r*.3*bend);ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#fff4df';ctx.lineWidth=Math.max(.6,width*.22);ctx.stroke();ctx.restore();
 }
 function drawSwordSweep(e,a){
- ctx.save();ctx.translate(e.x,e.y-18);ctx.rotate(e.angle);const r=(e.heavy?176:100)*p.reach,q=1-a,count=reduced?2:renderLoad.slow?4:6;
+ ctx.save();ctx.translate(e.x,e.y-18);ctx.rotate(e.angle);const r=(e.heavy?176:game.singleStage&&getWeapon().id==='greatsword'?125:100)*p.reach,q=1-a,count=reduced?2:renderLoad.slow?4:6;
  ctx.globalCompositeOperation='lighter';for(let i=0;i<count;i++){const rr=r+i*4,lo=-1.16+q*.75+i*.04,hi=1.06+q*.75-i*.06;ctx.strokeStyle=i===0?'#efffff':e.color||'#bdefff';ctx.globalAlpha=a*(i===0?.95:.5-i*.06);ctx.lineWidth=i===0?(e.heavy?9:4)*a+1:1.2;ctx.beginPath();ctx.arc(0,0,rr,lo,hi);ctx.stroke()}
  ctx.globalAlpha=a*.75;ctx.rotate(.35+q*.25);drawTaperedCut(r*.55,0,r*.6,1,e.color||'#bdefff',4*a);ctx.restore();
 }

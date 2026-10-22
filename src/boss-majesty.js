@@ -97,7 +97,7 @@ function castDemonSorcery(e,target,dir){
  else{personaWarning(e,'fan',e.x,e.y,1.5,{dir,length:850,spread:.85,atk:54,move:'abyssReap'});combatSound('demon-blade',e.x);banner('闇刃の扇','大きく横へ',1)}
 }
 function castDemonSword(e){
- if(warnings.some(w=>w.owner===e.id&&w.life>.15))return;e.barrageClock=1.45;const pattern=(e.barrageIndex||0)%3;e.barrageIndex=(e.barrageIndex||0)+1;
+ if(warnings.some(w=>w.owner===e.id&&w.life>.15))return;e.barrageClock=1.45;const pattern=(e.barrageIndex||0)%6;e.barrageIndex=(e.barrageIndex||0)+1;if(demonSecondArt(e,pattern))return;
  if(pattern===0)return warnDemonCharge(e);
  const n=norm(p.x-e.x,p.y-e.y);
  if(pattern===1){for(const [i,a]of [-.36,.36].entries()){const angle=Math.atan2(n.y,n.x)+a;personaWarning(e,'fan',e.x,e.y,1.35+i*.5,{dir:{x:Math.cos(angle),y:Math.sin(angle)},length:410,spread:1.05,atk:58,move:'royalReap'})}combatSound('demon-blade',e.x);banner('獄王の二連薙ぎ','振り終わるまで正面に入るな',1)}

@@ -62,15 +62,7 @@ function drawArenaIdentity(t){
  if(game.region>=4){const x=680,yy=y-340;if(game.region===5){for(const r of [50,76,100]){ctx.beginPath();ctx.ellipse(x,yy,r,r*.6,t*.06,0,Math.PI*2);ctx.stroke()}}else{path([[x-90,yy+45],[x-70,yy-40],[x-40,yy-25],[x,yy-95],[x+40,yy-25],[x+70,yy-40],[x+90,yy+45]],game.region===6?'#191b23':'#352239',c+'88')}}
  ctx.restore();
 }
-function drawDistantBosses(){
- if(game.mode!=='play'||!bossArenaActive())return;
- for(const e of enemies){if(e.kind!=='boss'||e.hp<=0)continue;
-  const x=view.w/2+(e.x-cam.x)*view.scale,y=view.h/2+(e.y-65-cam.y)*view.scale*CAMERA.depth;
-  if(x>24&&x<view.w-24&&y>125&&y<view.h-170)continue;
-  const cx=clamp(x,35,view.w-35),cy=clamp(y,145,view.h-190),angle=Math.atan2(y-cy,x-cx);
-  ctx.save();ctx.translate(cx,cy);ctx.rotate(angle);path([[10,0],[-5,-8],[-1,0],[-5,8]],'#ffdda2','#151624');ctx.rotate(-angle);ctx.font='800 10px system-ui';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#101626';ctx.strokeText('BOSS',0,22);ctx.fillStyle='#ffe4ac';ctx.fillText('BOSS',0,22);ctx.restore();
- }
-}
+function drawDistantBosses(){drawBossTracker()}
 function drawPersistentArt(f,t){
  const s=f.s;ctx.save();ctx.translate(f.x,f.y);
  if(s.id==='tornado'){ctx.strokeStyle=s.color;ctx.lineWidth=3;for(let i=0;i<7;i++){ctx.beginPath();ctx.ellipse(0,-i*17,s.r*(.25+i*.1),9+i*3,t*3+i*.6,0,Math.PI*1.65);ctx.stroke()}}

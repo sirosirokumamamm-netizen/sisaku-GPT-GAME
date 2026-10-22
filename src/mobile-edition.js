@@ -37,14 +37,14 @@ function drawAcquisitionLog(){if(game.mode!=='play'||game.bossScene)return;ctx.s
 function drawThreatHUD(){
  if(game.mode!=='play'||game.bossScene||p.cutin>0)return;
  const warning=warnings.some(w=>showAttackWarning(w)&&!w.perfectUsed&&warningContains(w)),burning=hazards.some(z=>showAttackWarning(z)&&(z.kind?warningContains(z):distance(z,p)<z.r+p.r*.4)),pending=!!game.pendingHit&&showAttackWarning(game.pendingHit.warning);
- ctx.save();ctx.textAlign='center';if((warning||burning||pending)&&!game.royalPressure?.life){const y=view.h*.36,x=view.w/2,scale=view.w<450?.8:1;ctx.translate(x,y);ctx.scale(scale,scale);path([[-112,-20],[-132,16],[-92,16]],'#fff3c1','#843c20');ctx.font='900 27px system-ui';ctx.fillStyle='#903519';ctx.fillText('!',-112,11);ctx.font='900 30px system-ui';ctx.lineWidth=6;ctx.strokeStyle='#5b2f31';ctx.strokeText('注意！！',20,12);ctx.fillStyle='#fff0ba';ctx.fillText('注意！！',20,12);ctx.font='bold 13px system-ui';ctx.fillStyle='#fff';ctx.lineWidth=3;const hint=warnings.some(w=>w.kind==='ring'&&warningContains(w))?'全域攻撃 · 蒼緑の避難域へ！':burning?'攻撃中！ 外へ':warnings.some(w=>w.follow&&w.life>w.lockTime&&warningContains(w))?'追尾中！ 動き続けよう':'範囲の外へ回避！';ctx.strokeText(hint,0,38);ctx.fillText(hint,0,38);}
+ ctx.save();ctx.textAlign='center';if((warning||burning||pending)&&!game.royalPressure?.life){const y=view.h*.36,x=view.w/2,scale=view.w<450?.8:1;ctx.translate(x,y);ctx.scale(scale,scale);path([[-112,-20],[-132,16],[-92,16]],'#fff3c1','#843c20');ctx.font='900 27px system-ui';ctx.fillStyle='#903519';ctx.fillText('!',-112,11);ctx.font='900 30px system-ui';ctx.lineWidth=6;ctx.strokeStyle='#5b2f31';ctx.strokeText('注意！！',20,12);ctx.fillStyle='#fff0ba';ctx.fillText('注意！！',20,12);ctx.font='bold 13px system-ui';ctx.fillStyle='#fff';ctx.lineWidth=3;const status=warnings.find(w=>w.stateOnly&&warningContains(w)),hint=status?AILMENTS[status.ailment].name+' · 回避で防ぐ':warnings.some(w=>w.kind==='ring'&&warningContains(w))?'全域攻撃 · 蒼緑の避難域へ！':burning?'攻撃中！ 外へ':warnings.some(w=>w.follow&&w.life>w.lockTime&&warningContains(w))?'追尾中！ 動き続けよう':'範囲の外へ回避！';ctx.strokeText(hint,0,38);ctx.fillText(hint,0,38);}
  ctx.restore();if(game.lastHit?.life>0){ctx.save();ctx.textAlign='center';ctx.font='bold 14px system-ui';ctx.strokeStyle='#442c37';ctx.lineWidth=4;const text=game.lastHit.source+' −'+game.lastHit.amount+' HP';ctx.strokeText(text,view.w/2,view.h*.48);ctx.fillStyle='#fff0df';ctx.fillText(text,view.w/2,view.h*.48);ctx.restore()}
 }
 function queueCoyoteHit(amount,x,y){
  if(game.applyingCoyote||!game.damageThreat||!game.singleStage)return false;
  if(!game.pendingHit)game.pendingHit={amount,x,y,left:.12,warning:{...game.damageThreat}};return true;
 }
-function tickCoyote(dt){if(!game.pendingHit||game.bossScene||p.cutin>0)return;game.pendingHit.left-=dt;if(game.pendingHit.left>0)return;const hit=game.pendingHit;game.pendingHit=null;game.applyingCoyote=true;try{takeHit(hit.amount,hit.x,hit.y)}finally{game.applyingCoyote=false}}
+function tickCoyote(dt){if(!game.pendingHit||game.bossScene||p.cutin>0)return;game.pendingHit.left-=dt;if(game.pendingHit.left>0)return;const hit=game.pendingHit;game.pendingHit=null;game.applyingCoyote=true;const before=game.damageThreat;game.damageThreat=hit.warning;try{takeHit(hit.amount,hit.x,hit.y)}finally{game.applyingCoyote=false;game.damageThreat=before}}
 function resolveCoyoteDodge(){if(!game.pendingHit)return;const hit=game.pendingHit;game.pendingHit=null;perfectDodge(hit.warning);acquisitionToast('間一髪！','#b8f5ff')}
 function drawSpeedFlash(){
  if(reduced||!preferences.flashes||!(game.dashFlash>0))return;ctx.save();ctx.globalAlpha=game.dashFlash/.2*.5;ctx.strokeStyle='#a9f2ff';ctx.lineWidth=2;const dir=p.rollDir||p.face;for(let i=0;i<10;i++){const x=(i%2?view.w-20:20),y=70+i*(view.h-140)/10;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-dir.x*35,y-dir.y*55);ctx.stroke()}ctx.restore();
@@ -77,7 +77,7 @@ function tickGoldenDash(e,dt){
 }
 function skillDisplayName(s,rank){if(!s)return '';const level=rank??p?.learned?.[s.id]??0;return(level>=3&&isManualSkill(s)?'真・':'')+(s.id==='dawn'&&campaign.dawnUpgrade?'黎明の大剣・改':s.name)}
 function darkCrashUnlocked(){return !!campaign&&campaign.rares.includes('nova')}
-function darkCrashDamage(rank=p.learned.nova||1){return (rank>=3?460:rank===2?240:190)*p.power}
+function darkCrashDamage(rank=p.learned.nova||1){return (rank>=3?435:rank===2?240:190)*p.power}
 function castDarkCrash(boost,manual=false){
  const rank=p.learned.nova||1,target=nearest(skillReach(rank>=3?480:260));if(!target){acquisitionToast('敵に近づこう');return}const color=rank>=3?'#e8b6ff':'#a880de';p.face=norm(target.x-p.x,target.y-p.y);slashEffect(true,p.face,color);hurtEnemy(target,darkCrashDamage(rank)*boost,true,color,false,false,manual,'dark');signatureRelease('nova',p.x,p.y,{length:Math.max(260,distance(p,target)+80)});if(rank>=3)trueSkillEffect(getSkill('nova'));playCue('impact');
 }
@@ -96,7 +96,7 @@ function grantPhasePotion(e){
  if(game.bossScene)game.bossScene.phaseGift=true;updatePotionUI();
 }
 function transformGod(e){
- const before={...e,facing:{...e.facing}};clearHostiles();e.bossPhase=2;e.hp=Math.round(e.maxHp*.75);e.r=70;Object.assign(e,safePoint(e.x,e.y,e.r));e.ward=1;e.cycleTime=8;e.godAttack=1.2;e.state='chase';e.leapFrom=e.leapTo=null;e.burn=e.bleed=e.frost=0;e.roamClock=0;
+ const before={...e,facing:{...e.facing}};clearHostiles();secondFormHealth(e);e.bossPhase=2;e.hp=Math.round(e.maxHp*.75);e.r=70;Object.assign(e,safePoint(e.x,e.y,e.r));e.ward=1;e.cycleTime=8;e.godAttack=1.2;e.state='chase';e.leapFrom=e.leapTo=null;e.burn=e.bleed=e.frost=0;e.roamClock=0;
  beginBossScene('transform',e,before);grantPhasePotion(e);
 }
 function randomRefuge(){if(bossArenaActive())return arenaRefuge();

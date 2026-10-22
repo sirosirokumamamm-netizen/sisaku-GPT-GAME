@@ -20,9 +20,8 @@ const assert=require('node:assert/strict');
   assert(await page.evaluate(()=>!keys.has('Shift')),'Space key release ends held dodge');
   // Regression: a pending level at room rest used to freeze its deferral timer and hide both exits.
   await page.evaluate(()=>{enemies=[];game.phase='stageClear';game.pendingChoices=1;game.choiceDelay=.22;grantStageReward()});
-  assert.equal(await page.evaluate(()=>game.mode),'play','pending growth does not force a modal after clear');
-  assert(await page.locator('#overlay').isHidden());await page.locator('#roomExit').click();await page.locator('#restGrowth').click();
-  assert.equal(await page.evaluate(()=>game.mode),'draft');assert(await page.locator('#deferChoice').isHidden());
+  assert.equal(await page.evaluate(()=>game.mode),'draft','pending growth is mandatory before leaving the room');
+  assert(await page.locator('#deferChoice').isHidden());
   await page.locator('[data-offer="0"]').click();
   if(await page.evaluate(()=>game.mode==='replace'))await page.locator('#skipReplacement').click();
   await page.evaluate(()=>roomEquipment());assert(await page.locator('#roomEquipmentDone').isVisible(),'preparation is still available after growth');
@@ -44,7 +43,8 @@ const assert=require('node:assert/strict');
     }
     return {mode:game.mode,room:game.room,confirmations,guard};
    });
-   assert.equal(result.mode,'chest','combat clear reaches chest in stage '+region);
+   assert.equal(result.mode,'stageResult','rank summary precedes inheritance in stage '+region);
+   await page.locator('#resultStages').click();assert.equal(await page.evaluate(()=>game.mode),'chest');
    assert.equal(result.room,5);assert(result.confirmations>=3,'all four room exits are traversed');
    await page.locator('[data-reward="0"]').click();
    if(region<2){assert.equal(await page.evaluate(()=>game.mode),'stageSelect');assert.equal(await page.locator('[data-stage]').count(),3);assert(await page.locator('[data-stage="'+(region+1)+'"]').isEnabled())}
@@ -57,6 +57,6 @@ const assert=require('node:assert/strict');
   await page.reload();await page.locator('[data-stage="0"]').waitFor({state:'visible'});assert.equal(await page.evaluate(()=>game.mode),'stageSelect');assert.equal(await page.locator('[data-stage]').count(),4,'discovery and clear progress survive reload');
   await page.evaluate(()=>{const old={...preferences,bindings:{...preferences.bindings,roll:'Shift'}};localStorage.setItem('azure-settings',JSON.stringify(old))});await page.reload();assert(await page.evaluate(()=>preferences.bindings.roll===' '&&boundKey(' ')==='Shift'),'saved default Shift binding migrates to Space');
   assert.deepEqual(errors,[]);
-  console.log('PASS held Space dodge, deferred-growth deadlock regression, optional rest confirmation, all five-room transitions, difficulty unlocks, hidden finale reveal and reload persistence');
+  console.log('PASS held Space dodge, mandatory-growth flow, optional rest confirmation, all five-room transitions, difficulty unlocks, hidden finale reveal and reload persistence');
  }finally{await browser.close()}
 })().catch(e=>{console.error(e);process.exitCode=1});

@@ -3,7 +3,7 @@ function setHUDText(node,value){const text=String(value);if(node.textContent!==t
 function setHUDStyle(node,key,value){const text=String(value);if(node.style.getPropertyValue(key)!==text)node.style.setProperty(key,text)}
 function setHUDAttribute(node,key,value){const text=String(value);if(node.getAttribute(key)!==text)node.setAttribute(key,text)}
 function skillRecovery(s){return({nova:.24,dawn:.3,meteor:.2,thunder:.18,quake:.18,execute:.16})[s.id]||.09}
-function dawnDamage(rank=p.learned.dawn||1){return (campaign.dawnUpgrade?[210,320,560]:[100,140,185])[clamp(rank,1,3)-1]*p.power}
+function dawnDamage(rank=p.learned.dawn||1){return (campaign.dawnUpgrade?[210,320,520]:[100,140,185])[clamp(rank,1,3)-1]*p.power}
 function dawnRadius(rank=p.learned.dawn||1){return campaign.dawnUpgrade?Infinity:skillReach([300,330,360][clamp(rank,1,3)-1])}
 function castDawnBlade(boost,manual=false){
  const rank=p.learned.dawn||1,r=dawnRadius(rank),color=campaign.dawnUpgrade?'#fff2bd':'#f2cb83';
@@ -18,7 +18,7 @@ function bindTouchAction(button,type){
 }
 function effectBudget(){return reduced?70:Math.min(view.w,view.h)<600||matchMedia('(pointer: coarse)').matches?(renderLoad.slow?140:200):(renderLoad.slow?240:360)}
 function limitCosmetics(){
- const cap=effectBudget();if(effects.length>cap){let excess=effects.length-cap;effects=effects.filter(e=>!(excess>0&&['particle','afterimage','hitstar'].includes(e.kind)&&excess--));if(effects.length>cap){const essential=effects.filter(e=>['signatureRelease','astralSlash','artMotion','defeat','cataclysm'].includes(e.kind)),cosmetic=effects.filter(e=>!['signatureRelease','astralSlash','artMotion','defeat','cataclysm'].includes(e.kind));effects=[...(cap>essential.length?cosmetic.slice(-(cap-essential.length)):[]),...essential]}}
+ const cap=effectBudget();if(effects.length>cap){let excess=effects.length-cap;effects=effects.filter(e=>!(excess>0&&['particle','afterimage','hitstar'].includes(e.kind)&&excess--));if(effects.length>cap){const essential=effects.filter(e=>['signatureRelease','astralSlash','artMotion','defeat','cataclysm','catastropheRelease'].includes(e.kind)),cosmetic=effects.filter(e=>!['signatureRelease','astralSlash','artMotion','defeat','cataclysm','catastropheRelease'].includes(e.kind));effects=[...(cap>essential.length?cosmetic.slice(-(cap-essential.length)):[]),...essential]}}
  const maxTexts=cap<=200?28:44;if(texts.length>maxTexts)texts=texts.slice(-maxTexts);
 }
 function godMotion(e){

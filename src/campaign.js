@@ -61,10 +61,10 @@ function startStageAttempt(index,seed){
  cam={x:p.x,y:p.y-view.h/(view.scale*CAMERA.depth)*((view.w<600?CAMERA.mobileAnchor:CAMERA.desktopAnchor)-.5)};game.furthest=p.y;encounter();updateUI();return true;
 }
 function stageResult(win){
- const gold=game.goldEarned,completion=win?1:Math.min(.95,((game.room-1)+(isBossStage()?Math.min(1,game.bossDamage/(REGIONS[game.region].hp*(game.region===4?1.8:game.region===3?1.16:1))):Math.min(1,(game.kills-game.roomEntryKills)/32)))/5),target=game.region<2?150:240;
+ const gold=game.goldEarned,completion=win?1:Math.min(.95,((game.room-1)+(isBossStage()?Math.min(1,game.bossDamage/(REGIONS[game.region].hp*(game.region===4?1.8:game.region===3?1.16:1))):Math.min(1,(game.kills-game.roomEntryKills)/32)))/5),assessment=rankAssessment(win,completion),target=assessment.target;
  const parts={combat:Math.round(completion*4000),gold:gold*5,clear:win?2000:0,time:win?Math.round(clamp((target*1.5-game.time)/target,0,1)*1500):0,technique:Math.round(Math.max(0,1000-game.hitsTaken*65)+Math.min(500,game.perfects*60))};
- const score=Object.values(parts).reduce((a,b)=>a+b,0),quality=(win?55:0)+Math.round(completion*10)+(win?clamp((target*1.5-game.time)/target,0,1)*15:0)+Math.max(0,15-game.hitsTaken)+Math.min(5,game.perfects);
- return{stage:game.region,attemptId:game.attemptId,score,rank:quality>=90?'S':quality>=78?'A':quality>=65?'B':quality>=45?'C':'D',time:game.time,win,parts,gold,spent:game.goldSpent,bankGold:Math.max(0,gold-game.goldSpent-(game.bankedGold||0)),kills:game.kills,level:p.lv,perfects:game.perfects,hits:game.hitsTaken,hint:lossAdvice(),seed:game.seed};
+ const score=Object.values(parts).reduce((a,b)=>a+b,0);
+ return{stage:game.region,attemptId:game.attemptId,score,rank:assessment.rank,time:game.time,win,parts,gold,spent:game.goldSpent,bankGold:Math.max(0,gold-game.goldSpent-(game.bankedGold||0)),kills:game.kills,level:p.lv,perfects:game.perfects,hits:game.hitsTaken,hint:lossAdvice(),seed:game.seed};
 }
 function lossAdvice(){const worst=Object.entries(game.damageSources||{}).sort((a,b)=>b[1]-a[1])[0]?.[0];if(!worst)return game.blocks>8?'盾持ちの正面は硬い。背後か攻撃後を狙おう。':'技で群れをまとめて倒し、成長を重ねよう。';return ({'突進':'突進は進路の横へ。止まった直後に反撃。','弾':'射手は弾の間を抜けて接近すると倒しやすい。','残る炎':'地面に残る炎から離れ、安全な場所で戦おう。','着地':'跳躍の着地点から離れ、着地したら反撃。'})[worst]||'広がる予兆の外へ移動し、発動後に近づこう。'}
 function attackLabel(attack){return ({bossDash:'突進',dash:'突進',leap:'着地',hop:'着地',mine:'残る炎',volley:'弾',fan:'弾'})[attack]||'範囲攻撃'}
@@ -129,7 +129,7 @@ let pendingBinding=null;
 window.addEventListener('keydown',e=>{if(!pendingBinding||game.mode!=='settings')return;e.preventDefault();e.stopImmediatePropagation();const k=normalizeKey(e.key);if(k==='Escape'){pendingBinding=null;openSettings();return}if(!/^[a-z0-9]$/.test(k)&&k!=='Shift'&&k!==' ')return;const other=Object.keys(preferences.bindings).find(id=>id!==pendingBinding&&preferences.bindings[id]===k);if(other)preferences.bindings[other]=preferences.bindings[pendingBinding];preferences.bindings[pendingBinding]=k;pendingBinding=null;writeStore('azure-settings',preferences);openSettings()},true);
 
 function finishRoom(){
- if(['roomRest','exitWalk'].includes(game.phase))return;game.active=false;game.phase='roomRest';game.campReady=true;clearHostiles();collectStageGold();fields=[];bolts=[];scheduled=[];
+ if(['roomRest','exitWalk'].includes(game.phase))return;game.active=false;game.phase='roomRest';game.campReady=true;clearHostiles();clearPlayerAilments();collectStageGold();fields=[];bolts=[];scheduled=[];
  const beforeHP=p.hp,beforeMP=p.mp;const recovery=Math.round(p.maxHp*.12)+(game.restHealing||0)+(hasRelic('heart')?Math.ceil(p.maxHp*.1):0);p.hp=Math.min(p.maxHp,p.hp+recovery);p.mp=Math.min(p.maxMp,p.mp+Math.ceil(p.maxMp*.25));game.restHealing=0;
  game.lastRecovery={hp:Math.ceil(p.hp-beforeHP),mp:Math.ceil(p.mp-beforeMP)};recoveryFeedback(game.lastRecovery.hp,game.lastRecovery.mp);banner('区画クリア！','上へ進もう',1);acquisitionToast('HP・MP回復！');game.mode='play';game.draftDeferred=0;game.choiceDelay=0;resetInput();prepareRoomReward();game.phase='exitWalk';game.campReady=true;updateUI();flushLevelChoices();
 }

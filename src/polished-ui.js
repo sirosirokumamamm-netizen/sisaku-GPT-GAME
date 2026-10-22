@@ -1,5 +1,5 @@
 // Original vector artwork shares the illustrated cards' framing without extra downloads.
-const WEAPON_ROLES={traveler:'基本・素直な間合い',rapier:'手数・風の連撃',greatsword:'一撃・広く薙ぐ',ember:'炎上・継続ダメージ',frostblade:'減速・安全な間合い',echo:'連鎖・群れに強い',abyss:'衝撃波・闇の一撃',starfall:'長射程・対ボス',dawn:'回復・剣技の循環'};
+const WEAPON_ROLES={traveler:'基本・素直な間合い',rapier:'手数・風の連撃',greatsword:'超広範囲・重い歩み',ember:'炎上・継続ダメージ',frostblade:'減速・安全な間合い',echo:'連鎖・群れに強い',abyss:'衝撃波・闇の一撃',starfall:'長射程・対ボス',dawn:'回復・剣技の循環'};
 function storeArtwork(w,sword,art){
  if(sword)return weaponArtwork(w);
  const color=w.color||'#f4d391',id=w.id;let drawing;

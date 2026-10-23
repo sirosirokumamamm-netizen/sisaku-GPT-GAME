@@ -8,14 +8,6 @@ function renderVictoryResult(){
  openModal(`<div class="eyebrow">STAGE CLEAR · ${q.first?'初踏破':'再踏破'}</div><h2>${REGIONS[result.stage].name}</h2><div class="score-hero"><div class="rank-badge rank-${result.rank}"><small>RANK</small><b>${result.rank}</b></div><div><small>総合スコア</small><strong>${result.score.toLocaleString('ja-JP')}</strong><span>${formatTime(result.time)} · ${result.kills}体撃破</span></div></div><div class="result-summary"><span>獲得 <b>${gold.toLocaleString('ja-JP')} G</b></span><span>被弾 <b>${result.hits}回</b></span><span>ジャスト回避 <b>${result.perfects}回</b></span></div><p>この戦いで得た力を、次の旅へ。</p><button id="resultStages" class="cta">継承する力を選ぶ →</button>`);
  $('modal').classList.add('result-modal','clear-result');addEternalResult(result,q.first);$('resultStages').onclick=()=>{refreshCampaign();if(!campaign.pending)return;const n=cloneCampaign();n.pending.summarySeen=true;saveCampaign(n);renderInheritance()};
 }
-function personalizeStore(sword,art){
- $('modal').querySelector('.sword-detail').classList.toggle('weapon-detail',sword);
- for(const button of menuNodes('[data-sword],[data-product]')){
-  const id=button.dataset.sword||button.dataset.product,equipped=sword?id===campaign.weapon:art&&id===campaign.ultimate,owned=sword?campaign.weapons.includes(id):art?campaign.ultimates.includes(id):storeProducts().some(x=>x.id===id&&x.level>=x.max);
-  button.dataset.equipped=equipped;button.dataset.owned=owned;
-  if(equipped||owned)button.insertAdjacentHTML('beforeend','<span class="ownership-seal">'+(equipped?(art?'◆ 選択中':'◆ 装備中'):'✓ 購入済み')+'</span>');
- }
-}
 function weaponArtwork(w){
  const id=w.id,c=w.color,advanced=['abyss','starfall','dawn','origin','ancient'].includes(id);
  const silhouettes={origin:'M80 6L99 30L91 41L94 52L87 113L80 121L73 113L66 52L69 41L61 30Z',ancient:'M89 5L100 28L96 45L92 68L84 95L74 119H64L74 93L81 64L85 34Z',traveler:'M80 11L92 35L86 116H74L68 35Z',rapier:'M81 7L86 32L83 118H77L76 34Z',greatsword:'M80 8L106 29L99 112L89 121H71L61 112L54 29Z',ember:'M80 9L98 34L88 51L96 55L86 76L92 80L84 118H73L65 34Z',frostblade:'M80 7L100 40L88 57L94 74L84 118H74L67 75L72 56L62 40Z',echo:'M80 11L89 30L84 118H76L71 30Z',abyss:'M69 119L67 42L78 14L98 7L92 27L100 41L91 47L97 64L86 69L91 84L81 119Z',starfall:'M80 5L103 32L95 47L100 63L88 118H72L60 63L65 47L57 32Z',dawn:'M80 8L99 32L93 44L89 113L80 122L71 113L67 44L61 32Z'};

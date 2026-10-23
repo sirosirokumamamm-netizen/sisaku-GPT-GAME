@@ -1,5 +1,5 @@
 // Original vector artwork shares the illustrated cards' framing without extra downloads.
-const WEAPON_ROLES={traveler:'基本・素直な間合い',rapier:'手数・風の連撃',greatsword:'超広範囲・重い歩み',ember:'炎上・継続ダメージ',frostblade:'減速・安全な間合い',echo:'連鎖・群れに強い',abyss:'衝撃波・闇の一撃',starfall:'長射程・対ボス',dawn:'回復・剣技の循環'};
+const WEAPON_ROLES={traveler:'基本・素直な間合い',rapier:'手数・風の連撃',greatsword:'超広範囲・重い歩み',ember:'炎上・継続ダメージ',frostblade:'減速・安全な間合い',echo:'連鎖・群れに強い',abyss:'衝撃波・闇の一撃',starfall:'長射程・対ボス',dawn:'回復・剣技の循環',origin:'魔力循環・万能',ancient:'長大な刃・術式破壊'};
 function storeArtwork(w,sword,art){
  if(sword)return weaponArtwork(w);
  const color=w.color||'#f4d391',id=w.id;let drawing;
@@ -9,7 +9,7 @@ function storeArtwork(w,sword,art){
  return `<svg viewBox="0 0 160 160" role="presentation"><path d="M0 0H160V160H0Z" fill="#13253b"/><g fill="none" stroke="${color}"><circle cx="80" cy="80" r="60" opacity=".28"/><circle cx="80" cy="80" r="49" opacity=".16"/><path d="M11 132L143 17M27 151L156 37M10 50L50 10" opacity=".17"/></g><g fill="${color}" opacity=".7"><path d="M24 34l2 7 7 2-7 2-2 7-2-7-7-2 7-2Z"/><circle cx="132" cy="110" r="2"/><circle cx="118" cy="26" r="2"/></g>${drawing}<path d="M0 155Q80 117 160 155V160H0Z" fill="#081626" opacity=".5"/></svg>`;
 }
 function weaponComparison(w,current){
- return '<div class="weapon-role">'+WEAPON_ROLES[w.id]+'</div><dl class="weapon-comparison">'+[['attack','攻撃力'],['speed','速度'],['reach','間合い']].map(([key,label])=>{const scale=key==='attack'?1:100,delta=Math.round((w[key]-current[key])*scale),state=delta>0?'gain':delta<0?'loss':'equal';return `<div><dt>${label}</dt><dd>${Math.round(w[key]*scale)}${key==='attack'?'':'%'}<span class="stat-delta ${state}">${delta?(delta>0?'▲ +':'▼ ')+Math.abs(delta)+'pt':'＝ 同じ'}</span></dd></div>`}).join('')+'</dl>';
+ return '<div class="weapon-role">'+WEAPON_ROLES[w.id]+'</div><dl class="weapon-comparison">'+[['attack','攻撃力'],['speed','速度'],['reach','間合い']].map(([key,label])=>{const scale=key==='attack'?1:100,delta=Math.round((w[key]-current[key])*scale),state=delta>0?'gain':delta<0?'loss':'equal';return `<div><dt>${label}</dt><dd>${Math.round(w[key]*scale)}${key==='attack'?'':'%'}<span class="stat-delta ${state}">${delta?(delta>0?'▲ +':'▼ ')+Math.abs(delta)+'pt':''}</span></dd></div>`}).join('')+'</dl>';
 }
 function regionArtwork(i){
  if(i>=7)return eternalRegionArtwork(i);

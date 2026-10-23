@@ -1,0 +1,187 @@
+/* Stable service layouts: a fixed header and actions around a flexible, scrollable body. */
+body .modal.storefront-modal{display:flex;flex-direction:column;gap:12px;width:min(1010px,96vw)!important;height:min(744px,calc(100dvh - 28px));max-height:calc(100dvh - 28px)!important;padding:20px!important;overflow:hidden!important;background:radial-gradient(at 0 0,#fff3d6,#e8d7b2 85%)!important;text-align:left;color:#3c3325}
+.storefront-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:none}
+body .storefront-heading h2{margin:0!important;font-size:28px!important;text-align:left}
+.storefront-heading>div>small{font-size:11px;letter-spacing:.08em}
+body .storefront-wallet{display:block;padding:8px 14px;border-radius:18px 5px;background:#173445;color:#ffe5a5;font-size:24px;white-space:nowrap;border:1px solid #b59962}
+body .storefront-wallet>small{display:block;color:#d8e4df;font-size:10px;margin-bottom:2px}
+.storefront-wallet>span{font-size:13px}
+.storefront-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;flex:none;padding-bottom:10px;border-bottom:1px solid #b39a6b}
+body .storefront-tabs>button,body .training-tabs>button{margin:0;min-height:44px;border-radius:22px;background:#f7ebd0;color:#493d29;border:1px solid #ab915e;font-size:14px;font-weight:800;padding:8px}
+body .storefront-tabs>[aria-pressed=true],body .training-tabs>[aria-pressed=true]{background:#244b48!important;color:#fff2cb!important;border-color:#245e50;box-shadow:inset 0 -3px #d6b35e}
+body .storefront-tabs button:focus-visible{outline-offset:1px}
+.store-content{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;flex:1;min-height:0;min-width:0}
+.store-catalog{display:flex;flex-direction:column;min-height:0;min-width:0;gap:8px}
+.store-section-heading{display:flex;justify-content:space-between;align-items:baseline;gap:6px;padding:0 3px;flex:none}
+.store-section-heading>b{font-size:14px;color:#4e432e}.store-section-heading>small{font-size:11px}
+.store-items{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:clamp(116px,16dvh,145px);gap:9px;align-content:start;overflow-y:auto;min-height:0;flex:1;padding:3px 6px 4px 3px;scrollbar-width:thin;scrollbar-color:#877b5b #e6d7b5;overscroll-behavior:contain}
+body .modal.storefront-modal .store-item{position:relative;display:flex;align-items:stretch;justify-content:flex-end;flex-direction:column;isolation:isolate;border:1px solid #879b9a;border-radius:18px 5px;margin:0;padding:0!important;overflow:hidden;background:#142b3c!important;color:#fff1cf!important;min-height:0;line-height:1.35}
+.store-item>i{position:absolute;inset:0;z-index:-2;display:flex;align-items:center;justify-content:center;background:#152b3b;font-style:normal}
+.store-item>i svg{display:block;width:100%;height:100%}
+.store-item:after{content:'';position:absolute;inset:25% 0 0;z-index:-1;background:linear-gradient(transparent,#091b2ef5 65%)}
+.store-item-copy{display:block;padding:7px 5px}
+body .store-item-copy>b{display:block;font-size:12px;color:#fff5de;text-shadow:0 1px 3px #000;line-height:1.4}
+body .store-item-copy>small{display:block;font-size:11px;color:#ffe1a2!important;margin-top:3px}
+body .modal.storefront-modal .store-item.is-equipped{border-color:#7eaa8f;background:#1f4b43!important}
+body .store-item.is-equipped .store-item-copy{background:#1d4945e8}
+body .store-item.is-equipped small{color:#d9ffda!important}
+body .store-item.is-owned:not(.is-equipped) small{color:#dae1e6!important}
+body .modal.storefront-modal .store-item[aria-pressed=true]{border:2px solid #fff0b0;box-shadow:0 0 0 2px #a17b33}
+.store-equipped-mark{position:absolute;top:5px;right:5px;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#184d3f;color:#e6ffc4;border:1px solid #afd3a0;font-size:12px}
+.store-items.short-stock{grid-template-columns:1fr;grid-auto-rows:112px}
+.short-stock .store-item>i{right:auto;width:108px;z-index:0}.short-stock .store-item:after{display:none}.short-stock .store-item-copy{padding:12px 9px 12px 117px;text-align:left}.short-stock .store-item-copy>b{font-size:14px}.short-stock .store-item-copy>small{font-size:12px}
+.store-detail{display:flex;flex-direction:column;min-width:0;min-height:0;border:1px solid #b49a67;border-radius:22px 7px;background:#fbf0d8;overflow:hidden}
+.store-detail-copy{overflow-y:auto;min-height:0;flex:1;padding:14px;overscroll-behavior:contain;scrollbar-width:thin}
+.store-hero{display:block;height:205px;border-radius:16px 5px;overflow:hidden;background:#152b3b;text-align:center;margin-bottom:12px}
+.store-hero svg{height:100%;width:100%}
+.store-detail-heading>small{display:block;font-size:11px!important;color:#25604c!important;font-weight:800;min-height:0}
+.store-detail-heading>small:empty{display:none}
+body .store-detail-heading>h3{margin:3px 0 12px!important;font-size:23px!important;line-height:1.3;text-align:left}
+body .store-description p{font-size:13px!important;line-height:1.65!important;margin:9px 0 0!important;color:#4e4633!important}
+body .store-description .weapon-role{font-size:12px;color:#3c5c48;background:#e5ead6;padding:5px 8px;border-radius:8px;margin-bottom:8px}
+.store-description .weapon-comparison{margin:0}
+.store-description .weapon-comparison>div{padding:7px 0}
+body .store-description .store-effect{font-size:15px!important;font-weight:700;color:#2b5848!important}
+.store-trigger{display:inline-block;border-radius:12px 4px;background:#244b48;color:#fff0c5;padding:6px 9px;font-size:11px;line-height:1.4}
+.store-checkout{flex:none;display:flex;flex-direction:column;gap:7px;padding:12px;border-top:1px solid #b7a47e55;background:#f6e9cb}
+body .store-checkout>button{width:100%;margin:0!important;min-height:46px;font-size:13px!important;line-height:1.4!important;padding:10px!important;border-radius:17px 5px}
+body .store-checkout .store-remove{color:#4a4434;background:#fff3d7;border:1px solid #a9956a}
+body .store-shortage{font-size:11px;color:#833a2b!important;text-align:center}
+.store-swap{display:block;font-size:11px;color:#564a34}
+.store-swap select{display:block;width:100%;min-width:0;min-height:42px;margin-top:4px;padding:6px;border:1px solid #a18b5a;background:#fff7e4;color:#323f35;border-radius:10px;font-size:12px}
+.storefront-footer{display:flex;justify-content:flex-start;flex:none;border-top:1px solid #b6a07955;padding-top:9px}
+body .storefront-footer>button{margin:0!important;min-height:44px;padding:8px 18px;font-size:13px;line-height:1.3;border-radius:24px}
+body .modal.storefront-modal:has(.store-expansions){height:auto;max-height:calc(100dvh - 28px)}
+.store-expansions{display:grid;grid-template-columns:1fr 1fr;gap:14px;overflow-y:auto;min-height:0;scrollbar-width:thin}
+.store-expansion-card{display:flex;flex-direction:column;border:1px solid #b29b70;border-radius:22px 7px;background:#fcf0d5;overflow:hidden;min-width:0}
+.store-expansion-title{display:flex;align-items:center;gap:14px;padding:16px 16px 8px}
+.store-expansion-title>i{display:block;flex:none;width:96px;height:96px;border-radius:18px 5px;overflow:hidden}.store-expansion-title svg{width:100%;height:100%}
+body .store-expansion-title h3{font-size:21px!important;margin:0 0 8px!important;text-align:left}
+.store-expansion-title b{display:inline-block;padding:4px 10px;border-radius:20px;background:#254c47;color:#fff3cc;font-size:13px}
+body .store-expansion-card>p{font-size:12px!important;margin:8px 16px!important;line-height:1.6!important;text-align:left}
+.store-slot-track{display:flex;gap:7px;padding:8px 16px 16px;justify-content:center}
+.store-slot-track>span{display:grid;place-items:center;flex:1;height:38px;background:#e7dcc1;color:#6b654d;border:1px dashed #a5936a;border-radius:9px;font-size:18px}
+.store-slot-track>.filled{background:#d9e9d8;color:#245d48;border:1px solid #859e77}.store-slot-track>.next{background:#fff6db;color:#6c4c13;border:1px solid #bc934e}
+.store-expansion-card .store-checkout{margin-top:auto}
+.store-next{font-size:16px;color:#24634c;text-align:center}.store-max{display:block;padding:11px;border-radius:12px;background:#dce9d7;color:#315e46;text-align:center;font-size:14px}
+/* Training shares the same available-height rule instead of capping only its shelf. */
+body .modal.training-modal{height:min(704px,calc(100dvh - 28px));gap:10px}
+body .training-body{flex:1;grid-template-rows:minmax(0,1fr);align-items:stretch}
+body .training-grid{flex:1;max-height:none;grid-auto-rows:128px}
+body .training-detail{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;gap:9px}
+body .training-detail .training-hero{flex:none}
+body .training-detail-title small{font-size:11px}
+body .training-metrics dt{font-size:12px}.training-metrics dd small:empty{display:none}
+body .training-footer{flex:none;justify-content:flex-end;border-top:1px solid #b6a07955;padding-top:8px}
+body .training-footer:has(p){justify-content:space-between}
+body .training-footer>button{min-height:44px;font-size:12px}
+body .training-footer>p{font-size:11px!important}
+/* Less duplicate empty-state copy; keep the condition and reward prominent. */
+body .modal.mission-modal .mission-detail{justify-content:flex-start;gap:5px;padding:20px}
+body .modal.mission-modal .mission-detail .mission-seal{width:60px;min-height:60px;font-size:31px;flex:none;margin:0 0 6px}
+body .modal.mission-modal .mission-detail>small{letter-spacing:.04em;font-size:11px}
+body .modal.mission-modal .mission-detail h3{margin:4px 0 8px}
+body .modal.mission-modal .mission-reward{margin-top:10px;padding-top:12px}
+body .modal.mission-modal:has(.mission-empty) .mission-body{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr)}
+body .modal.mission-modal:has(.mission-empty) .mission-detail{display:none}
+body .modal.mission-modal .mission-footer small{font-size:11px}
+body .modal .embark-kit .endgame-loadout{font-size:11px;line-height:1.5;color:#42543c}
+body .modal .embark-style select,body .modal .charm-select select{color:#304536;background:#fff5dd}
+body .modal .carry-heading>button[data-carry]{width:auto;border-radius:18px;min-height:36px;padding:5px 10px}
+body .modal .expand-slot-link{min-height:36px}
+body .modal .embark-footer button small{color:inherit!important;opacity:.9}
+body .modal .gate-skills>small{font-size:11px;color:#5c523b}
+body .modal button:disabled{cursor:default}
+@media(max-width:600px) and (min-height:451px){
+ body .modal.storefront-modal{width:calc(100vw - 16px)!important;height:calc(100dvh - 20px);max-height:calc(100dvh - 20px)!important;padding:11px!important;gap:8px}
+ body .storefront-heading h2{font-size:24px!important}.storefront-heading>div>small{font-size:10px}body .storefront-wallet{font-size:20px;padding:6px 11px}
+ .storefront-tabs{gap:5px;padding-bottom:7px}body .storefront-tabs>button{padding:7px 3px;font-size:12px}
+ .store-content{grid-template-columns:1fr;grid-template-rows:minmax(70px,1fr) auto;gap:9px}
+ .store-catalog{gap:3px}.store-section-heading>b{font-size:12px}.store-section-heading>small{font-size:10px}
+ .store-items{grid-auto-rows:115px;gap:6px;padding:3px 4px 3px 3px}
+ body .store-item-copy>b{font-size:11px}body .store-item-copy>small{font-size:10px}
+ .store-items.short-stock{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:115px}.short-stock .store-item>i{inset:0;width:auto;z-index:-2}.short-stock .store-item:after{display:block}.short-stock .store-item-copy{padding:7px 5px;text-align:center}.short-stock .store-item-copy>b{font-size:11px}.short-stock .store-item-copy>small{font-size:10px}
+ .store-detail{max-height:min(340px,52dvh);border-radius:18px 5px}
+ .store-detail-copy{display:grid;grid-template-columns:82px 1fr;gap:0 10px;padding:9px;align-content:start}
+ .store-hero{grid-column:1;grid-row:1/3;height:100px;margin:0;border-radius:12px 4px}
+ .store-detail-heading{grid-column:2;align-self:center}body .store-detail-heading>h3{font-size:18px!important;margin:2px 0 6px!important}.store-detail-heading>small{font-size:10px!important}
+ .store-description{grid-column:2}body .store-description p{font-size:12px!important;line-height:1.5!important;margin-top:6px!important}body .store-description .store-effect{font-size:13px!important}.store-trigger{font-size:10px;padding:4px 7px}
+ .store-detail:has(.weapon-comparison) .store-description{grid-column:1/-1}
+ .store-description .weapon-role{margin:6px 0!important}body .store-description .weapon-comparison{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.store-description .weapon-comparison>div{display:block;padding:3px 0}.store-description .weapon-comparison dd{font-size:16px}.store-description .stat-delta{display:block;font-size:10px;margin:2px 0}
+ .store-checkout{padding:8px;gap:4px}body .store-checkout>button{min-height:44px;font-size:12px!important;padding:8px!important}.store-swap select{min-height:38px}
+ .storefront-footer{padding-top:6px}.storefront-footer>button{width:100%}
+ .store-expansions{grid-template-columns:1fr;gap:9px}.store-expansion-title{padding:10px 12px 4px;gap:12px}.store-expansion-title>i{width:65px;height:65px}body .store-expansion-title h3{font-size:18px!important;margin-bottom:5px!important}.store-expansion-card>p{margin:5px 12px!important}.store-slot-track{padding:5px 12px 8px}.store-slot-track>span{height:26px;font-size:14px}.store-expansion-card .store-checkout{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:5px 10px}.store-expansion-card .store-shortage{grid-column:1/-1}.store-max{grid-column:1/-1;padding:8px}.store-next{font-size:14px;white-space:nowrap}
+ body .training-body{grid-template-rows:minmax(70px,1fr) auto}
+ body .training-grid{grid-auto-rows:100px;grid-template-columns:repeat(3,minmax(0,1fr))}
+ body .training-detail{max-height:47dvh;flex-shrink:0}.training-hero{height:110px}
+ body .modal.mission-modal .mission-detail{padding:10px;display:block}.mission-detail>.mission-seal{display:none!important}
+}
+@media(max-height:450px) and (min-width:480px){
+ body .modal.storefront-modal{height:calc(100dvh - 16px);max-height:calc(100dvh - 16px)!important;padding:8px 12px!important;gap:6px}
+ .storefront-heading{min-height:30px}body .storefront-heading h2{font-size:20px!important}.storefront-heading>div>small{display:none}body .storefront-wallet{font-size:18px;padding:4px 10px}.storefront-wallet>small{display:none!important}
+ .storefront-tabs{padding-bottom:5px;gap:7px}body .storefront-tabs>button{min-height:40px;padding:6px;font-size:12px}
+ .store-content{grid-template-columns:1fr 1fr;gap:9px}.store-catalog{gap:3px}.store-section-heading>b{font-size:11px}.store-section-heading>small{font-size:10px}
+ .store-items{grid-auto-rows:96px;gap:5px;grid-template-columns:repeat(3,minmax(0,1fr))}body .store-item-copy>b{font-size:10px}body .store-item-copy>small{font-size:10px}.store-item-copy{padding:5px 3px}
+ .store-items.short-stock{grid-template-columns:1fr;grid-auto-rows:80px}.short-stock .store-item>i{width:78px}.short-stock .store-item-copy{padding:9px 6px 9px 84px}.short-stock .store-item-copy>b{font-size:12px}
+ .store-detail-copy{padding:8px}.store-hero{height:80px;width:80px;float:left;margin:0 9px 5px 0}body .store-detail-heading>h3{font-size:17px!important;margin:2px 0 8px!important}.store-detail-heading>small{font-size:10px!important}body .store-description p{font-size:11px!important;line-height:1.5!important}.store-description .weapon-role{font-size:11px;clear:both}
+ .store-trigger{font-size:10px;padding:4px 7px}.store-checkout{padding:6px;gap:3px}body .store-checkout>button{min-height:40px;padding:6px!important;font-size:11px!important}
+ .store-checkout:has(.store-swap){display:grid;grid-template-columns:1fr 1fr;align-items:end;gap:4px 6px}.store-checkout:has(.store-swap) .store-shortage{grid-column:2}.store-swap{font-size:10px}.store-swap select{min-height:35px;font-size:10px;margin-top:2px;padding:3px}
+ .storefront-footer{padding-top:4px}body .storefront-footer>button{min-height:36px;font-size:11px;padding:5px 14px}
+ .store-expansions{gap:9px}.store-expansion-title{padding:8px;gap:8px}.store-expansion-title>i{width:46px;height:46px}body .store-expansion-title h3{font-size:16px!important;margin-bottom:4px!important}.store-expansion-title b{font-size:11px;padding:3px 7px}body .store-expansion-card>p{font-size:11px!important;margin:3px 8px!important}.store-slot-track{padding:5px 8px;gap:5px}.store-slot-track>span{height:25px;font-size:13px}.store-next{display:none}.store-max{padding:7px;font-size:12px}
+ body .training-tabs>button{min-height:40px;font-size:11px;padding:5px}.training-title small{display:none}body .training-grid{grid-auto-rows:88px}body .training-detail{display:flex;gap:4px;padding:8px}body .training-hero{float:left;height:80px;display:none}body .training-detail-title>h3{font-size:16px!important}body .training-detail #forgeBuy{min-height:40px;flex-shrink:0;margin-top:4px}body .training-footer>button{min-height:36px}body .training-footer>p{font-size:10px!important}
+ body .modal.mission-modal .mission-detail{padding:8px}.mission-detail>.mission-seal{display:none!important}
+}
+@media(prefers-reduced-motion:reduce){.storefront-modal *{scroll-behavior:auto!important;transition:none!important}}
+body .kit-weapon>i{overflow:hidden}body .kit-weapon>i>svg{display:block;width:100%;height:100%}
+body .modal.storefront-modal .store-item .sale-price,body .modal.storefront-modal .store-item .sale-tag{color:#ffc0a6!important}
+/* Explicit bounds also override the base dialog's legacy 660px width. */
+body .modal.storefront-modal{max-width:1010px!important}
+body .storefront-heading{margin:0!important;padding:0!important}
+body .storefront-wallet>[data-gold-counter]{font-size:24px}
+body .modal.training-modal{max-width:940px!important}
+body .modal.mission-modal{max-width:940px!important}
+body .training-heading{margin:0!important;flex-shrink:0}
+body .training-tabs{flex-shrink:0}
+body .training-detail{display:flex!important;flex-direction:column;padding:0!important;overflow:hidden}
+.training-detail-copy{overflow-y:auto;overscroll-behavior:contain;min-height:0;flex:1;padding:12px;scrollbar-width:thin;display:flex;flex-direction:column;gap:8px}
+.training-actions{flex:none;padding:9px;border-top:1px solid #b7a47e55;background:#f6e9cb}
+body .training-actions #forgeBuy{width:100%;margin:0!important;line-height:1.35!important}
+.training-actions .training-shortage{display:block;margin-top:4px;text-align:center}
+body .modal.training-modal .training-footer>button{line-height:1.35!important;padding:8px 14px!important;margin:0!important}
+@media(max-width:600px) and (min-height:451px){
+ body .storefront-wallet>[data-gold-counter]{font-size:20px}
+ .training-detail-copy{display:grid;grid-template-columns:82px 1fr;grid-template-areas:'art title' 'art metrics';gap:4px 9px;padding:8px}
+ .training-detail-copy:has(.training-supply){grid-template-areas:'art title' 'art metrics' 'gain gain'}
+ .training-detail-copy .training-supply-gain{grid-area:gain}
+ .training-actions{padding:7px}
+ body .training-detail .training-hero{height:106px}
+}
+@media(max-height:450px) and (min-width:480px){
+ body .modal.training-modal{height:calc(100dvh - 16px);padding:8px 12px!important;gap:6px}
+ body .training-heading{height:34px}.training-title>i{width:32px;height:32px}.training-title h2{font-size:20px!important}
+ body .storefront-wallet>[data-gold-counter]{font-size:18px}
+ body .training-footer{padding-top:4px}
+ .training-detail-copy{padding:7px;gap:4px}.training-actions{padding:5px}
+ body .training-metrics>div{padding:3px 0}
+ body .training-detail .training-hero{display:none}
+ .training-supply-gain{font-size:12px}
+}
+.store-items.short-stock{grid-auto-rows:minmax(112px,1fr)}
+.store-items.short-stock:has(> :only-child){grid-template-columns:1fr}
+.store-expansion-card.is-highlighted{border-color:#9a742d;box-shadow:inset 0 0 0 1px #c29b4e}
+@media(max-width:600px) and (min-height:451px){.store-items.short-stock{grid-auto-rows:minmax(115px,1fr)}}
+@media(max-height:450px) and (min-width:480px){.store-items.short-stock{grid-auto-rows:minmax(80px,1fr)}}
+body .store-description .stat-delta:empty{display:none}
+.store-art-metrics{display:flex;align-items:center;justify-content:space-between;margin:12px 0 0;padding:9px 0;border-top:1px solid #b7a47e55;color:#42523f}.store-art-metrics dt{font-size:12px}.store-art-metrics dd{margin:0;font-size:22px;font-weight:900;color:#285743}
+@media(max-width:600px) and (min-height:451px){
+ body .modal.mission-modal .mission-body{grid-template-rows:minmax(90px,1fr) auto}
+ body .modal.mission-modal .mission-detail{max-height:35dvh}
+}
+@media(max-height:450px) and (min-width:480px){
+ .store-expansion-card .store-slot-track{display:none}
+ .store-expansion-title{padding:6px;gap:7px}.store-expansion-title>i{width:32px;height:32px}
+ body .store-expansion-title h3{font-size:14px!important;margin-bottom:2px!important}.store-expansion-title b{padding:2px 6px;font-size:10px}
+ body .store-expansion-card>p{font-size:10px!important;line-height:1.3!important;margin:3px 7px!important}
+ body .store-expansion-card .store-checkout>button{min-height:36px;font-size:10px!important}
+ .store-expansion-card .store-shortage{font-size:10px;line-height:1.2}
+}

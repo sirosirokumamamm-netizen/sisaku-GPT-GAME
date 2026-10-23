@@ -10,7 +10,7 @@ function configureEndgameBoss(e,index){
  if(game.region<TEMPLE&&game.region!==WASTELAND)return;
  e.name=REGIONS[source].boss;e.form=['beast','monster','dragon','sentinel','demon','god','demon','sentinel'][source];e.shadowLord=source===6;e.ancientWarden=source===7;
  if(source===3){e.name=index?'月影の守護獣':'星核の守護者';e.form=index?'beast':'sentinel';e.r=38}
- if(isTemple()){const multiplier=1.4+Math.min(.2,(campaign.clears[TEMPLE]?.visits||0)*.02);e.hp=e.maxHp=Math.round(REGIONS[source].hp*multiplier*(source===3?.58:1));e.speed*=1.12;}
+ if(isTemple()){const multiplier=(1.4+Math.min(.2,(campaign.clears[TEMPLE]?.visits||0)*.02))*(source<=4?1.35:1);e.hp=e.maxHp=Math.round(REGIONS[source].hp*multiplier*(source===3?.58:1));e.speed*=1.12;}
  e.atk=(source===4?56:source===5?54:source===6?62:source===7?60:22+source*5)*(isTemple()?1.22:1);e.r=e.form==='god'?56:e.ancientWarden?52:e.r;e.awakened=false;e.cycle='assault';e.cycleTime=8;
  if(e.form==='god'){e.ward=1;e.godCycle=0;e.cycleTime=3.3;e.godAttack=1.2}Object.assign(e,safePoint(e.x,e.y,e.r));
 }

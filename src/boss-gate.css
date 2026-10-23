@@ -1,0 +1,66 @@
+/* A dark boss banner, readable parchment workspace, and direct illustrated choices. */
+body .modal.boss-gate-illustrated{width:min(1020px,calc(100vw - 24px))!important;max-width:1020px!important;height:min(750px,calc(100dvh - 24px));padding:14px!important;gap:10px;border-radius:28px 8px!important;text-align:left}
+body .boss-gate-illustrated .boss-gate-heading{position:relative;min-height:94px;isolation:isolate;overflow:hidden;border:1px solid #bb9b63;border-radius:20px 6px;background:#142738;padding:13px 18px!important}
+.gate-realm-art{position:absolute;inset:0 0 0 38%;z-index:-2;opacity:.85}.gate-realm-art svg{width:100%;height:100%;object-fit:cover;display:block}
+.boss-gate-heading:after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#102334,#102334eb 39%,#10233415)}
+.gate-header-copy{position:relative}.gate-header-copy>span{display:inline-block;color:#f1d391;font-size:10px;letter-spacing:.12em;border-bottom:1px solid #947b50;padding-bottom:4px}
+body .gate-header-copy>h2{font-size:27px!important;margin:6px 0 3px!important;text-align:left;color:#fff2cf!important;line-height:1.3}
+body .gate-header-copy>small{font-size:11px;color:#d9e4e5!important}
+body .boss-gate-illustrated .boss-gate-vitals{display:grid;grid-template-columns:1fr 1fr auto;gap:14px;align-items:center;padding:8px 12px;border-radius:14px 5px;background:#fff2d5;color:#3d4c3c;flex:none}
+.gate-vital{min-width:0}.gate-vital>span{display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px}.gate-vital b{font-variant-numeric:tabular-nums}.gate-vital>i{display:block;height:6px;overflow:hidden;border-radius:6px;background:#19313e}.gate-vital em{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#287861,#81cea0)}.gate-vital.gate-mp em{background:linear-gradient(90deg,#236e92,#8ad2e3)}.gate-potions{font-size:11px;white-space:nowrap}.gate-potions b{font-size:17px;color:#2c5f4d}
+body .boss-gate-illustrated .boss-gate-body{display:grid;grid-template-columns:minmax(270px,.9fr) minmax(0,1.6fr);gap:14px;flex:1;min-height:0;overflow:hidden}
+.gate-loadout{display:flex;flex-direction:column;min-height:0;overflow-y:auto;padding:3px;scrollbar-width:thin}
+body .boss-gate-illustrated .gate-loadout h3,body .boss-gate-illustrated .gate-picker h3{font-size:13px!important;color:#4b4935!important;letter-spacing:.03em;margin:0 0 6px!important}
+body .gate-loadout h3:nth-of-type(2){margin-top:12px!important}
+.gate-gear-slots,.gate-skill-slots{display:grid;gap:7px}
+body .modal.boss-gate-illustrated .gate-loadout-card{display:flex;align-items:center;position:relative;gap:9px;margin:0;padding:6px!important;min-height:68px;border:1px solid #b0a17d;border-radius:16px 4px;background:#fff4da!important;color:#32483b!important;text-align:left}
+.gate-loadout-card>i{display:block;width:52px;height:58px;flex:none;border-radius:12px 4px;overflow:hidden;background:#183042}.gate-loadout-card svg,.gate-loadout-card .skill-art{display:block;width:100%;height:100%;border:0;border-radius:0}
+.gate-loadout-card>span{flex:1;min-width:0}.gate-loadout-card small{display:block;font-size:10px;color:#66563b!important;margin-bottom:3px}.gate-loadout-card b{display:block;font-size:13px;font-weight:800;line-height:1.45}.gate-loadout-card em{font-style:normal;white-space:nowrap;font-size:11px}.gate-loadout-card>strong{font-size:21px;font-weight:400;color:#776038}
+body .modal.boss-gate-illustrated .gate-loadout-card[aria-pressed=true]{border-color:#38695c;box-shadow:0 0 0 2px #315c4955;background:#deead7!important}
+body .gate-loadout-card[aria-pressed=true]:before{content:'';position:absolute;left:-1px;top:12px;bottom:12px;width:3px;border-radius:3px;background:#31694e}
+.gate-empty-art{display:grid;place-items:center;width:100%;height:100%;color:#e6d09f;background:radial-gradient(#2b4856,#14283c);font-size:30px;font-style:normal;font-weight:400}
+.gate-picker{display:flex;flex-direction:column;min-width:0;min-height:0;border:1px solid #b9a172;border-radius:20px 6px;background:#f8edd3;padding:11px}
+.gate-picker-heading{display:flex;justify-content:space-between;align-items:baseline;gap:7px;flex:none}.gate-picker-heading>small{font-size:10px;color:#686047!important}
+body .modal.boss-gate-illustrated .gate-current-summary{font-size:12px!important;line-height:1.5!important;margin:0 0 9px!important;width:100%!important;max-width:none!important;padding:7px 9px;border-radius:10px 3px;background:#e3e8d3;color:#3b5844!important;flex:none}
+.gate-choice-list{min-height:0;overflow-y:auto;overscroll-behavior:contain;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:148px;align-content:start;gap:8px;padding:3px 4px 3px 3px;scrollbar-width:thin;scrollbar-color:#80775f #e6d7b5}
+body .modal.boss-gate-illustrated .gate-choice{display:flex;flex-direction:column;justify-content:flex-end;position:relative;isolation:isolate;overflow:hidden;border:1px solid #78949a;border-radius:16px 5px;background:#142a3d!important;color:#fff0cc!important;padding:0!important;margin:0;text-align:left;min-height:0}
+.gate-choice>i{position:absolute;inset:0;z-index:-2;display:flex;justify-content:center;align-items:center;overflow:hidden}.gate-choice>i>svg,.gate-choice>i>.skill-art{display:block;width:100%;height:100%;border:0;border-radius:0}.gate-choice:after{content:'';position:absolute;inset:22% 0 0;z-index:-1;background:linear-gradient(transparent,#071728f5 65%)}
+.gate-choice-copy{padding:7px}.gate-choice-copy>b{display:block;color:#fff5db;font-size:12px;line-height:1.4;text-shadow:0 1px 3px #000}.gate-choice-copy b em{font-size:10px;font-style:normal;white-space:nowrap;color:#ffdf9d}.gate-choice-copy>small{display:flex;flex-wrap:wrap;gap:4px;color:#d5e6df!important;font-size:10px;margin-top:4px;line-height:1.4}.gate-choice-copy small>span{border:1px solid #8ca7a055;padding:1px 4px;border-radius:6px;font-size:10px}
+.gate-choice-tag{position:absolute;top:5px;right:5px;border:1px solid #d1d8a4;background:#245346ee;color:#f3ffd6;border-radius:9px 3px;font-size:10px;padding:3px 5px}.gate-choice-tag.is-transfer{background:#293c5bea;color:#eff0ff;border-color:#9b9bc6}
+body .modal.boss-gate-illustrated .gate-choice[aria-pressed=true]{border:2px solid #eac575;box-shadow:0 0 0 1px #9f8137}
+body .boss-gate-illustrated .service-footer{padding-top:8px;border-top:1px solid #b9a27355;grid-template-columns:1fr 1.5fr;gap:10px}
+body .boss-gate-illustrated .service-footer>button{min-height:46px;font-size:13px!important;padding:9px!important;line-height:1.3!important;margin:0!important;border-radius:20px 5px}
+body .boss-gate-illustrated .service-footer #bossGateBack{border-radius:22px;color:#4b432f;background:#f7eacc}
+body .boss-gate-illustrated .service-footer #bossGateConfirm{display:flex;align-items:center;justify-content:center;gap:18px;color:#fff2c7!important;background:linear-gradient(135deg,#375d53,#163e3e)!important;border-color:#b6a16b!important}
+@media(max-width:600px) and (min-height:451px){
+ body .modal.boss-gate-illustrated{width:calc(100vw - 16px)!important;height:calc(100dvh - 20px);padding:9px!important;gap:8px}
+ body .boss-gate-illustrated .boss-gate-heading{min-height:83px;padding:9px 12px!important}.gate-header-copy>span{font-size:9px}body .gate-header-copy>h2{font-size:22px!important}.gate-header-copy>small{font-size:10px!important}
+ body .boss-gate-illustrated .boss-gate-vitals{gap:9px;padding:7px;font-size:10px}.gate-vital>span{font-size:10px}.gate-potions{font-size:9px}.gate-potions b{display:block;text-align:center;font-size:14px}
+ body .boss-gate-illustrated .boss-gate-body{display:flex;flex-direction:column;overflow-y:auto;gap:10px;scrollbar-width:thin;overscroll-behavior:contain}
+ .gate-loadout{flex:none;overflow:visible;padding:3px}.gate-gear-slots{grid-template-columns:1fr 1fr;gap:6px}.gate-skill-slots{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+ body .modal.boss-gate-illustrated .gate-loadout-card{gap:5px;padding:5px!important;min-height:64px}.gate-loadout-card>i{width:36px;height:44px}.gate-loadout-card b{font-size:11px}.gate-loadout-card small{font-size:9px;margin-bottom:2px}.gate-loadout-card>strong{display:none}
+ body .modal.boss-gate-illustrated .gate-skill-slots>.gate-loadout-card{flex-direction:column;align-items:stretch;gap:4px;padding:5px!important;min-height:112px}.gate-skill-slots .gate-loadout-card>i{width:100%;height:50px}.gate-skill-slots .gate-loadout-card small{font-size:9px}.gate-skill-slots .gate-loadout-card em{font-size:9px}.gate-skill-slots .gate-loadout-card b{font-size:10px;line-height:1.35}
+ .gate-picker{flex:none;padding:8px;border-radius:16px 5px}.gate-choice-list{overflow:visible;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:138px;gap:7px;padding:3px}.gate-choice-copy>b{font-size:11px}
+ body .boss-gate-illustrated .service-footer{padding-top:6px;gap:7px;grid-template-columns:1fr 1.5fr}body .boss-gate-illustrated .service-footer>button{font-size:11px!important;min-height:44px;padding:7px!important}
+}
+@media(max-height:450px) and (min-width:480px){
+ body .modal.boss-gate-illustrated{width:calc(100vw - 18px)!important;height:calc(100dvh - 16px);padding:7px 10px!important;gap:5px}
+ body .boss-gate-illustrated .boss-gate-heading{min-height:47px;padding:5px 10px!important}.gate-header-copy>span{font-size:8px;padding-bottom:1px;float:right}.gate-header-copy>small{display:none}body .gate-header-copy>h2{font-size:20px!important;margin:3px 0!important}
+ body .boss-gate-illustrated .boss-gate-vitals{padding:4px 8px;gap:12px}.gate-vital>span{font-size:9px;margin-bottom:3px}.gate-vital>i{height:4px}.gate-potions{font-size:9px}.gate-potions b{font-size:13px}
+ body .boss-gate-illustrated .boss-gate-body{grid-template-columns:minmax(175px,.85fr) minmax(0,1.5fr);gap:9px}
+ body .boss-gate-illustrated .gate-loadout h3{font-size:10px!important;margin:0 0 4px!important}body .gate-loadout h3:nth-of-type(2){margin-top:6px!important}.gate-gear-slots,.gate-skill-slots{gap:4px}
+ body .modal.boss-gate-illustrated .gate-loadout-card{min-height:42px;padding:3px!important;gap:5px}.gate-loadout-card>i{width:30px;height:32px}.gate-loadout-card small{font-size:8px;margin-bottom:1px}.gate-loadout-card b{font-size:10px}.gate-loadout-card em{font-size:9px}.gate-loadout-card>strong{font-size:16px}
+ .gate-picker{padding:6px;border-radius:14px 4px}body .boss-gate-illustrated .gate-picker h3{font-size:11px!important;margin:0 0 4px!important}.gate-picker-heading>small{font-size:9px}body .modal.boss-gate-illustrated .gate-current-summary{font-size:10px!important;margin-bottom:4px!important;padding:4px 6px}
+ .gate-choice-list{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:112px;gap:5px;padding:2px}.gate-choice-copy{padding:5px}.gate-choice-copy>b{font-size:10px}.gate-choice-copy>small{font-size:9px}.gate-choice-tag{font-size:8px;padding:2px 3px}.gate-choice-copy small>span{font-size:8px;padding:1px 2px}
+ body .boss-gate-illustrated .service-footer{padding-top:4px}body .boss-gate-illustrated .service-footer>button{min-height:36px;font-size:11px!important;padding:5px!important}
+}
+
+/* During the cinematic only its skip action remains visible. */
+body .scene.cinematic-playing #ultimate,body .scene.cinematic-playing #combatPotion,body .scene.cinematic-playing #roomExit,body .scene.cinematic-playing .controls{visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+@media(max-height:450px) and (min-width:480px){
+ .gate-choice-list{grid-template-columns:1fr;grid-auto-rows:62px}
+ .gate-choice>i{right:auto;width:60px}
+ .gate-choice:after{inset:0 0 0 60px;background:#10263b}
+ .gate-choice-copy{padding:5px 7px 5px 68px}
+ .gate-choice-tag{left:3px;right:auto;top:3px;font-size:8px}
+}

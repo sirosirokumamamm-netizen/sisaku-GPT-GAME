@@ -51,7 +51,7 @@ function demonMagicWarning(e,target,dir){
  castDemonSorcery(e,target,dir);
 }
 function bossAttackSpectacle(w,owner){
- if(!owner||owner.kind!=='boss')return;if(!w.persona&&w.attack!=='persona')combatSound(({beast:'beast-roar',monster:'tide-crash',dragon:'dragon-breath',sentinel:'stone-break',demon:'demon-blade',god:'god-verdict'})[owner.form]||'stone-break',owner.x);if(w.persona||w.attack==='persona'){emitSovereignImpact(w,owner);return}const flavor=owner.form==='demon'&&owner.awakened?'blade':owner.form,color=({beast:'#b8f4aa',monster:'#9fefff',dragon:'#ffc06a',sentinel:'#c5bbff',blade:'#e9afff',demon:'#df9aff',god:'#fff2b4'})[flavor]||'#d6c8ff';
+ if(!owner||owner.kind!=='boss')return;emitBossTheatre(w,owner);if(!w.persona&&w.attack!=='persona')combatSound(({beast:'beast-roar',monster:'tide-crash',dragon:'dragon-breath',sentinel:'stone-break',demon:'demon-blade',god:'god-verdict'})[owner.form]||'stone-break',owner.x);if(w.persona||w.attack==='persona'){emitSovereignImpact(w,owner);return}const flavor=owner.form==='demon'&&owner.awakened?'blade':owner.form,color=({beast:'#b8f4aa',monster:'#9fefff',dragon:'#ffc06a',sentinel:'#c5bbff',blade:'#e9afff',demon:'#df9aff',god:'#fff2b4'})[flavor]||'#d6c8ff';
  const cap=reduced?2:renderLoad.slow?5:8;if(effects.filter(e=>e.kind==='bossRupture').length>=cap)return;
  effects.push({...w,kind:'bossRupture',shape:w.kind,flavor,color,life:reduced?.45:1.35,max:reduced?.45:1.35,r:w.r||100,seed:Math.round(owner.id*1000)%17});particle(w.x,w.y,color,reduced?4:20,240);
  if(!reduced&&preferences.shake)shake=Math.max(shake,w.style==='doom'?8:4);

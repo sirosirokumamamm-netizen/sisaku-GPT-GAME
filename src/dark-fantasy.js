@@ -35,6 +35,7 @@ const SKILL_ART_SHEETS={
 };
 const SKILL_ART_INDEX=Object.fromEntries(Object.entries(SKILL_ART_SHEETS).flatMap(([sheet,ids])=>ids.map((id,cell)=>[id,{sheet,cell}])));
 function skillArtwork(s){
+ if(s?.mineOnly)return miningSkillArtwork(s);
  if(['laststand','bloodpact'].includes(s?.id))return eternalSkillArtwork(s);
  const key=s?.id==='dawn'&&campaign.dawnUpgrade?'dawn-upgraded':s?.id||'fallback',art=SKILL_ART_INDEX[key]||SKILL_ART_INDEX.fallback;
  return '<span class="skill-art skill-illustration art-'+art.sheet+'" data-art-key="'+(SKILL_ART_INDEX[key]?key:'fallback')+'" style="--art-x:'+((art.cell%3)*50)+'%;--art-y:'+(Math.floor(art.cell/3)*50)+'%" aria-hidden="true"></span>';

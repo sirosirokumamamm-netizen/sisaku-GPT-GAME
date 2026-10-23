@@ -9,10 +9,10 @@ function openPreparation(index){return renderEmbark(index)}
 function storeProducts(){return [
  {id:'carryExpansion',icon:'▣',name:'持ち込み枠',level:campaign.carrySlots,max:3,price:campaign.carrySlots===1?1800:3600,desc:'宝箱で解放した技を、出発時にもう1つ持ち込めます。',effect:'持ち込み '+campaign.carrySlots+' → '+Math.min(3,campaign.carrySlots+1)+' 枠',note:'永続強化。戦闘中の手動ボタンは3個のままです。'},
  {id:'luckCharm',icon:'✦',name:'金運のお守り',level:campaign.luckCharm,max:2,price:campaign.luckCharm===0?1600:3200,desc:'金色のスライムに出会う抽選確率を高めます。',effect:campaign.luckCharm===0?'出会いやすさ 約2.7倍':'出会いやすさ 約4.7倍',note:'永続効果。第2区画から抽選、1挑戦で最大1体。必ず出る効果ではありません。'}
-,...permanentStatProducts()]}
+,{id:'charmExpansion',icon:'◈',name:'お守り枠',level:campaign.charmSlots,max:3,price:campaign.charmSlots===1?1000:2200,desc:'お守りを同時にもう1つ装備できるようにします。',effect:'お守り '+campaign.charmSlots+' → '+Math.min(3,campaign.charmSlots+1)+' 枠',note:'最大3枠。異なるお守りの効果を組み合わせられます。'},...permanentStatProducts()]}
 let storeReturn='stageSelect',storeTab='swords',storeRegion=0;
 function openWeaponShop(returnMode='stageSelect',selection,tab='swords'){
- if(tab==='tools')return openTraining('growth',selection);if(!['stageSelect','stageResult','weaponShop','preparation','training'].includes(game.mode))return false;
+ if(tab==='tools')return openExpansionStore(returnMode,selection);if(!['stageSelect','stageResult','weaponShop','preparation','training'].includes(game.mode))return false;
  if(game.mode!=='weaponShop'){storeRegion=recommendedStage();storeReturn=returnMode==='preparation'?'preparation':'stageSelect'}refreshCampaign();game.mode='weaponShop';storeTab=tab;
  const list=tab==='swords'?availableWeapons():tab==='arts'?ultimateArts().filter(a=>a.regionUnlock==null||campaign.clears[a.regionUnlock]||campaign.ultimates.includes(a.id)):storeProducts(),chosen=list.find(x=>x.id===selection)||list.find(x=>x.id===(tab==='arts'?campaign.ultimate:recommendedSword(storeRegion).id))||list[0],sword=tab==='swords',art=tab==='arts',w=chosen,current=getWeapon(campaign.weapon),owned=sword?campaign.weapons.includes(w.id):art?campaign.ultimates.includes(w.id):w.level>=w.max,equipped=sword?campaign.weapon===w.id:art&&campaign.ultimate===w.id,price=sword?weaponSale(w.id,storeRegion).price:w.price,sale=sword&&!owned&&weaponSale(w.id,storeRegion).sale,canBuy=!owned&&campaign.wallet>=price;
  const portrait='<div class="sword-portrait product-portrait" style="--blade:'+(w.color||'#e8c77e')+'">'+storeArtwork(w,sword,art)+'</div>';

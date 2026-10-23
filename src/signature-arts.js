@@ -9,7 +9,7 @@ function skillAimTarget(s,range,allowDistant=true){
  return nearest(range);
 }
 function beginSkillCharge(s,free){
- if(s.id==='bloodpact'&&p.hp<=bloodPactCost()){banner('HPが足りない','血契斬はHPを残して使う技です',1);return true}const duration=SIGNATURE_CHARGES[s.id];if(!duration)return false;
+ if(s.id==='bloodpact'&&p.hp<=bloodPactCost()){banner('HPが足りない','最大HPの8%より多いHPが必要です',1);return true}const duration=SIGNATURE_CHARGES[s.id];if(!duration)return false;
  const target=skillAimTarget(s,skillReach(s.range||s.r||500));if(target)p.face=norm(target.x-p.x,target.y-p.y);
  if(!free)p.mp-=s.mp;p.skillCharge={id:s.id,remaining:duration,duration,face:{...p.face},paid:free?0:s.mp,free};p.castLock=duration+.01;inputBuffer=null;
  combatSound(s.id==='nova'?'charge-dark':s.id==='dawn'?'charge-light':'charge-element');updateUI();return true;
@@ -24,6 +24,7 @@ function updateSkillCharge(dt){
  releaseManualSkill(getSkill(q.id),q.free);
 }
 function releaseManualSkill(s,free=false){
+ if(s.id==='bloodpact'&&p.hp<=bloodPactCost()){p.mp=Math.min(p.maxMp,p.mp+s.mp);p.castLock=0;floating(p.x,p.y-105,'HPが足りない · 技を中止','#f3a6ad');return false}
  const target=skillAimTarget(s,skillReach(s.range||s.r||500));if(target)p.face=norm(target.x-p.x,target.y-p.y);p.castLock=skillRecovery(s);const boost=(free?(p.counter>0?consumeCounter():2):consumeCounter())*consumeStyleSkill(s),killsBefore=game.kills;
  if(s.id==='bloodpact'){const cost=bloodPactCost();if(p.hp<=cost){p.mp=Math.min(p.maxMp,p.mp+s.mp);p.castLock=0;return}p.hp-=cost;p.hurtHud=1;floating(p.x,p.y-105,'血契 −'+cost,'#f3a6ad');effects.push({kind:'ailmentPulse',ailment:'weaken',x:p.x,y:p.y,r:55,life:.4,max:.4})}game.skillUses++;p.skillCooldowns[s.id]=skillCooldown(s);p.skillPose={id:s.id,life:.48,max:.48};castSkill(s,boost);
  const multi=game.kills-killsBefore;game.stageMulti=Math.max(game.stageMulti,multi);if(multi>=3)floating(p.x,p.y-145,multi+' K.O.!','#fff0a8',true);

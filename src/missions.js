@@ -94,7 +94,7 @@ function openMissions(tab='ready',selection=null){
 }
 function addMissionHub(){
  const shop=$('weaponShop');if(!shop)return;const ready=missionClaimable().length,button=document.createElement('button');button.id='missionHub';button.className='map-missions';button.innerHTML='<i>✧</i><span><b>ミッション</b><small>'+(ready?'報酬を受け取れます':'冒険の実績と解放報酬')+'</small></span><em>'+(ready||'›')+'</em>';button.onclick=()=>openMissions(ready?'ready':'progress');
- const hub=document.createElement('div');hub.className='map-hub';shop.before(hub);hub.append(shop,button);addTrainingHub(hub);const map=$('modal').querySelector('.world-map');map?.classList.add('atlas-living');
+ const hub=document.createElement('div');hub.className='map-hub';shop.before(hub);hub.append(shop,button);addTrainingHub(hub);hub.insertBefore($('trainingHub'),button);addMineEntry(hub);const map=$('modal').querySelector('.world-map');map?.classList.add('atlas-living');
  const svg=map?.querySelector('svg');if(svg)svg.insertAdjacentHTML('beforeend',`<g class="atlas-wind" fill="none" stroke="#d4f1db55" stroke-width="2"><path d="M30 290Q120 180 255 235T650 180"/><path d="M60 165Q200 75 360 130T670 80"/></g><g class="atlas-ship" fill="#ead1a0" stroke="#243c52" stroke-width="2"><path d="M344 259L377 263L369 274L351 272Z"/><path d="M358 259V228L377 254Z" fill="#f6e7c4"/><path d="M355 232L342 253H355Z" fill="#c79f69"/></g><g class="atlas-beacon" fill="none" stroke="#fff2b2" opacity=".6"><ellipse cx="565" cy="45" rx="42" ry="14"/><path d="M565 3V22M565 66V82M519 45H532M599 45H613"/></g>`);
 
 }

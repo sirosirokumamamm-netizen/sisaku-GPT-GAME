@@ -9,10 +9,10 @@ function readableCooldown(node,remaining,total,ready){
 }
 function updateReadableControls(){
  const state=survivalState(),allowed=game.mode==='play'&&(!game.singleStage||combatActionsAvailable())&&p.cutin<=0,unlocked=!(p.castLock>0||p.rollTime>0||p.hurtRecovery>0||p.ailments?.paralyze>0);
- for(const id of SLOT_NAMES){const node=$(id),s=getSkill(p.loadout[SLOT_NAMES.indexOf(id)]),remaining=s?p.skillCooldowns[s.id]||0:0,low=!!s&&p.mp<s.mp&&p.counter<=0&&p.skillCharge?.id!==s.id;
+ for(const id of SLOT_NAMES){const node=$(id),s=getSkill(p.loadout[SLOT_NAMES.indexOf(id)]),remaining=s?p.skillCooldowns[s.id]||0:0,lowHP=s?.id==='bloodpact'&&p.hp<=bloodPactCost(),low=lowHP||!!s&&p.mp<s.mp&&p.counter<=0&&p.skillCharge?.id!==s.id;
   readableCooldown(node,remaining,s?skillCooldown(s):1,allowed&&unlocked&&!!s&&!low&&remaining<=.05);node.classList.toggle('mana-low',low);node.style.opacity='1';
-  let tag=node.querySelector('.skill-state');if(!tag){tag=document.createElement('small');tag.className='skill-state';tag.setAttribute('aria-hidden','true');node.append(tag)}setHUDText(tag,low&&remaining<=.05?'MP不足':'');
-  if(s)setHUDAttribute(node,'aria-label',skillDisplayName(s)+' · '+(remaining>.05?'再使用まで '+remaining.toFixed(1)+'秒':low?'MP不足':p.skillCharge?.id===s.id?'溜め中':'使用可能'));
+  let tag=node.querySelector('.skill-state');if(!tag){tag=document.createElement('small');tag.className='skill-state';tag.setAttribute('aria-hidden','true');node.append(tag)}setHUDText(tag,low&&remaining<=.05?(lowHP?'HP不足':'MP不足'):'');
+  if(s)setHUDAttribute(node,'aria-label',skillDisplayName(s)+' · '+(remaining>.05?'再使用まで '+remaining.toFixed(1)+'秒':low?(lowHP?'HP不足':'MP不足'):p.skillCharge?.id===s.id?'溜め中':'使用可能'));
  }
  $('battleHint').classList.toggle('survival-busy',game.mode==='play'&&game.active&&(state.critical||state.potionPrompt||state.manaBlocked));
  const roll=$('roll');readableCooldown(roll,p.cd.roll,hasRelic('feather')?.8:.95,allowed&&p.cd.roll<=.05);setHUDAttribute(roll,'aria-label',p.cd.roll>.05?'回避 · 再使用まで '+p.cd.roll.toFixed(1)+'秒':'回避 · 使用可能');

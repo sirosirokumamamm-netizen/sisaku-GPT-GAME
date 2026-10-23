@@ -7,7 +7,7 @@ function rankAssessment(win,completion){
  return {rank:win?(quality>=94&&game.hitsTaken<=5&&damageRatio<=.45?'S':quality>=84?'A':quality>=70?'B':'C'):quality>=40?'C':'D',quality:Math.round(quality*10)/10,target};
 }
 function secondFormHealth(e){if(e.secondFormScaled)return;e.secondFormScaled=true;e.maxHp=Math.round(e.maxHp*(e.shadowLord?1.18:e.form==='god'?1.16:1.18))}
-function outgoingStatusMultiplier(){return p.ailments?.weaken>0?.5:1}
+function outgoingStatusMultiplier(){return (p.ailments?.weaken>0?.5:1)*(p.charmPowerTime>0?1.2:1)}
 function walkingWeight(){return game.singleStage&&getWeapon().id==='greatsword'?.82:1}
 function clearPlayerAilments(){p.ailments={};p.ailmentGuard={};p.poisonClock=1}
 function applyPlayerAilment(id,duration=AILMENTS[id]?.duration){
@@ -104,7 +104,7 @@ function updateGodTrial(e,dt){
  if(e.state==='recover'){e.timer-=dt;e.exposed=Math.max(0,e.timer);if(e.timer>0)return true;e.state='chase';}
  const angle=game.time*(e.bossPhase===2?1.2:.65),target=safePoint(arenaX(380+Math.sin(angle)*210),arenaY(STAGES[game.stage].y+50+Math.cos(angle)*160),e.r),n=norm(target.x-e.x,target.y-e.y),phase=game.time%2.8,speed=e.bossPhase===2?(phase<.8?65:phase<1.6?425:145):godMotion(e).speed;
  moveActor(e,n.x*speed*dt,n.y*speed*dt);e.motionPhase=e.bossPhase===2?(phase<.8?'still':phase<1.6?'surge':'settle'):godMotion(e).phase;
- if(e.godAttack<=0&&!e.attackSequence&&!warnings.some(w=>w.owner===e.id&&w.life>.2)){const pattern=nextGodEdict(e);e.godPattern=(e.godPattern||0)+1;e.godAttack=e.bossPhase===2?1.05:1.65;godEdict(e,pattern)}return true;
+ if(e.godAttack<=0&&!e.attackSequence&&!warnings.some(w=>w.owner===e.id&&w.life>.2)){const pattern=nextGodEdict(e);e.godPattern=(e.godPattern||0)+1;e.godAttack=e.bossPhase===2?.82:1.4;godEdict(e,pattern)}return true;
 }
 function drawPlainGod(e,t){
  ctx.save();ctx.translate(0,-45+Math.sin(t*1.4)*3);ctx.strokeStyle='#aebbbb';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,-70,28,9,0,0,Math.PI*2);ctx.stroke();

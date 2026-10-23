@@ -1,14 +1,14 @@
 // Each late realm has a visual descent and its own boss vocabulary. Stable save IDs.
-function roomWaveCount(region=game.region,room=game.room){return region===TEMPLE||room===stageRoomCount(region)?1:region===6?(room>=4?4:3):region===7?3:region===5?(room===1||room===3?2:3):2}
+function roomWaveCount(region=game.region,room=game.room){return region===TEMPLE||room===stageRoomCount(region)?1:region===MINE?(room===1?2:Math.min(3,2+Math.floor(mineDepth()/3))):region===6?(room>=4?4:3):region===7?3:region===5?(room===1||room===3?2:3):2}
 function realmDepth(room=game.room){return clamp((room-1)/(stageRoomCount()-1),0,1)}
 function realmChapter(region=game.region,room=game.room){if(region===TEMPLE)return '第'+room+'刻・'+REGIONS[endgameBossRegion()].name;if(region===WASTELAND)return ['風化した街道','剣塚の丘','忘却の集落','始原の参道','王骸の封印','王骸の玉座'][room-1]||'';return ({4:['魔城の外縁','黒炎の回廊','禁術の広間','王の近衛域','冥王の玉座'],5:['雲海の入口','天への階段','星詠みの聖堂','裁きの門','神託の回廊','創世の神座'],6:['灰の墓地','屍の参道','忘却の霊廟','黒月の王域','終影の回廊','影葬の玉座']})[region]?.[clamp(room,1,stageRoomCount())-1]||''}
 function shadowLightAt(x,y){const d=Math.hypot(x-p.x,(y-p.y)*CAMERA.depth),depth=realmDepth();return clamp(1-(d-95)/(330-depth*65),.2,1)}
 function shadowBodyColor(e,base,hit){return e.flash>0?hit:base}
 function drawWorldScene(t,sx,sy){
  const shadow=game.singleStage&&game.region===6,b=worldBounds();
- drawGround(t);if(bossArenaActive()){drawOpenBossArena(t);drawArenaIdentity(t)}else{drawDarkFloor(t);drawHeavenFloor(t);drawCinematicScenery(t);drawOvergrownRuins(t);drawExpeditionFloor(t);drawRealmDescent(t)}drawEternalScenery(t);drawTerrainGround(t);drawRealmAmbience(t);
+ drawGround(t);if(bossArenaActive()){drawOpenBossArena(t);drawArenaIdentity(t)}else{drawDarkFloor(t);drawHeavenFloor(t);drawCinematicScenery(t);drawOvergrownRuins(t);drawExpeditionFloor(t);drawRealmDescent(t)}drawEternalScenery(t);drawMineCavern(t);drawTerrainGround(t);drawRealmAmbience(t);
  if(!shadow){drawRoomGate(t);drawCombatObjects(t);for(const w of warnings)drawWarning(w,t)}
- const scene=decor.filter(d=>!bossArenaActive()&&visibleWorldCircle(d.x,d.y,140)).map(d=>({y:d.y,draw:()=>aboveView(()=>drawDecor(d,t),d.x,d.y)}));
+ const scene=decor.filter(d=>!bossArenaActive()&&!isMine()&&visibleWorldCircle(d.x,d.y,140)).map(d=>({y:d.y,draw:()=>aboveView(()=>drawDecor(d,t),d.x,d.y)}));
  for(const o of terrain)if(visibleWorldBox(o.x-(o.r||0)-70,o.y-160,o.x+(o.w||o.r||0)+70,o.y+(o.h||o.r||0)+70)&&['rock','ruin','barrel','crystal','furnace'].includes(o.kind))scene.push({y:o.y+(o.h||0),draw:()=>drawTerrainProp(o,t)});
  if(!shadow)scene.push(...worldActors(t));scene.sort((a,b)=>a.y-b.y).forEach(a=>a.draw());
  if(shadow){ctx.save();const d=cv.width/view.w;ctx.setTransform(d,0,0,d,0,0);drawShadowGrade(t,sx,sy);ctx.restore()}
@@ -72,7 +72,7 @@ function glideJudgingGod(e,dt){
  const center=STAGES[game.stage].y,n=norm(arenaX(380+Math.sin(game.time*.25)*160)-e.x,arenaY(center-80+Math.cos(game.time*.25)*55)-e.y);moveActor(e,n.x*245*dt,n.y*245*dt);
 }
 function godEdict(e,pattern){
- if(e.bossPhase===2&&godSecondArt(e,pattern))return;
+ if(augmentedGodEdict(e,pattern))return;if(e.bossPhase===2&&godSecondArt(e,pattern))return;
  const y=STAGES[game.stage].y;
  if(pattern===0){for(const [i,x]of [170,310,450,590].entries())personaWarning(e,'circle',i<2?clamp(p.x+(i?115:-65),battleBounds().left+90,battleBounds().right-90):arenaX(x),i<2?p.y+(i?95:-30):arenaY(y-40+(i%2)*150),1.15+i*.18,{r:82,atk:50,move:'holyPillar'});banner('四柱の宣告','光の柱が順番に降りる',1)}
  else if(pattern===1){const center={x:clamp(p.x,battleBounds().left+100,battleBounds().right-100),y:clamp(p.y,battleBounds().top+100,battleBounds().bottom-100)};for(const [i,dir]of [{x:.707,y:.707},{x:-.707,y:.707}].entries())personaWarning(e,'line',center.x-dir.x*370,center.y-dir.y*370,1.65+i*.4,{dir,length:740,width:88,atk:52,move:'heavenScales'});banner('天秤の光剣','交差する光を見切れ',1.2)}

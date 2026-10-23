@@ -22,7 +22,7 @@ function buildOpenBossArena(){
 }
 function drawOpenBossArena(t){
  if(!bossArenaActive())return;const b=battleBounds(),y=STAGES[game.stage].y,c=REGIONS[game.region].color;
- ctx.save();ctx.fillStyle=['#4b6658','#3c6268','#59413e','#625d45','#292336','#d2d6c5','#25272f','#73634e','#354850'][game.region];ctx.fillRect(b.left,b.top,b.right-b.left,b.bottom-b.top);
+ ctx.save();ctx.fillStyle=['#4b6658','#3c6268','#59413e','#625d45','#292336','#d2d6c5','#25272f','#73634e','#354850','#202b33'][game.region];ctx.fillRect(b.left,b.top,b.right-b.left,b.bottom-b.top);
  ctx.strokeStyle=c+'28';ctx.lineWidth=1;
  for(let x=b.left+30;x<b.right;x+=90){ctx.beginPath();ctx.moveTo(x,b.top);ctx.lineTo(x,b.bottom);ctx.stroke()}
  for(let yy=b.top+30;yy<b.bottom;yy+=90){ctx.beginPath();ctx.moveTo(b.left,yy);ctx.lineTo(b.right,yy);ctx.stroke()}
